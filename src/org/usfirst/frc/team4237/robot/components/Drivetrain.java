@@ -5,6 +5,12 @@ import edu.wpi.first.wpilibj.drive.MecanumDrive;
 
 public class Drivetrain extends MecanumDrive
 {
+	
+	private static WPI_TalonSRX frontLeftMotor = new WPI_TalonSRX(Constants.FRONT_LEFT_MOTOR_PORT);
+	private static WPI_TalonSRX frontRightMotor = new WPI_TalonSRX(Constants.FRONT_RIGHT_MOTOR_PORT);
+	private static WPI_TalonSRX rearLeftMotor = new WPI_TalonSRX(Constants.REAR_LEFT_MOTOR_PORT);
+	private static WPI_TalonSRX rearRightMotor = new WPI_TalonSRX(Constants.FRONT_RIGHT_MOTOR_PORT);
+	
 	private static Drivetrain instance = new Drivetrain();
 	
 	/**
@@ -16,11 +22,7 @@ public class Drivetrain extends MecanumDrive
 		return instance;
 	}
 	
-	private static WPI_TalonSRX frontLeftMotor = new WPI_TalonSRX(Constants.FRONT_LEFT_MOTOR_PORT);
-	private static WPI_TalonSRX frontRightMotor = new WPI_TalonSRX(Constants.FRONT_RIGHT_MOTOR_PORT);
-	private static WPI_TalonSRX rearLeftMotor = new WPI_TalonSRX(Constants.REAR_LEFT_MOTOR_PORT);
-	private static WPI_TalonSRX rearRightMotor = new WPI_TalonSRX(Constants.FRONT_RIGHT_MOTOR_PORT);
-	
+
 	private Drivetrain()
 	{
 		super(frontLeftMotor, frontRightMotor, rearLeftMotor, rearRightMotor);
