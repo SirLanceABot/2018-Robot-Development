@@ -13,8 +13,9 @@ public class Drivetrain extends MecanumDrive
 	
 	private static Drivetrain instance = new Drivetrain();
 	
+	
 	/**
-	 * Returns the instance of DriveTrain
+	 * Returns the instance of Drivetrain
 	 * @return
 	 */
 	public static Drivetrain getInstance()
