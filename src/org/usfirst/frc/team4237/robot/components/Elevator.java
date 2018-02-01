@@ -6,7 +6,6 @@ import org.usfirst.frc.team4237.robot.control.Xbox;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.Timer;
 
-
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 /**
@@ -16,13 +15,6 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
  */
 public class Elevator extends Thread
 {
-	private static Elevator instance = new Elevator();
-
-	public static Elevator getInstance()
-	{
-		return instance;
-	}
-
 	private Xbox xbox = Xbox.getInstance();
 
 	private WPI_TalonSRX masterTalonSRX = new WPI_TalonSRX(Constants.MASTER_MOTOR_PORT); 
@@ -38,6 +30,14 @@ public class Elevator extends Thread
 	private double[] targetRange;
 	private Constants.Direction currentDirection = Constants.Direction.None;
 	private boolean isMoving = false;
+	
+	private static Elevator instance = new Elevator();
+
+	public static Elevator getInstance()
+	{
+		return instance;
+	}
+
 
 	/**
 	 * Constructor for Elevator, called only
@@ -276,18 +276,18 @@ public class Elevator extends Thread
 		private enum InitRange
 		{
 			floorRange(0.0, .0769), //>= 0 and < 1
-			floorExchangeRange(.0769, .153), //>= 1 and < 2
-			exchangeRange(.153, .231),
-			exchangePortalRange(.231, .307),
-			portalRange(.307, .384),
-			portalBottomSwitchRange(.384, .461),
-			bottomSwitchRange(.461, .538),
-			bottomSwitchTopSwitchRange(.538, .615),
-			topSwitchRange(.615, .692),
-			topSwitchBottomScaleRange(.692, .769),
-			bottomScaleRange(.769, .846),
-			bottomScaleTopScaleRange(.846, .923),
-			topScaleRange(.923, 1.0),
+			floorExchangeRange(0.0769, 0.153), //>= 1 and < 2
+			exchangeRange(0.153, 0.231),
+			exchangePortalRange(0.231, 0.307),
+			portalRange(0.307, 0.384),
+			portalBottomSwitchRange(0.384, 0.461),
+			bottomSwitchRange(0.461, 0.538),
+			bottomSwitchTopSwitchRange(0.538, 0.615),
+			topSwitchRange(0.615, 0.692),
+			topSwitchBottomScaleRange(0.692, 0.769),
+			bottomScaleRange(0.769, 0.846),
+			bottomScaleTopScaleRange(0.846, 0.923),
+			topScaleRange(0.923, 1.1),
 			none(-1, -1),
 			error(-1, -1);
 
@@ -316,7 +316,7 @@ public class Elevator extends Thread
 
 		public enum Range
 		{
-			floorRange(                 InitRange.floorRange.range(),                 InitRange.floorRange,              InitRange.exchangeRange),
+			floorRange(                 InitRange.floorRange.range(),                 InitRange.floorRange,        InitRange.exchangeRange),
 			floorExchangeRange(         InitRange.floorExchangeRange.range(),         InitRange.floorRange,        InitRange.exchangeRange),
 			exchangeRange(              InitRange.exchangeRange.range(),              InitRange.floorRange,        InitRange.portalRange),
 			exchangePortalRange(        InitRange.exchangePortalRange.range(),        InitRange.exchangeRange,     InitRange.portalRange),
