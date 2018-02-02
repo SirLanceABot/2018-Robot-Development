@@ -22,5 +22,6 @@
 	<classpathentry kind="lib" path="C:/Users/Mark/wpilib/java/current/lib/wpiutil-sources.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Mark/wpilib/user/java/lib/CTRE_Phoenix.jar"/>
 	<classpathentry kind="lib" path="C:/Users/Mark/wpilib/user/java/lib/CTRE_Phoenix-sources.jar"/>
+	<classpathentry kind="var" path="USERLIBS_DIR/navx_frc.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
