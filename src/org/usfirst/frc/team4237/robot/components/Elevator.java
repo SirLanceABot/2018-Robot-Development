@@ -46,16 +46,13 @@ public class Elevator extends Thread
 	 * tickLevels.
 	 */
 	private Elevator()
-	{	
+	{
 		masterTalonSRX.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 20);
 		masterTalonSRX.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 20);
-		masterTalonSRX.overrideLimitSwitchesEnable(false);
 		
-		masterTalonSRX.setNeutralMode(NeutralMode.Coast);
-		slaveTalonSRX.setNeutralMode(NeutralMode.Coast);
-		
-		masterTalonSRX.overrideSoftLimitsEnable(true);
-		
+		masterTalonSRX.configForwardSoftLimitEnable(false, 20);
+		masterTalonSRX.configReverseSoftLimitEnable(false, 20);
+
 		slaveTalonSRX.follow(masterTalonSRX); // Sets slaveTalonSRX to follow masterTalonSrx
 	}
 
@@ -63,8 +60,8 @@ public class Elevator extends Thread
 	 * Raise the elevator
 	 */
 	public void raise()
-	{	
-			masterTalonSRX.set(0.5);
+	{
+		masterTalonSRX.set(0.5);
 	}
 
 	/**
@@ -72,7 +69,7 @@ public class Elevator extends Thread
 	 */
 	public void lower()
 	{
-			masterTalonSRX.set(-0.5);
+		masterTalonSRX.set(-0.5);
 	}
 
 	@Override
@@ -84,7 +81,7 @@ public class Elevator extends Thread
 			boolean leftBumper = xbox.getRawButton(Xbox.Constants.LEFT_BUMPER);
 			
 			updateCurrentRange();
-			
+
 			if (!isMoving())
 			{
 				if (rightBumper)
@@ -252,7 +249,7 @@ public class Elevator extends Thread
 		}
 		else return distance;
 	}
-	
+
 	public boolean isMoving()
 	{
 		return isMoving;
