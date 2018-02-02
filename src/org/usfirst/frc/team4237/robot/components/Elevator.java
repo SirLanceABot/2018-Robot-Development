@@ -6,6 +6,9 @@ import org.usfirst.frc.team4237.robot.control.Xbox;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.Timer;
 
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 /**
@@ -21,9 +24,6 @@ public class Elevator extends Thread
 	private WPI_TalonSRX slaveTalonSRX = new WPI_TalonSRX(Constants.SLAVE_MOTOR_PORT);
 
 	private AnalogPotentiometer stringPot = new AnalogPotentiometer(Constants.STRING_POT_PORT);
-
-	//private LimitSwitch topLimitSwitch = new LimitSwitch(0);
-	//private LimitSwitch bottomLimitSwitch = new LimitSwitch(1);
 
 	private double currentValue;
 	private Constants.Range currentRange;
@@ -47,17 +47,11 @@ public class Elevator extends Thread
 	 */
 	private Elevator()
 	{
-//		masterTalonSRX.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder, 0, 0);
-		//	masterTalonSRX.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.Analog, 0, 0);
-//		masterTalonSRX.setSensorPhase(false);
-
-//		masterTalonSRX.configForwardSoftLimitThreshold(5000, 0);
-//		masterTalonSRX.configReverseSoftLimitThreshold(-5000, 0);
-//		masterTalonSRX.configForwardSoftLimitEnable(true, 0);
-//		masterTalonSRX.configReverseSoftLimitEnable(true, 0);
-
-//		slaveTalonSRX.configForwardSoftLimitEnable(false, 0);
-//		slaveTalonSRX.configReverseSoftLimitEnable(false, 0);
+		masterTalonSRX.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 20);
+		masterTalonSRX.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 20);
+		
+		masterTalonSRX.configForwardSoftLimitEnable(false, 20);
+		masterTalonSRX.configReverseSoftLimitEnable(false, 20);
 
 		slaveTalonSRX.follow(masterTalonSRX); // Sets slaveTalonSRX to follow masterTalonSrx
 	}
@@ -255,16 +249,6 @@ public class Elevator extends Thread
 		}
 		else return distance;
 	}
-
-	/*public int getEncoder()
-	{
-		return masterTalonSRX.getSelectedSensorPosition(0);
-	}
-*/
-	/*public void resetEncoder()
-	{
-		masterTalonSRX.setSelectedSensorPosition(0, 0, 20);
-	}*/
 
 	public boolean isMoving()
 	{
