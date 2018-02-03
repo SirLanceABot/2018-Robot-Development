@@ -35,6 +35,8 @@ public class Gripper
 		
 		mPivot.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder, 0, 0);
 		mPivot.setSensorPhase(false);
+		
+		mLeftIntake.config_kD(arg0, arg1, arg2)
 	}
 
 	/**
@@ -155,16 +157,16 @@ public class Gripper
 		if(isPivotDone)
 		{
 			isPivotDone = false;
-			if(mPivot.getSelectedSensorPosition(0) > Constants.ENCODER_SWITCH_POSITION)
+			if(mPivot.getSelectedSensorPosition(0) > Constants.SWITCH)
 			{
 				pivot(-.25);
 			}
-			else if(mPivot.getSelectedSensorPosition(0) < Constants.ENCODER_SWITCH_POSITION)
+			else if(mPivot.getSelectedSensorPosition(0) < Constants.SWITCH)
 			{
 				pivot(.25);
 			}
 		}
-		else if(Math.abs(mPivot.getSelectedSensorPosition(0)) >= Constants.ENCODER_SWITCH_POSITION)
+		else if(Math.abs(mPivot.getSelectedSensorPosition(0)) >= Constants.SWITCH)
 		{
 			pivotOff();
 			isPivotDone = true;
@@ -181,16 +183,16 @@ public class Gripper
 		if(isPivotDone)
 		{
 			isPivotDone = false;
-			if(mPivot.getSelectedSensorPosition(0) > Constants.ENCODER_SCALE_POSITION)
+			if(mPivot.getSelectedSensorPosition(0) > Constants.SCALE)
 			{
 				pivot(-.25);
 			}
-			else if(mPivot.getSelectedSensorPosition(0) < Constants.ENCODER_SCALE_POSITION)
+			else if(mPivot.getSelectedSensorPosition(0) < Constants.SCALE)
 			{
 				pivot(.25);
 			}
 		}
-		else if(Math.abs(mPivot.getSelectedSensorPosition(0)) >= Constants.ENCODER_SCALE_POSITION)
+		else if(Math.abs(mPivot.getSelectedSensorPosition(0)) >= Constants.SCALE)
 		{
 			pivotOff();
 			isPivotDone = true;
@@ -209,8 +211,8 @@ public class Gripper
 		public static final int SPIT_CUBE_OUT = 1;
 		public static final int SUCK_CUBE_IN = 500;
 		
-		public static final int ENCODER_SWITCH_POSITION = 0;
-		public static final int ENCODER_SCALE_POSITION = 1;
+		public static final int SWITCH = 0;
+		public static final int SCALE = 1;
 		
 		public static final int LEFT_INTAKE_MOTOR_PORT = 0;
 		public static final int RIGHT_INTAKE_MOTOR_PORT = 1;
