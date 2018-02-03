@@ -36,7 +36,17 @@ public class Gripper
 		mPivot.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder, 0, 0);
 		mPivot.setSensorPhase(false);
 		
-		//mLeftIntake.config_kD(arg0, arg1, arg2);
+		mLeftIntake.selectProfileSlot(Constants.PID_SLOT_ID, 0);
+		mLeftIntake.config_kP(Constants.PID_SLOT_ID, 2.2, 1);
+		mLeftIntake.config_kI(Constants.PID_SLOT_ID, 0.01, 1);
+		mLeftIntake.config_kD(Constants.PID_SLOT_ID, 0.0001, 1);
+		mLeftIntake.config_kF(Constants.PID_SLOT_ID, 4.3, 1);
+		
+		mRightIntake.selectProfileSlot(Constants.PID_SLOT_ID, 0);
+		mRightIntake.config_kP(Constants.PID_SLOT_ID, 2.2, 1);
+		mRightIntake.config_kI(Constants.PID_SLOT_ID, 0.01, 1);
+		mRightIntake.config_kD(Constants.PID_SLOT_ID, 0.0001, 1);
+		mRightIntake.config_kF(Constants.PID_SLOT_ID, 4.3, 1);
 	}
 
 	/**
@@ -50,8 +60,8 @@ public class Gripper
 			isIntakeDone = false;
 			mLeftIntake.setSelectedSensorPosition(0,0,0);
 			mRightIntake.setSelectedSensorPosition(0,0,0);		// set encoder position
-			mLeftIntake.set(1);
-			mRightIntake.set(-1);		// set motor
+			mLeftIntake.set(ControlMode.Velocity, 1);
+			mRightIntake.set(ControlMode.Velocity, -1);		// set motor
 		}
 		else if(mRightIntake.getSelectedSensorPosition(0) >= Constants.SUCK_CUBE_IN)
 		{
@@ -72,8 +82,8 @@ public class Gripper
 		{
 			isIntakeDone = false;
 			mRightIntake.setSelectedSensorPosition(0,0,0);		// set encoder position
-			mLeftIntake.set(-1);
-			mRightIntake.set(1);
+			mLeftIntake.set(ControlMode.Velocity, -1);
+			mRightIntake.set(ControlMode.Velocity, 1);
 		}
 		else if(mRightIntake.getSelectedSensorPosition(0) >= Constants.SPIT_CUBE_OUT)
 		{
@@ -89,8 +99,8 @@ public class Gripper
 	 */
 	void intakeOff()
 	{
-		mLeftIntake.set(0);
-		mRightIntake.set(0);
+		mLeftIntake.set(ControlMode.Velocity, 0);
+		mRightIntake.set(ControlMode.Velocity, 0);
 	}
 
 	/**
@@ -98,8 +108,8 @@ public class Gripper
 	 */
 	void intake()
 	{
-		mLeftIntake.set(-0.5);
-		mRightIntake.set(0.5);
+		mLeftIntake.set(ControlMode.Velocity, -0.5);
+		mRightIntake.set(ControlMode.Velocity, 0.5);
 	}
 	
 	/**
@@ -107,28 +117,20 @@ public class Gripper
 	 */
 	void outtake()
 	{
-		mLeftIntake.set(0.5);
-		mRightIntake.set(-0.5);
+		mLeftIntake.set(ControlMode.Velocity, 0.5);
+		mRightIntake.set(ControlMode.Velocity, -0.5);
 	}
 	
-	void SpinLeft()
+	void spinLeft()
 	{
-		mLeftIntake.set(0.1);
-		mRightIntake.set(0.1);
+		mLeftIntake.set(ControlMode.Velocity, 0.1);
+		mRightIntake.set(ControlMode.Velocity, 0.1);
 	}
 	
-	void SpinRight()
+	void spinRight()
 	{
-		mLeftIntake.set(-0.1);
-		mRightIntake.set(-0.1);
-	}
-	
-	void SyncIntakeMotorSpeed()
-	{
-		int leftMotorSpeed = mLeftIntake.getSelectedSensorVelocity(0);
-		int rightMotorSpeed = mRightIntake.getSelectedSensorVelocity(0);
-		
-		System.out.println();
+		mLeftIntake.set(ControlMode.Velocity, -0.1);
+		mLeftIntake.set(ControlMode.Velocity, -0.1);
 	}
 	
 	/**
@@ -217,6 +219,8 @@ public class Gripper
 		public static final int LEFT_INTAKE_MOTOR_PORT = 0;
 		public static final int RIGHT_INTAKE_MOTOR_PORT = 1;
 		public static final int PIVOT_MOTOR_PORT = 2;
+		
+		public static final int PID_SLOT_ID = 0;
 	}
 
 }
