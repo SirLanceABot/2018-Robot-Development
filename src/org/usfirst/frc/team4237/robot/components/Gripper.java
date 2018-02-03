@@ -36,7 +36,7 @@ public class Gripper
 		mPivot.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder, 0, 0);
 		mPivot.setSensorPhase(false);
 		
-		mLeftIntake.config_kD(arg0, arg1, arg2);
+		//mLeftIntake.config_kD(arg0, arg1, arg2);
 	}
 
 	/**
