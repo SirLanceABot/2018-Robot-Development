@@ -1,11 +1,12 @@
 package org.usfirst.frc.team4237.robot.components;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 
 /**
  * Gripper class
- * @author Julien Thrum & Erin Lafrenz
+ * @author Julien Dumb & Erin Lafrenz
  */
 public class Gripper
 {
@@ -16,9 +17,9 @@ public class Gripper
 		return instance;
 	}
 	
-	WPI_TalonSRX mLeftIntake = new WPI_TalonSRX(0);
-	//WPI_TalonSRX mRightIntake = new WPI_TalonSRX(1);
-	WPI_TalonSRX mPivot = new WPI_TalonSRX(2);
+	WPI_TalonSRX mLeftIntake = new WPI_TalonSRX(Constants.LEFT_INTAKE_MOTOR_PORT);
+	WPI_TalonSRX mRightIntake = new WPI_TalonSRX(Constants.RIGHT_INTAKE_MOTOR_PORT);
+	WPI_TalonSRX mPivot = new WPI_TalonSRX(Constants.PIVOT_MOTOR_PORT);
 	
 	boolean isIntakeDone = true;
 	boolean isPivotDone = true;
@@ -27,6 +28,10 @@ public class Gripper
 	{
 		mLeftIntake.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder, 0, 0);
 		mLeftIntake.setSensorPhase(false);
+		mRightIntake.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder, 0, 0);
+		mRightIntake.setSensorPhase(false);
+		
+		
 		
 		mPivot.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder, 0, 0);
 		mPivot.setSensorPhase(false);
@@ -38,18 +43,19 @@ public class Gripper
 	 */
 	boolean autoIntake()
 	{
-//		if(isIntakeDone == true)
-//		{
-//			isIntakeDone = false;
-//			mRightIntake.setSelectedSensorPosition(0,0,0);		// set encoder position
-//			mLeftIntake.set(1);
-//			mRightIntake.set(-1);		// set motor
-//		}
-//		else if(mRightIntake.getSelectedSensorPosition(0) >= Constants.SUCK_CUBE_IN)
-//		{
-//			intakeOff();
-//			isIntakeDone = true;
-//		}
+		if(isIntakeDone == true)
+		{
+			isIntakeDone = false;
+			mLeftIntake.setSelectedSensorPosition(0,0,0);
+			mRightIntake.setSelectedSensorPosition(0,0,0);		// set encoder position
+			mLeftIntake.set(1);
+			mRightIntake.set(-1);		// set motor
+		}
+		else if(mRightIntake.getSelectedSensorPosition(0) >= Constants.SUCK_CUBE_IN)
+		{
+			intakeOff();
+			isIntakeDone = true;
+		}
 		
 		return isIntakeDone;
 	}
@@ -60,19 +66,19 @@ public class Gripper
 	 */
 	boolean autoOuttake()
 	{
-//		if(isIntakeDone == true)
-//		{
-//			isIntakeDone = false;
-//			mRightIntake.setSelectedSensorPosition(0,0,0);		// set encoder position
-//			mLeftIntake.set(-1);
-//			mRightIntake.set(1);
-//		}
-//		else if(mRightIntake.getSelectedSensorPosition(0) >= Constants.SPIT_CUBE_OUT)
-//		{
-//			intakeOff();
-//			isIntakeDone = true;
-//		}
-//		
+		if(isIntakeDone == true)
+		{
+			isIntakeDone = false;
+			mRightIntake.setSelectedSensorPosition(0,0,0);		// set encoder position
+			mLeftIntake.set(-1);
+			mRightIntake.set(1);
+		}
+		else if(mRightIntake.getSelectedSensorPosition(0) >= Constants.SPIT_CUBE_OUT)
+		{
+			intakeOff();
+			isIntakeDone = true;
+		}
+		
 		return isIntakeDone;
 	}
 
@@ -82,7 +88,7 @@ public class Gripper
 	void intakeOff()
 	{
 		mLeftIntake.set(0);
-//		mRightIntake.set(0);
+		mRightIntake.set(0);
 	}
 
 	/**
@@ -91,7 +97,7 @@ public class Gripper
 	void intake()
 	{
 		mLeftIntake.set(-0.5);
-//		mRightIntake.set(0.5);
+		mRightIntake.set(0.5);
 	}
 	
 	/**
@@ -100,7 +106,27 @@ public class Gripper
 	void outtake()
 	{
 		mLeftIntake.set(0.5);
-//		mRightIntake.set(-0.5);
+		mRightIntake.set(-0.5);
+	}
+	
+	void SpinLeft()
+	{
+		mLeftIntake.set(0.1);
+		mRightIntake.set(0.1);
+	}
+	
+	void SpinRight()
+	{
+		mLeftIntake.set(-0.1);
+		mRightIntake.set(-0.1);
+	}
+	
+	void SyncIntakeMotorSpeed()
+	{
+		int leftMotorSpeed = mLeftIntake.getSelectedSensorVelocity(0);
+		int rightMotorSpeed = mRightIntake.getSelectedSensorVelocity(0);
+		
+		System.out.println()
 	}
 	
 	/**
@@ -171,22 +197,24 @@ public class Gripper
 		}
 		return isPivotDone;
 	}
+	
+	
 
 	/**
 	 * Constants class for Gripper
 	 */
 	public static class Constants
 	{
-		public enum Rotations
-		{
-			nintendoWiiUHeight	//Slowest selling Nintendo console in history
-		}
-
 		//TODO:change numbers to appropriate values
 		public static final int SPIT_CUBE_OUT = 1;
 		public static final int SUCK_CUBE_IN = 500;
+		
 		public static final int SWITCH = 0;
 		public static final int SCALE = 1;
+		
+		public static final int LEFT_INTAKE_MOTOR_PORT = 0;
+		public static final int RIGHT_INTAKE_MOTOR_PORT = 1;
+		public static final int PIVOT_MOTOR_PORT = 2;
 	}
 
 }
