@@ -126,7 +126,7 @@ public class Gripper
 		int leftMotorSpeed = mLeftIntake.getSelectedSensorVelocity(0);
 		int rightMotorSpeed = mRightIntake.getSelectedSensorVelocity(0);
 		
-		System.out.println()
+		System.out.println();
 	}
 	
 	/**
