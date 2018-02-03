@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 /**
  * Gripper class
  * @author Julien Thrum & Erin Lafrenz
+ * 
  */
 public class Gripper
 {
