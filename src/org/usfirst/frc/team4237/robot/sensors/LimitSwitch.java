@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 
 /**
  * Class for limit switches
- * @author Mark
+ * @author Mark Washington
  *
  */
 public class LimitSwitch extends DigitalInput

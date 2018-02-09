@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.AnalogInput;
 
 /**
  * Ultrasonic distance sensor class
- * @author Julien Guillaume Gunther Thrum and Shi Han Wong
+ * @author Julien Thrum and Darryl Wong
  *
  */
 public class Sonar extends AnalogInput

@@ -4,9 +4,8 @@ import edu.wpi.first.wpilibj.Joystick;
 import java.util.HashMap;
 
 /**
- * 
+ * Xbox controller class
  * @author Mark Washington
- * @version 1.0
  *
  */
 public abstract class Xbox extends Joystick

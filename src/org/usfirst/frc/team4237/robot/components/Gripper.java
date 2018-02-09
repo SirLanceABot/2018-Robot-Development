@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.Timer;
 
 /**
  * Gripper class
- * @author Julien Dumb & Erin Lafrenz & Ben Puzycki & Shi Han Dont Have One Wang
+ * @author Julien Thrum, Erin Lafrenz, Ben Puzycki, Darryl Wong, and Mark Washington
  */
 public class Gripper extends Thread
 {

@@ -14,7 +14,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 /**
  * 
- * @author Ben Puzycki, Darryl Wong, Mark Washington
+ * @author Ben Puzycki, Darryl Wong, and Mark Washington
  *
  */
 public class Elevator extends Thread
