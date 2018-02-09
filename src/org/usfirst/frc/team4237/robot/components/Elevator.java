@@ -298,7 +298,7 @@ public class Elevator extends Thread
 			}
 		}
 
-		public enum Range
+		private enum Range
 		{
 			floorRange(                 InitRange.floorRange.range(),                 InitRange.floorRange,        InitRange.exchangeRange),
 			floorExchangeRange(         InitRange.floorExchangeRange.range(),         InitRange.floorRange,        InitRange.exchangeRange),
