@@ -2,6 +2,7 @@ package org.usfirst.frc.team4237.robot.components;
 
 import java.util.HashMap;
 import org.usfirst.frc.team4237.robot.sensors.LimitSwitch;
+import org.usfirst.frc.team4237.robot.control.OperatorXbox;
 import org.usfirst.frc.team4237.robot.control.Xbox;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.Timer;
@@ -18,7 +19,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
  */
 public class Elevator extends Thread
 {
-	private Xbox xbox = Xbox.getInstance();
+	private Xbox xbox = OperatorXbox.getInstance();
 
 	private WPI_TalonSRX masterTalonSRX = new WPI_TalonSRX(Constants.MASTER_MOTOR_PORT); 
 	private WPI_TalonSRX slaveTalonSRX = new WPI_TalonSRX(Constants.SLAVE_MOTOR_PORT);
