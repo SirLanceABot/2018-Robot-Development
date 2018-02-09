@@ -25,11 +25,13 @@ public class Elevator extends Thread
 
 	private AnalogPotentiometer stringPot = new AnalogPotentiometer(Constants.STRING_POT_PORT);
 
-	private double currentValue;
-	private Constants.Range currentRange;
-	private double[] targetRange;
-	private Constants.Direction currentDirection = Constants.Direction.None;
 	private boolean isMoving = false;
+	
+	private double currentValue;
+	private double[] targetRange;
+	
+	private Constants.Range currentRange;
+	private Constants.Direction currentDirection = Constants.Direction.None;
 	
 	private static Elevator instance = new Elevator();
 
@@ -40,10 +42,7 @@ public class Elevator extends Thread
 
 
 	/**
-	 * Constructor for Elevator, called only
-	 * once by getInstance(). It initializes
-	 * the keys and values in levelTicks and
-	 * tickLevels.
+	 * Constructor for Elevator
 	 */
 	private Elevator()
 	{
