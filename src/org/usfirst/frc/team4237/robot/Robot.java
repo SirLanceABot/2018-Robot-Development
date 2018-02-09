@@ -6,35 +6,55 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 
 public class Robot extends IterativeRobot
 {
-	public Xbox xbox = Xbox.getInstance();
-	public RaspberryPiReceiver raspberryPiReceiver = RaspberryPiReceiver.getInstance();
-	
+	private Teleop teleop = Teleop.getInstance();
+	private Autonomous autonomous = Autonomous.getInstance();
+		
 	public Robot()
 	{
-		raspberryPiReceiver.start();
+
 	}
 	
 	@Override
 	public void robotInit()
 	{
-		
+		System.out.println("Starting robot...");
 	}
 	
 	@Override
 	public void disabledInit()
 	{
-		System.out.println("Entering Disabled");
+		System.out.println("Robot is disabled");
 	}
 	
 	@Override
 	public void disabledPeriodic()
 	{
-		System.out.println(raspberryPiReceiver.getValue());
+			
+	}
+	
+	@Override
+	public void teleopInit()
+	{
+		System.out.println("Entering teleop");
+		teleop.init();
 	}
 	
 	@Override
 	public void teleopPeriodic()
 	{
-		
+		teleop.periodic();
+	}
+	
+	@Override
+	public void autonomousInit()
+	{
+		System.out.println("Entering autonomous");
+		autonomous.init();
+	}
+	
+	@Override
+	public void autonomousPeriodic()
+	{
+		autonomous.periodic();
 	}
 }
