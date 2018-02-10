@@ -36,5 +36,9 @@ public abstract class Xbox extends Joystick
 		public static final int LEFT_BUMPER = 5;
 		public static final int LEFT_STICK_BUTTON = 8;
 		public static final int RIGHT_STICK_BUTTON = 9;
+		public static final int LEFT_STICK_X_AXIS = 0;
+		public static final int LEFT_STICK_Y_AXIS = 1;
+		public static final int RIGHT_STICK_X_AXIS = 4;
+		public static final int RIGHT_STICK_Y_AXIS = 5;
 	}
 }

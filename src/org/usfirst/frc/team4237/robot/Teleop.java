@@ -18,6 +18,11 @@ public class Teleop
 	private boolean xButton = false;
 	private boolean yButton = false;
 	
+	private double rightXAxis = 0.0;
+	private double rightYAxis = 0.0;
+	private double leftXAxis = 0.0;
+	private double leftYAxis = 0.0;
+	
 	private static Teleop instance = new Teleop();
 	public static Teleop getInstance()
 	{
@@ -37,6 +42,11 @@ public class Teleop
 	 */
 	public void periodic()
 	{
+		leftXAxis = xbox.getRawAxis(Xbox.Constants.LEFT_STICK_X_AXIS);
+		leftYAxis = xbox.getRawAxis(Xbox.Constants.LEFT_STICK_Y_AXIS);
+		rightXAxis = xbox.getRawAxis(Xbox.Constants.RIGHT_STICK_X_AXIS);
+		
+		drivetrain.driveCartesian(leftXAxis, leftYAxis, rightXAxis);
 		
 	}
 }
