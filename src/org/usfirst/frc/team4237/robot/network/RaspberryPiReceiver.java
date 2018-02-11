@@ -4,9 +4,6 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
-import org.usfirst.frc.team4237.vision.Vision;
-import org.usfirst.frc.team4237.vision.VisionData;
-
 import com.esotericsoftware.jsonbeans.Json;
 
 /**
@@ -20,14 +17,14 @@ public class RaspberryPiReceiver extends Thread
 	private DatagramPacket packet = null;
 	private String data = "";
 	private Json json = new Json();
-	
+
 	private static RaspberryPiReceiver instance;
-	
+
 	static //Static block to get around the constructor throwing IOException
 	{
 		try	
 		{
-			 instance = new RaspberryPiReceiver(); 
+			instance = new RaspberryPiReceiver(); 
 		}
 		catch(IOException e)
 		{
@@ -42,16 +39,16 @@ public class RaspberryPiReceiver extends Thread
 	{
 		return instance;
 	}
-	
+
 	private RaspberryPiReceiver() throws IOException
 	{
-		
+
 	}
-	
+
 	/**
 	 * Method that runs when thread is started
 	 */
-	public synchronized void run()
+	public void run()
 	{
 		while (!this.interrupted())
 		{
@@ -62,9 +59,7 @@ public class RaspberryPiReceiver extends Thread
 				try
 				{
 					this.rxsocket.receive(packet);
-					this.data = new String(packet.getData(), 0, packet.getLength());
-					VisionData.getInstance().set(json.fromJson(VisionData.class, data));
-					System.out.println(this.data);
+					setRawData(new String(packet.getData(), 0, packet.getLength()));
 				}
 				catch(Exception e)
 				{
@@ -77,16 +72,21 @@ public class RaspberryPiReceiver extends Thread
 			}
 		}
 	}
-	
+
 	/**
 	 * Gets the most current data received by the pi
 	 * @return
 	 */
-	public String getRawValue()
+	public synchronized String getRawData()
 	{
 		return this.data;
 	}
-	
+
+	public synchronized void setRawData(String data)
+	{
+		this.data = data;
+	}
+
 	/**
 	 * Constants class for constants related to RaspberryPiReceiver
 	 * @author Mark
@@ -94,7 +94,7 @@ public class RaspberryPiReceiver extends Thread
 	 */
 	public static class Constants
 	{
-		private static final int PACKETSIZE = 256;
+		private static final int PACKETSIZE = 4096;
 		private static final int PORT = 5802;
 	}
 }
