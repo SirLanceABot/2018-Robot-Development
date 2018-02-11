@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import org.usfirst.frc.team4237.robot.control.OperatorXbox;
 import org.usfirst.frc.team4237.robot.control.Xbox;
+
 import edu.wpi.first.wpilibj.Timer;
 
 /**
@@ -13,7 +14,7 @@ import edu.wpi.first.wpilibj.Timer;
  */
 public class Gripper extends Thread
 {
-	private Xbox xbox = OperatorXbox.getInstance();
+	private OperatorXbox xbox = OperatorXbox.getInstance();
 
 	private WPI_TalonSRX leftIntakeTalon = new WPI_TalonSRX(Constants.LEFT_INTAKE_MOTOR_PORT);
 	private WPI_TalonSRX rightIntakeTalon = new WPI_TalonSRX(Constants.RIGHT_INTAKE_MOTOR_PORT);
@@ -25,7 +26,8 @@ public class Gripper extends Thread
 	
 	private int currentValue = 0;
 	
-	private Constants.Range currentRange;
+	private Constants.Range currentRange = Constants.Range.error;
+	private Constants.Range autoTargetRange = Constants.Range.error;
 	private int[] targetRange = new int[2];
 	private Constants.Direction currentDirection = Constants.Direction.None;
 
@@ -209,7 +211,7 @@ public class Gripper extends Thread
 	public void raise()
 	{	
 		setPivoting(true);
-		pivot(0.5);
+		pivot(0.7);
 	}
 	
 	/**
@@ -218,7 +220,7 @@ public class Gripper extends Thread
 	public void lower()
 	{
 		setPivoting(true);
-		pivot(-0.5);
+		pivot(-0.7);
 	}
 		
 	/**
@@ -241,9 +243,10 @@ public class Gripper extends Thread
 			boolean xButton = xbox.getRawButton(Xbox.Constants.X_BUTTON);
 			
 			updateCurrentRange();
+			System.out.println(currentRange);
 			
 			//Start of code copied from Elevator
-			if (!isPivoting())
+			if (!isPivoting() || aButton || yButton || bButton)
 			{
 
 				//Some alternative code to make it work like the elevator
@@ -261,15 +264,15 @@ public class Gripper extends Thread
 //					currentDirection = Constants.Direction.Down;
 //				}
 				
-				if (aButton)
+				if (aButton || autoTargetRange == Constants.Range.floorRange)
 				{
 					targetRange = Constants.Range.floorRange.range();
 					setPivoting(true);
 					currentDirection = Constants.Direction.Down;
 				}
-				else if (bButton)
+				else if (bButton || autoTargetRange == Constants.Range.middleRange)
 				{
-					targetRange = Constants.Range.middleRange.range();;
+					targetRange = Constants.Range.middleRange.range();
 					setPivoting(true);
 					if (currentValue < Constants.Range.middleRange.bottomValue())
 					{
@@ -295,7 +298,7 @@ public class Gripper extends Thread
 						}
 					}
 				}
-				else if (yButton)
+				else if (yButton || autoTargetRange == Constants.Range.raisedRange)
 				{
 					targetRange = Constants.Range.raisedRange.range();
 					setPivoting(true);
@@ -305,24 +308,32 @@ public class Gripper extends Thread
 						
 			if(isPivoting())
 			{
-				if (yButton)
+				if (xButton)
 				{
 					pivoterOff();
+					setPivoting(false);
 				}
-				
-				if ((currentValue >= targetRange[0]) && (currentValue < targetRange[1]))
+				else if ((currentValue >= targetRange[0]) && (currentValue < targetRange[1]))
 				{
 					System.out.println("In target range");
 					setPivoting(false);
 					currentDirection = Constants.Direction.None;
 					pivoterOff();
 				}
-				else if (currentDirection == Constants.Direction.Up)
+				else if (currentValue < targetRange[0])
+				{
+					currentDirection = Constants.Direction.Up;
+				}
+				else if (currentValue > targetRange[1])
+				{
+					currentDirection = Constants.Direction.Down;
+				}
+				if (currentDirection == Constants.Direction.Up)
 				{
 					System.out.println("Raising");
 					raise();
 				}
-				else if (currentDirection == Constants.Direction.Down)
+				if (currentDirection == Constants.Direction.Down)
 				{
 					System.out.println("Lowering");
 					lower();
@@ -457,6 +468,26 @@ public class Gripper extends Thread
 	{
 		this.isPivoting = isPivoting;
 	}
+	
+	public void autoSetRaisedTargetRange()
+	{
+		this.autoTargetRange = Constants.Range.raisedRange;
+	}
+	
+	public void autoSetMiddleTargetRange()
+	{
+		this.autoTargetRange = Constants.Range.middleRange;
+	}
+	
+	public void autoSetFloorTargetRange()
+	{
+		this.autoTargetRange = Constants.Range.floorRange;
+	}
+	
+	public Constants.Range getCurrentRange()
+	{
+		return this.currentRange;
+	}
 
 	/**
 	 * Constants class for Gripper
@@ -474,7 +505,7 @@ public class Gripper extends Thread
 		{
 			floorRange(0, 20),
 			floorMiddleRange(20, 2090),
-			middleRange(2090, 3010),
+			middleRange(2990, 3010),
 			middleRaisedRange(3010, 3980),
 			raisedRange(5980, 6000),
 			none(-1, -1),
