@@ -71,17 +71,17 @@ public class Gripper extends Thread
 		pivoter.configReverseSoftLimitEnable(false, 0);
 
 		//PID settings
-		leftIntakeTalon.selectProfileSlot(Constants.PID_SLOT_ID, 0);
-		leftIntakeTalon.config_kP(Constants.PID_SLOT_ID, 2.2, 1);
-		leftIntakeTalon.config_kI(Constants.PID_SLOT_ID, 0.01, 1);
-		leftIntakeTalon.config_kD(Constants.PID_SLOT_ID, 0.0001, 1);
-		leftIntakeTalon.config_kF(Constants.PID_SLOT_ID, 4.3, 1);
-
-		rightIntakeTalon.selectProfileSlot(Constants.PID_SLOT_ID, 0);
-		rightIntakeTalon.config_kP(Constants.PID_SLOT_ID, 2.2, 1);
-		rightIntakeTalon.config_kI(Constants.PID_SLOT_ID, 0.01, 1);
-		rightIntakeTalon.config_kD(Constants.PID_SLOT_ID, 0.0001, 1);
-		rightIntakeTalon.config_kF(Constants.PID_SLOT_ID, 4.3, 1);
+//		leftIntakeTalon.selectProfileSlot(Constants.PID_SLOT_ID, 0);
+//		leftIntakeTalon.config_kP(Constants.PID_SLOT_ID, 2.2, 1);
+//		leftIntakeTalon.config_kI(Constants.PID_SLOT_ID, 0.01, 1);
+//		leftIntakeTalon.config_kD(Constants.PID_SLOT_ID, 0.0001, 1);
+//		leftIntakeTalon.config_kF(Constants.PID_SLOT_ID, 4.3, 1);
+//
+//		rightIntakeTalon.selectProfileSlot(Constants.PID_SLOT_ID, 0);
+//		rightIntakeTalon.config_kP(Constants.PID_SLOT_ID, 2.2, 1);
+//		rightIntakeTalon.config_kI(Constants.PID_SLOT_ID, 0.01, 1);
+//		rightIntakeTalon.config_kD(Constants.PID_SLOT_ID, 0.0001, 1);
+//		rightIntakeTalon.config_kF(Constants.PID_SLOT_ID, 4.3, 1);
 	}
 	public void resetEncoders()
 	{
@@ -102,8 +102,8 @@ public class Gripper extends Thread
 			leftIntakeTalon.setSelectedSensorPosition(0,0,0);
 			rightIntakeTalon.setSelectedSensorPosition(0,0,0);		// set encoder position
 
-			leftIntakeTalon.set(ControlMode.Velocity, 1);
-			rightIntakeTalon.set(ControlMode.Velocity, 1);		// set motor
+//			leftIntakeTalon.set(ControlMode.Velocity, 1);
+//			rightIntakeTalon.set(ControlMode.Velocity, 1);		// set motor
 		}
 		if(rightIntakeTalon.getSelectedSensorPosition(0) >= Constants.AUTO_INTAKE_ENCODER_STOP_VALUE)
 		{
@@ -126,8 +126,8 @@ public class Gripper extends Thread
 			setAutoEjecting(true);
 
 			rightIntakeTalon.setSelectedSensorPosition(0, 0, 0);		// set encoder position
-			leftIntakeTalon.set(ControlMode.Velocity, -1);
-			rightIntakeTalon.set(ControlMode.Velocity, -1);
+//			leftIntakeTalon.set(ControlMode.Velocity, -1);
+//			rightIntakeTalon.set(ControlMode.Velocity, -1);
 		}
 		//TODO: Check logic, should it be <= or should it be >= like it was originally?
 		if(rightIntakeTalon.getSelectedSensorPosition(0) <= Constants.AUTO_EJECT_ENCODER_STOP_VALUE)
@@ -148,8 +148,11 @@ public class Gripper extends Thread
 		//leftIntakeTalon.set(ControlMode.Velocity, 0);
 		//rightIntakeTalon.set(ControlMode.Velocity, 0);
 
-		leftIntakeTalon.set(ControlMode.PercentOutput, 0);
-		rightIntakeTalon.set(ControlMode.PercentOutput, 0);
+//		leftIntakeTalon.set(ControlMode.PercentOutput, 0);
+//		rightIntakeTalon.set(ControlMode.PercentOutput, 0);
+	
+		leftIntakeTalon.set(0);
+		rightIntakeTalon.set(0);
 	}
 
 	/**
@@ -161,8 +164,11 @@ public class Gripper extends Thread
 		//leftIntakeTalon.set(ControlMode.Velocity, -0.5);
 		//rightIntakeTalon.set(ControlMode.Velocity, -0.5);
 
-		leftIntakeTalon.set(ControlMode.PercentOutput, -0.5);
-		rightIntakeTalon.set(ControlMode.PercentOutput, -0.5);
+//		leftIntakeTalon.set(ControlMode.PercentOutput, -0.5);
+//		rightIntakeTalon.set(ControlMode.PercentOutput, -0.5);
+		
+		leftIntakeTalon.set(-0.5);
+		rightIntakeTalon.set(-0.5);
 	}
 
 	/**
@@ -173,8 +179,11 @@ public class Gripper extends Thread
 		//leftIntakeTalon.set(ControlMode.Velocity, 500);
 		//rightIntakeTalon.set(ControlMode.Velocity, 500);
 
-		leftIntakeTalon.set(ControlMode.PercentOutput, 0.5);
-		rightIntakeTalon.set(ControlMode.PercentOutput, 0.5);
+//		leftIntakeTalon.set(ControlMode.PercentOutput, 0.5);
+//		rightIntakeTalon.set(ControlMode.PercentOutput, 0.5);
+		
+		leftIntakeTalon.set(0.5);
+		rightIntakeTalon.set(0.5);
 	}
 
 	/**
@@ -182,8 +191,11 @@ public class Gripper extends Thread
 	 */
 	public void spinLeft()
 	{
-		leftIntakeTalon.set(ControlMode.PercentOutput, -0.3);
-		rightIntakeTalon.set(ControlMode.PercentOutput, 0.3);
+		leftIntakeTalon.set(-0.3);
+		rightIntakeTalon.set(0.3);
+		
+//		leftIntakeTalon.set(ControlMode.PercentOutput, -0.3);
+//		rightIntakeTalon.set(ControlMode.PercentOutput, 0.3);
 	}
 
 	/**
@@ -191,8 +203,11 @@ public class Gripper extends Thread
 	 */
 	public void spinRight()
 	{
-		leftIntakeTalon.set(ControlMode.PercentOutput, 0.3);
-		rightIntakeTalon.set(ControlMode.PercentOutput, -0.3);
+		leftIntakeTalon.set(0.3);
+		rightIntakeTalon.set(-0.3);
+		
+//		leftIntakeTalon.set(ControlMode.PercentOutput, 0.3);
+//		rightIntakeTalon.set(ControlMode.PercentOutput, -0.3);
 	}
 
 	/**
@@ -242,6 +257,7 @@ public class Gripper extends Thread
 			boolean yButton = xbox.getRawButton(Xbox.Constants.Y_BUTTON);
 			boolean xButton = xbox.getRawButton(Xbox.Constants.X_BUTTON);
 			
+			//Updates Current Range
 			updateCurrentRange();
 			System.out.println(currentRange);
 			
@@ -264,6 +280,7 @@ public class Gripper extends Thread
 //					currentDirection = Constants.Direction.Down;
 //				}
 				
+				//Sets starting direction of the pivoter
 				if (aButton || autoTargetRange == Constants.Range.floorRange)
 				{
 					targetRange = Constants.Range.floorRange.range();
@@ -305,7 +322,8 @@ public class Gripper extends Thread
 					currentDirection = Constants.Direction.Up;
 				}
 			}
-						
+			
+			//Keeps pivoter pivoting until target position is reached and switches direction of pivoter if target position is skipped forwhatever reason
 			if(isPivoting())
 			{
 				if (xButton)
@@ -404,6 +422,7 @@ public class Gripper extends Thread
 		}
 	}
 	
+	//Updates the current range depending on the encoder value
 	public void updateCurrentRange()
 	{
 		currentValue = (int)getPivoterEncoder();
@@ -533,7 +552,8 @@ public class Gripper extends Thread
 				return this.range[1];
 			}
 		}
-
+		
+		//Sets lower and upper limits for each range
 		public enum Range
 		{
 			floorRange(        InitRange.floorRange.range(),        InitRange.floorRange,  InitRange.middleRange),
