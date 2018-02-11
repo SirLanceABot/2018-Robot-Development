@@ -4,6 +4,11 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
+import org.usfirst.frc.team4237.vision.Vision;
+import org.usfirst.frc.team4237.vision.VisionData;
+
+import com.esotericsoftware.jsonbeans.Json;
+
 /**
  * Class for receiving data from the Raspberry Pi
  * REMEMBER: UDP has no return address 
@@ -11,7 +16,13 @@ import java.net.DatagramSocket;
  */
 public class RaspberryPiReceiver extends Thread	
 {
+	private DatagramSocket rxsocket = new DatagramSocket(Constants.PORT);
+	private DatagramPacket packet = null;
+	private String data = "";
+	private Json json = new Json();
+	
 	private static RaspberryPiReceiver instance;
+	
 	static //Static block to get around the constructor throwing IOException
 	{
 		try	
@@ -31,10 +42,6 @@ public class RaspberryPiReceiver extends Thread
 	{
 		return instance;
 	}
-	
-	private DatagramSocket rxsocket = new DatagramSocket(Constants.PORT);
-	private DatagramPacket packet = null;
-	private String data;
 	
 	private RaspberryPiReceiver() throws IOException
 	{
@@ -56,8 +63,8 @@ public class RaspberryPiReceiver extends Thread
 				{
 					this.rxsocket.receive(packet);
 					this.data = new String(packet.getData(), 0, packet.getLength());
+					VisionData.getInstance().set(json.fromJson(VisionData.class, data));
 					System.out.println(this.data);
-					
 				}
 				catch(Exception e)
 				{
@@ -75,7 +82,7 @@ public class RaspberryPiReceiver extends Thread
 	 * Gets the most current data received by the pi
 	 * @return
 	 */
-	public String getValue()
+	public String getRawValue()
 	{
 		return this.data;
 	}
