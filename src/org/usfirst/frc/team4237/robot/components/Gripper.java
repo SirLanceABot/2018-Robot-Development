@@ -4,7 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import org.usfirst.frc.team4237.robot.control.OperatorXbox;
-import org.usfirst.frc.team4237.robot.control.Xbox;
+import org.usfirst.frc.team4237.robot.control.OperatorXbox;
 
 import edu.wpi.first.wpilibj.Timer;
 
@@ -99,7 +99,8 @@ public class Gripper extends Thread
 		if(!isAutoIntaking())
 		{
 			setAutoIntaking(true);
-			leftIntakeTalon.setSelectedSensorPosition(0,0,0);
+			intake();
+			//leftIntakeTalon.setSelectedSensorPosition(0,0,0);
 			rightIntakeTalon.setSelectedSensorPosition(0,0,0);		// set encoder position
 
 //			leftIntakeTalon.set(ControlMode.Velocity, 1);
@@ -113,6 +114,10 @@ public class Gripper extends Thread
 
 		return isAutoIntaking();
 	}
+	public double autoEncoder()
+	{
+		return rightIntakeTalon.getSelectedSensorPosition(0);
+	}
 
 	//TODO: Fix this method
 	/** 
@@ -121,9 +126,10 @@ public class Gripper extends Thread
 	 */
 	public boolean autoEject()
 	{
-		if(isAutoEjecting())
+		if(!isAutoEjecting())
 		{
 			setAutoEjecting(true);
+			eject();
 
 			rightIntakeTalon.setSelectedSensorPosition(0, 0, 0);		// set encoder position
 //			leftIntakeTalon.set(ControlMode.Velocity, -1);
@@ -167,8 +173,8 @@ public class Gripper extends Thread
 //		leftIntakeTalon.set(ControlMode.PercentOutput, -0.5);
 //		rightIntakeTalon.set(ControlMode.PercentOutput, -0.5);
 		
-		leftIntakeTalon.set(-0.5);
-		rightIntakeTalon.set(-0.5);
+		leftIntakeTalon.set(0.5);
+		rightIntakeTalon.set(0.5);
 	}
 
 	/**
@@ -182,8 +188,8 @@ public class Gripper extends Thread
 //		leftIntakeTalon.set(ControlMode.PercentOutput, 0.5);
 //		rightIntakeTalon.set(ControlMode.PercentOutput, 0.5);
 		
-		leftIntakeTalon.set(0.5);
-		rightIntakeTalon.set(0.5);
+		leftIntakeTalon.set(-0.5);
+		rightIntakeTalon.set(-0.5);
 	}
 
 	/**
@@ -601,8 +607,8 @@ public class Gripper extends Thread
 		}
 
 		//TODO:change numbers to appropriate values
-		public static final int AUTO_EJECT_ENCODER_STOP_VALUE = 1;
-		public static final int AUTO_INTAKE_ENCODER_STOP_VALUE = 500;
+		public static final int AUTO_EJECT_ENCODER_STOP_VALUE = -5000;
+		public static final int AUTO_INTAKE_ENCODER_STOP_VALUE = 5000;
 
 		public static final int ENCODER_FLOOR_POSITION = 0;
 		public static final int ENCODER_MIDDLE_POSITION = 3000;
