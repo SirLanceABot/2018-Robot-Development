@@ -18,7 +18,7 @@ public class Gripper extends Thread
 
 	private WPI_TalonSRX leftIntakeTalon = new WPI_TalonSRX(Constants.LEFT_INTAKE_MOTOR_PORT);
 	private WPI_TalonSRX rightIntakeTalon = new WPI_TalonSRX(Constants.RIGHT_INTAKE_MOTOR_PORT);
-	private WPI_TalonSRX pivoter = new WPI_TalonSRX(Constants.pivoter_MOTOR_PORT);
+	private WPI_TalonSRX pivoter = new WPI_TalonSRX(Constants.PIVOTER_MOTOR_PORT);
 	
 	private boolean isAutoEjecting = false;
 	private boolean isAutoIntaking = false;
@@ -588,9 +588,9 @@ public class Gripper extends Thread
 		public static final int ENCODER_MIDDLE_POSITION = 3000;
 		public static final int ENCODER_RAISED_POSITION = 6000;
 
-		public static final int LEFT_INTAKE_MOTOR_PORT = 0;
-		public static final int RIGHT_INTAKE_MOTOR_PORT = 1;
-		public static final int pivoter_MOTOR_PORT = 1;
+		public static final int LEFT_INTAKE_MOTOR_PORT = 9;
+		public static final int RIGHT_INTAKE_MOTOR_PORT = 10;
+		public static final int PIVOTER_MOTOR_PORT = 8;
 
 		public static final int PID_SLOT_ID = 0;
 	}

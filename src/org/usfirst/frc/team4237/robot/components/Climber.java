@@ -17,7 +17,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 public class Climber 
 {
 	private Xbox xbox = OperatorXbox.getInstance();
-	private WPI_TalonSRX climberTalonSRX = new WPI_TalonSRX(Constants.PORT); 
+	private WPI_TalonSRX climberTalonSRX = new WPI_TalonSRX(Constants.CLIMBER_MASTER_PORT); 
 	
 	private static Climber instance = new Climber();
 	
@@ -58,7 +58,8 @@ public class Climber
 	
 	public static class Constants
 	{
-		public static final int PORT = 0;
+		public static final int CLIMBER_MASTER_PORT = 3;
+		public static final int CLIMBER_SLAVE_PORT = 2;
 		
 	}
 }

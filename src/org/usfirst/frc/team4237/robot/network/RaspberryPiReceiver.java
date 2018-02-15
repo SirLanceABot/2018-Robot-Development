@@ -4,7 +4,11 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
+import org.usfirst.frc.team4237.robot.vision.VisionData;
+
 import com.esotericsoftware.jsonbeans.Json;
+
+import edu.wpi.first.wpilibj.Timer;
 
 /**
  * Class for receiving data from the Raspberry Pi
@@ -42,7 +46,7 @@ public class RaspberryPiReceiver extends Thread
 
 	private RaspberryPiReceiver() throws IOException
 	{
-
+		
 	}
 
 	/**
@@ -60,6 +64,7 @@ public class RaspberryPiReceiver extends Thread
 				{
 					this.rxsocket.receive(packet);
 					setRawData(new String(packet.getData(), 0, packet.getLength()));
+					
 				}
 				catch(Exception e)
 				{

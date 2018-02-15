@@ -363,8 +363,8 @@ public class Elevator extends Thread
 
 		public static final int ACCEPTABLE_TICK_RANGE = 10;
 
-		public static final int MASTER_MOTOR_PORT = 0;
-		public static final int SLAVE_MOTOR_PORT = 1;
+		public static final int MASTER_MOTOR_PORT = 12;
+		public static final int SLAVE_MOTOR_PORT = 13;
 		public static final int STRING_POT_PORT = 3;
 
 		public static final double STRING_POT_SCALE = 1.0;

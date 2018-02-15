@@ -9,10 +9,9 @@ public class Drivetrain extends MecanumDrive
 	private static WPI_TalonSRX frontLeftMotor = new WPI_TalonSRX(Constants.FRONT_LEFT_MOTOR_PORT);
 	private static WPI_TalonSRX frontRightMotor = new WPI_TalonSRX(Constants.FRONT_RIGHT_MOTOR_PORT);
 	private static WPI_TalonSRX rearLeftMotor = new WPI_TalonSRX(Constants.REAR_LEFT_MOTOR_PORT);
-	private static WPI_TalonSRX rearRightMotor = new WPI_TalonSRX(Constants.FRONT_RIGHT_MOTOR_PORT);
+	private static WPI_TalonSRX rearRightMotor = new WPI_TalonSRX(Constants.REAR_RIGHT_MOTOR_PORT);
 	
 	private static Drivetrain instance = new Drivetrain();
-	
 	
 	/**
 	 * Returns the instance of Drivetrain
@@ -26,7 +25,8 @@ public class Drivetrain extends MecanumDrive
 
 	private Drivetrain()
 	{
-		super(frontLeftMotor, frontRightMotor, rearLeftMotor, rearRightMotor);
+		super(frontLeftMotor, rearLeftMotor, frontRightMotor, rearRightMotor);
+		this.setSafetyEnabled(false);
 	}
 	
 	/**
@@ -66,9 +66,9 @@ public class Drivetrain extends MecanumDrive
 	 */
 	public static class Constants
 	{
-		public static final int FRONT_LEFT_MOTOR_PORT = 0;
-		public static final int FRONT_RIGHT_MOTOR_PORT = 1;
-		public static final int REAR_LEFT_MOTOR_PORT = 2;
-		public static final int REAR_RIGHT_MOTOR_PORT = 3;
+		public static final int FRONT_LEFT_MOTOR_PORT = 14;
+		public static final int FRONT_RIGHT_MOTOR_PORT = 15;
+		public static final int REAR_LEFT_MOTOR_PORT = 1;
+		public static final int REAR_RIGHT_MOTOR_PORT = 0;
 	}
 }

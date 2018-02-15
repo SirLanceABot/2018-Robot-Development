@@ -11,6 +11,11 @@ public class Autonomous
 	private Elevator elevator = Elevator.getInstance();
 	private Gripper gripper = Gripper.getInstance();
 	private RaspberryPiReceiver raspberryPiReceiver = RaspberryPiReceiver.getInstance();
+
+	/*
+	 * This class will handle switching between
+	 * raspberry pi and roborio for vision
+	 */
 	
 	private static Autonomous instance = new Autonomous();
 	public static Autonomous getInstance()
