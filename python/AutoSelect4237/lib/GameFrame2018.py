@@ -17,8 +17,10 @@ class GameFrame2018(QtGui.QFrame):
         self.blankPixmap2018 = QtGui.QPixmap("img/2018/icons/TransparentRobotIcon.png")
         self.switchPixmap = QtGui.QPixmap("img/2018/icons/SwitchIcon.png")
         self.scalePixmap = QtGui.QPixmap("img/2018/icons/ScaleIcon.png")
+        self.autoLinePixmap = QtGui.QPixmap("img/2018/icons/AutoLineIcon.png")
         self.transparentSwitchPixmap = QtGui.QPixmap("img/2018/icons/TransparentSwitchIcon.png")
         self.transparentScalePixmap = QtGui.QPixmap("img/2018/icons/TransparentScaleIcon.png")
+        self.transparentAutoLinePixmap = QtGui.QPixmap("img/2018/icons/TransparentAutoLineIcon.png")
         
         self.position1Button = RobotPosition.RobotPosition(self.blankPixmap2018.scaledToWidth(75))
         self.position2Button = RobotPosition.RobotPosition(self.blankPixmap2018.scaledToWidth(75))
@@ -45,13 +47,16 @@ class GameFrame2018(QtGui.QFrame):
         self.noPositionLabel.setAlignment(QtCore.Qt.AlignCenter)
         
         self.targetSwitchButton = RobotPosition.RobotPosition(self.switchPixmap.scaledToWidth(self.iconSize))
-        self.targetScaleButton = RobotPosition.RobotPosition(self.scalePixmap.scaledToWidth(self.iconSize))
+        self.targetScaleButton = RobotPosition.RobotPosition(self.transparentScalePixmap.scaledToWidth(self.iconSize))
+        self.targetAutoLineButton = RobotPosition.RobotPosition(self.transparentAutoLinePixmap.scaledToWidth(100))
        
         self.targetSwitchButton.setAlignment(QtCore.Qt.AlignCenter)
         self.targetScaleButton.setAlignment(QtCore.Qt.AlignCenter)
+        self.targetAutoLineButton.setAlignment(QtCore.Qt.AlignCenter)
        
         self.targetSwitchButton.clicked.connect(lambda: self.selectTarget(0))
         self.targetScaleButton.clicked.connect(lambda: self.selectTarget(1))
+        self.targetAutoLineButton.clicked.connect(lambda: self.selectTarget(2))
        
         self.backupPlanLabel = QtGui.QLabel("Backup Plan: ")
         self.backupPlanLabel.setAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignVCenter)
@@ -73,7 +78,7 @@ class GameFrame2018(QtGui.QFrame):
         
         self.layout.addWidget(self.targetSwitchButton, 2, 0)
         self.layout.addWidget(self.targetScaleButton, 2, 1)
-        self.layout.addWidget(self.backupPlanLabel, 2, 2)
+        self.layout.addWidget(self.targetAutoLineButton, 2, 2)
         self.layout.addWidget(self.backupPlan, 2, 3)
         
         self.setLayout(self.layout)
@@ -107,12 +112,16 @@ class GameFrame2018(QtGui.QFrame):
     def selectTarget(self, target):
         self.targetSwitchButton.setPixmap(self.transparentSwitchPixmap.scaledToWidth(self.iconSize))
         self.targetScaleButton.setPixmap(self.transparentScalePixmap.scaledToWidth(self.iconSize))
+        self.targetAutoLineButton.setPixmap(self.transparentAutoLinePixmap.scaledToWidth(100))
         if target is 0:
             self.selectedTarget = "Switch"
             self.targetSwitchButton.setPixmap(self.switchPixmap.scaledToWidth(self.iconSize))
         elif target is 1:
             self.selectedTarget = "Scale"
             self.targetScaleButton.setPixmap(self.scalePixmap.scaledToWidth(self.iconSize))
+        elif target is 2:
+            self.selectedTarget = "Auto Line"
+            self.targetAutoLineButton.setPixmap(self.autoLinePixmap.scaledToWidth(100))
     
     def selectBackupPlan(self):
         self.selectedBackupPlan = str(self.backupPlan.currentText())
