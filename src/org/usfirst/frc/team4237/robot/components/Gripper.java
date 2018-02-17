@@ -35,13 +35,13 @@ public class Gripper extends Thread
 	
 	//Quarantine
 	boolean isIntakeDone = true;
-	boolean ispivoterRaisedDone = true;
-	boolean ispivoterMiddleDone = true;
-	boolean ispivoterFloorDone = true;
+	boolean isPivoterRaisedDone = true;
+	boolean isPivoterMiddleDone = true;
+	boolean isPivoterFloorDone = true;
 
-	boolean isAutopivoterRaisedDone = false;
-	boolean isAutopivoterMiddleDone = false;
-	boolean isAutopivoterFloorDone = false;
+	boolean isAutoPivoterRaisedDone = false;
+	boolean isAutoPivoterMiddleDone = false;
+	boolean isAutoPivoterFloorDone = false;
 	//End quarantine
 
 	private static Gripper instance = new Gripper();
@@ -95,7 +95,7 @@ public class Gripper extends Thread
 	 * Intake function for autonomous
 	 * @return State of intake, whether it's done or not
 	 */
-	public boolean autoIntake()
+	public void autoIntake()
 	{
 		if(!isAutoIntaking())
 		{
@@ -113,7 +113,7 @@ public class Gripper extends Thread
 			setAutoIntaking(false);
 		}
 
-		return isAutoIntaking();
+		isAutoIntaking = true;
 	}
 	public double autoEncoder()
 	{
@@ -125,7 +125,7 @@ public class Gripper extends Thread
 	 * Eject function for autonomous
 	 * @return State of eject, whether it's done or not
 	 */
-	public boolean autoEject()
+	public void autoEject()
 	{
 		if(!isAutoEjecting())
 		{
@@ -143,7 +143,7 @@ public class Gripper extends Thread
 			setAutoEjecting(false);
 		}
 
-		return isAutoEjecting();
+		isAutoEjecting = true;
 	}
 
 	/**
@@ -293,6 +293,10 @@ public class Gripper extends Thread
 					targetRange = Constants.Range.floorRange.range();
 					setPivoting(true);
 					currentDirection = Constants.Direction.Down;
+					if ((currentValue >= targetRange[0]) && (currentValue < targetRange[1]))
+					{
+						isAutoPivoterFloorDone = true;
+					}
 				}
 				else if (bButton || autoTargetRange == Constants.Range.middleRange)
 				{
@@ -321,12 +325,21 @@ public class Gripper extends Thread
 							currentDirection = Constants.Direction.None;
 						}
 					}
+					
+					if ((currentValue >= targetRange[0]) && (currentValue < targetRange[1]))
+					{
+						isAutoPivoterRaisedDone = true;
+					}
 				}
 				else if (yButton || autoTargetRange == Constants.Range.raisedRange)
 				{
 					targetRange = Constants.Range.raisedRange.range();
 					setPivoting(true);
 					currentDirection = Constants.Direction.Up;
+					if ((currentValue >= targetRange[0]) && (currentValue < targetRange[1]))
+					{
+						isAutoPivoterRaisedDone = true;
+					}
 				}
 			}
 			
@@ -367,29 +380,29 @@ public class Gripper extends Thread
 			//End of code copied from elevator
 			
 			/*
-			if(yButton || !ispivoterRaisedDone)
+			if(yButton || !isPivoterRaisedDone)
 			{	
-				ispivoterRaisedDone = false;
-				ispivoterMiddleDone = true;
-				ispivoterFloorDone = true;
+				isPivoterRaisedDone = false;
+				isPivoterMiddleDone = true;
+				isPivoterFloorDone = true;
 				if(pivoter.getSelectedSensorPosition(0) < Constants.ENCODER_RAISED_POSITION)
 				{
 					pivot(0.5);
 				}
 				else
 				{
-					ispivoterRaisedDone = true;
+					isPivoterRaisedDone = true;
 					pivoterOff();
 				}
 			}
-			if(bButton || !ispivoterMiddleDone)
+			if(bButton || !isPivoterMiddleDone)
 			{
-				ispivoterFloorDone = true;
-				ispivoterRaisedDone = true;
+				isPivoterFloorDone = true;
+				isPivoterRaisedDone = true;
 
-				if(ispivoterMiddleDone)
+				if(isPivoterMiddleDone)
 				{
-					ispivoterMiddleDone = false;
+					isPivoterMiddleDone = false;
 					if(pivoter.getSelectedSensorPosition(0) > Constants.ENCODER_MIDDLE_POSITION)	// If it is above the switch
 					{
 						pivot(-0.5);
@@ -403,16 +416,16 @@ public class Gripper extends Thread
 				}
 				else if(((pivoter.getSelectedSensorPosition(0) >= Constants.ENCODER_MIDDLE_POSITION) && (currentDirection == Constants.Direction.Up)) || ((pivoter.getSelectedSensorPosition(0) <= Constants.ENCODER_MIDDLE_POSITION) && (currentDirection == Constants.Direction.Down)))
 				{
-					ispivoterMiddleDone = true;
+					isPivoterMiddleDone = true;
 					pivoterOff();
 				}
 
 			}
-			if(aButton || !ispivoterFloorDone)
+			if(aButton || !isPivoterFloorDone)
 			{
-				ispivoterFloorDone = false;
-				ispivoterMiddleDone = true;
-				ispivoterRaisedDone = true;
+				isPivoterFloorDone = false;
+				isPivoterMiddleDone = true;
+				isPivoterRaisedDone = true;
 
 				if(pivoter.getSelectedSensorPosition(0) > Constants.ENCODER_FLOOR_POSITION)
 				{
@@ -421,7 +434,7 @@ public class Gripper extends Thread
 				else
 				{
 					pivoterOff();
-					ispivoterFloorDone = true;
+					isPivoterFloorDone = true;
 				}
 			}
 			 */
@@ -455,6 +468,21 @@ public class Gripper extends Thread
 		}
 	}
 
+	public boolean isAutoMiddlePivoterDone()
+	{
+		return isAutoPivoterMiddleDone;
+	}
+	
+	public boolean isAutoFloorPivoterDone()
+	{
+		return isAutoPivoterFloorDone;
+	}
+	
+	public boolean isAutoRaisedPivoterDone()
+	{
+		return isAutoPivoterRaisedDone;
+	}
+	
 	public int[] getVelocityArray()
 	{
 		return new int[] {leftIntakeTalon.getSelectedSensorVelocity(0), rightIntakeTalon.getSelectedSensorVelocity(0)};

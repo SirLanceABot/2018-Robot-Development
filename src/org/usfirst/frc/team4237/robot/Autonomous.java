@@ -3,8 +3,8 @@ package org.usfirst.frc.team4237.robot;
 import org.usfirst.frc.team4237.robot.components.Drivetrain;
 import org.usfirst.frc.team4237.robot.sensors.AMSColorSensor;
 import org.usfirst.frc.team4237.robot.network.AutoSelect4237;
-//import org.usfirst.frc.team4237.robot.components.Elevator;
-//import org.usfirst.frc.team4237.robot.components.Gripper;
+import org.usfirst.frc.team4237.robot.components.Elevator;
+import org.usfirst.frc.team4237.robot.components.Gripper;
 import org.usfirst.frc.team4237.robot.network.RaspberryPiReceiver;
 
 import edu.wpi.first.wpilibj.DriverStation;
@@ -21,8 +21,10 @@ public class Autonomous
 	 * This class will handle switching between
 	 * raspberry pi and roborio for vision
 	 */
-	
+
 	private DriverStation driverStation = DriverStation.getInstance();
+	private Elevator elevator = Elevator.getInstance();
+	private Gripper gripper = Gripper.getInstance();
 	private AutoSelect4237 autoSelect4237 = AutoSelect4237.getInstance();
 	private String fieldColors;
 	private DriverStation.Alliance allianceColor;
@@ -30,7 +32,7 @@ public class Autonomous
 	private AMSColorSensor.Constants.Color color;
 	private Constants.AutoMode autoMode = Constants.AutoMode.kAutoLine;
 	private Constants.AutoStage autoStage = Constants.AutoStage.kDrive1;
-	
+
 	private Timer t = new Timer();
 
 	private static Autonomous instance = new Autonomous();
@@ -38,12 +40,12 @@ public class Autonomous
 	{
 		return instance;
 	}
-	
+
 	private Autonomous()
 	{
 		raspberryPiReceiver.start();
 	}
-	
+
 	/**
 	 * Autonomous init method
 	 */
@@ -52,7 +54,7 @@ public class Autonomous
 		t.stop();
 		t.reset();
 		t.start();
-		
+
 		//grab values from fms and autoselect
 		fieldColors = driverStation.getGameSpecificMessage();
 		allianceColor = driverStation.getAlliance();
@@ -108,13 +110,13 @@ public class Autonomous
 		{
 			autoMode = Constants.AutoMode.kAutoLine;
 		}
-		
+
 		//backup auto routine
 		if(((fieldColors.charAt(0) == 'L'
 				&& autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("right"))
-			|| (fieldColors.charAt(0) == 'R'
+				|| (fieldColors.charAt(0) == 'R'
 				&& autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("left")))
-			&& autoSelect4237.getData().getSelectedTarget().equalsIgnoreCase("switch"))
+				&& autoSelect4237.getData().getSelectedTarget().equalsIgnoreCase("switch"))
 		{
 			if(autoSelect4237.getData().getSelectedBackupPlan().equalsIgnoreCase("auto line"))
 			{
@@ -123,7 +125,7 @@ public class Autonomous
 			else if(autoSelect4237.getData().getSelectedBackupPlan().equalsIgnoreCase("scale"))
 			{
 				if(fieldColors.charAt(1) == 'R'
-					&& autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("right"))
+						&& autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("right"))
 				{
 					autoMode = Constants.AutoMode.kScaleOnSameSide;
 				}
@@ -137,7 +139,7 @@ public class Autonomous
 		drivetrain.resetNavX();
 		autoStage = Constants.AutoStage.kDrive1;
 	}
-	
+
 	/**
 	 * Autonomous loop
 	 */
@@ -146,29 +148,102 @@ public class Autonomous
 		if(autoMode == Constants.AutoMode.kScaleOnOppositeSide)
 		{
 			scaleOnOppositeSide();
+			
+			gripper.autoSetMiddleTargetRange();
+			
+			if(autoStage == Constants.AutoStage.kDrive2ToLine2 || autoStage == Constants.AutoStage.kSpin2)
+			{
+				if(!elevator.inTargetRange() && gripper.isAutoMiddlePivoterDone())
+				{
+					elevator.autoSetScaleTargetRange();
+				}
+			}
+			else if(autoStage == Constants.AutoStage.kDone && elevator.inTargetRange())
+			{
+				gripper.autoEject();
+			}
 		}
 		else if(autoMode == Constants.AutoMode.kScaleOnSameSide)
 		{
 			scaleOnSameSide();
+			
+			gripper.autoSetMiddleTargetRange();
+			
+			if(autoStage == Constants.AutoStage.kSpin2 || autoStage == Constants.AutoStage.kDrive3ToLine)
+			{
+				if(!elevator.inTargetRange() && gripper.isAutoMiddlePivoterDone())
+				{
+					elevator.autoSetScaleTargetRange();
+				}
+			}
+			else if(autoStage == Constants.AutoStage.kDone && elevator.inTargetRange())
+			{
+				gripper.autoEject();
+			}
 		}
 		else if(autoMode == Constants.AutoMode.kSwitchOnSameSide)
 		{
 			switchOnSameSide();
+			
+			gripper.autoSetMiddleTargetRange();
+			
+			if(autoStage == Constants.AutoStage.kDrive2Distance1)
+			{
+				if(!elevator.inTargetRange() && gripper.isAutoMiddlePivoterDone())
+				{
+					elevator.autoSetSwitchTargetRange();
+				}
+			}
+			else if(autoStage == Constants.AutoStage.kDone && elevator.inTargetRange())
+			{
+				gripper.autoEject();
+			}
 		}
 		else if(autoMode == Constants.AutoMode.kSwitchLeftFromMiddle)
 		{
 			switchLeftFromMiddle();
+			
+			gripper.autoSetMiddleTargetRange();
+			
+			if(autoStage == Constants.AutoStage.kDrive2Distance1)
+			{
+				if(!elevator.inTargetRange() && gripper.isAutoMiddlePivoterDone())
+				{
+					elevator.autoSetSwitchTargetRange();
+				}
+			}
+			else if(autoStage == Constants.AutoStage.kDone && elevator.inTargetRange())
+			{
+				gripper.autoEject();
+			}
 		}
 		else if(autoMode == Constants.AutoMode.kSwitchRightFromMiddle)
 		{
 			switchRightFromMiddle();
+			
+			gripper.autoSetMiddleTargetRange();
+			
+			if(autoStage == Constants.AutoStage.kDrive2Distance1)
+			{
+				if(!elevator.inTargetRange() && gripper.isAutoMiddlePivoterDone())
+				{
+					elevator.autoSetSwitchTargetRange();
+				}
+			}
+			else if(autoStage == Constants.AutoStage.kDone && elevator.inTargetRange())
+			{
+				gripper.autoEject();
+			}
 		}
 		else if(autoMode == Constants.AutoMode.kAutoLine)
 		{
 			autoLine();
+			
+			gripper.autoSetMiddleTargetRange();
+			
 		}
 	}
-	
+
 	public void autoLine()
 	{
 		if(autoStage == Constants.AutoStage.kDrive1)
@@ -184,7 +259,7 @@ public class Autonomous
 			}
 		}
 	}
-	
+
 	public void switchLeftFromMiddle()
 	{
 		if(autoStage == Constants.AutoStage.kDrive1)
@@ -224,7 +299,7 @@ public class Autonomous
 			}
 		}
 	}
-	
+
 	public void switchRightFromMiddle()
 	{
 		if(autoStage == Constants.AutoStage.kDrive1)
@@ -264,7 +339,7 @@ public class Autonomous
 			}
 		}
 	}
-	
+
 	public void switchOnSameSide()
 	{
 		if(autoStage == Constants.AutoStage.kDrive1)
@@ -489,7 +564,7 @@ public class Autonomous
 			}
 		}
 	}
-	
+
 	public static class Constants
 	{
 		enum AutoMode {kScaleOnOppositeSide, kScaleOnSameSide, kSwitchLeftFromMiddle, kSwitchRightFromMiddle, kSwitchOnSameSide, kAutoLine, kNone}
