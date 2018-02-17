@@ -177,7 +177,7 @@ public class Elevator extends Thread
 				}
 			}
 			Timer.delay(0.005);
-		} //End of while loop
+		} // End of while loop
 	}
 
 	public void updateCurrentRange()
