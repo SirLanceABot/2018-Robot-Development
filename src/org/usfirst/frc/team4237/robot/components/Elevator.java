@@ -313,19 +313,19 @@ public class Elevator extends Thread
 	{
 		private enum InitRange
 		{
-			floorRange(0.0, .0769), //>= 0 and < 1
-			floorExchangeRange(0.0769, 0.153), //>= 1 and < 2
-			exchangeRange(0.153, 0.231),
-			exchangePortalRange(0.231, 0.307),
-			portalRange(0.307, 0.384),
-			portalBottomSwitchRange(0.384, 0.461),
-			bottomSwitchRange(0.461, 0.538),
-			bottomSwitchTopSwitchRange(0.538, 0.615),
-			topSwitchRange(0.615, 0.692),
-			topSwitchBottomScaleRange(0.692, 0.769),
-			bottomScaleRange(0.769, 0.846),
-			bottomScaleTopScaleRange(0.846, 0.923),
-			topScaleRange(0.923, 1.1),
+			floorRange(0.101, .1549230769), //>= 0 and < 1
+			floorExchangeRange(0.1549230769, 0.2078461538), //>= 1 and < 2
+			exchangeRange(0.2078461538, 0.26076923076923),
+			exchangePortalRange(0.26076923076923, 0.31369230769231),
+			portalRange(0.31369230769231, 0.36661538461539),
+			portalBottomSwitchRange(0.36661538461539, 0.41953846153846),
+			bottomSwitchRange(0.41953846153846, 0.47246153846154),
+			bottomSwitchTopSwitchRange(0.47246153846154, 0.52538461538462),
+			topSwitchRange(0.52538461538462, 0.57830769230769),
+			topSwitchBottomScaleRange(0.57830769230769, 0.63123076923077),
+			bottomScaleRange(0.63123076923077, 0.68415384615385),
+			bottomScaleTopScaleRange(0.68415384615385, 0.73707692307692),
+			topScaleRange(0.73707692307692, .8),
 			none(-1, -1),
 			error(-1, -1);
 
