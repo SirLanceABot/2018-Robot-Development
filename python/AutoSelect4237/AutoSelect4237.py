@@ -114,7 +114,7 @@ class GUI(QtGui.QMainWindow):                                                #Cr
         
     def sendToRobot2018(self):
         print self.frame2018.getJsonData()
-        transmitter.sendMessage(self.frame2018.getJsonData())
+        self.transmitter.sendMessage(self.frame2018.getJsonData())
 
     '''
     Function to get the current team number from the FRC Driver Station
