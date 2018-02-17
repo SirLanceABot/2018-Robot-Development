@@ -1,11 +1,14 @@
 package org.usfirst.frc.team4237.robot.components;
 
 import java.util.HashMap;
+
+import org.usfirst.frc.team4237.robot.components.Gripper.Constants;
 import org.usfirst.frc.team4237.robot.sensors.LimitSwitch;
+import edu.wpi.first.wpilibj.AnalogPotentiometer;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import org.usfirst.frc.team4237.robot.control.OperatorXbox;
 import org.usfirst.frc.team4237.robot.control.Xbox;
-import edu.wpi.first.wpilibj.AnalogPotentiometer;
-import edu.wpi.first.wpilibj.Timer;
 
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
@@ -14,25 +17,27 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 /**
  * 
- * @author Ben Puzycki, Darryl Wong, and Mark Washington
+ * @author Ben Puzycki, Darryl Wong, Mark Washington
  *
  */
 public class Elevator extends Thread
 {
-	private Xbox xbox = OperatorXbox.getInstance();
+	private OperatorXbox xbox = OperatorXbox.getInstance();
 
 	private WPI_TalonSRX masterTalonSRX = new WPI_TalonSRX(Constants.MASTER_MOTOR_PORT); 
 	private WPI_TalonSRX slaveTalonSRX = new WPI_TalonSRX(Constants.SLAVE_MOTOR_PORT);
 
 	private AnalogPotentiometer stringPot = new AnalogPotentiometer(Constants.STRING_POT_PORT);
 
-	private boolean isMoving = false;
-	
 	private double currentValue;
-	private double[] targetRange;
-	
 	private Constants.Range currentRange;
+	private double[] targetRange = Constants.Range.error.range;
 	private Constants.Direction currentDirection = Constants.Direction.None;
+	private boolean isMoving = false;
+	private boolean inTargetRange = false;
+
+	
+	private Constants.InitRange autoTargetRange = Constants.InitRange.error;
 	
 	private static Elevator instance = new Elevator();
 
@@ -43,7 +48,10 @@ public class Elevator extends Thread
 
 
 	/**
-	 * Constructor for Elevator
+	 * Constructor for Elevator, called only
+	 * once by getInstance(). It initializes
+	 * the keys and values in levelTicks and
+	 * tickLevels.
 	 */
 	private Elevator()
 	{
@@ -71,6 +79,7 @@ public class Elevator extends Thread
 	{
 		masterTalonSRX.set(-0.5);
 	}
+	
 
 	@Override
 	public synchronized void run()
@@ -97,8 +106,10 @@ public class Elevator extends Thread
 					currentDirection = Constants.Direction.Down;
 				}
 			}
-			if(isMoving())
+			
+			if(isMoving() && !DriverStation.getInstance().isAutonomous())
 			{
+				
 				System.out.println("Is Moving");
 				if (currentDirection == Constants.Direction.Up)
 				{
@@ -124,6 +135,7 @@ public class Elevator extends Thread
 						stopMoving();
 					}
 				}
+			
 				
 				if ( (currentValue >= targetRange[0]) && (currentValue < targetRange[1]) )
 				{
@@ -138,6 +150,27 @@ public class Elevator extends Thread
 					raise();
 				}
 				else if (currentDirection == Constants.Direction.Down)
+				{
+					lower();
+					System.out.println("Lowering");
+				}
+			}
+			else if (DriverStation.getInstance().isAutonomous())
+			{
+				inTargetRange = false;
+				
+				if ( (currentValue >= targetRange[0]) && (currentValue <= targetRange[1]) )
+				{
+					System.out.println("In target range");
+					currentDirection = Constants.Direction.None;
+					stopMoving();
+				}
+				else if (currentValue < targetRange[0])
+				{
+					System.out.println("Raising");
+					raise();
+				}
+				else if (currentValue > targetRange[1])
 				{
 					lower();
 					System.out.println("Lowering");
@@ -254,7 +287,28 @@ public class Elevator extends Thread
 	{
 		return isMoving;
 	}
+	public boolean inTargetRange()
+	{
+		return  (currentValue >= targetRange[0]) && (currentValue <= targetRange[1]);
+	}
+	
+	public void autoSetScaleTargetRange()
+	{
+		targetRange = Constants.Range.topScaleRange.range;
+	}
+	
+	public void autoSetSwitchTargetRange()
+	{
+		targetRange = Constants.Range.topSwitchRange.range;
+	}
+	
+	public void autoSetFloorTargetRange()
+	{
+		targetRange = Constants.Range.floorRange.range;
+	}
 
+
+	
 	public static class Constants
 	{
 		private enum InitRange
@@ -298,7 +352,7 @@ public class Elevator extends Thread
 			}
 		}
 
-		private enum Range
+		public enum Range
 		{
 			floorRange(                 InitRange.floorRange.range(),                 InitRange.floorRange,        InitRange.exchangeRange),
 			floorExchangeRange(         InitRange.floorExchangeRange.range(),         InitRange.floorRange,        InitRange.exchangeRange),
