@@ -10,6 +10,17 @@ public class AutoSelect4237 extends Thread
 	AutoSelect4237Receiver receiver = AutoSelect4237Receiver.getInstance();
 	Json json = new Json();
 	
+	private static AutoSelect4237 instance = new AutoSelect4237();
+	public static AutoSelect4237 getInstance()
+	{
+		return instance;
+	}
+	
+	private AutoSelect4237()
+	{
+		
+	}
+	
 	@Override
 	public void run()
 	{
@@ -25,7 +36,7 @@ public class AutoSelect4237 extends Thread
 		this.data = json.fromJson(AutoSelect4237Data.class, data);
 	}
 	
-	private synchronized AutoSelect4237Data getData()
+	public synchronized AutoSelect4237Data getData()
 	{
 		return this.data;
 	}

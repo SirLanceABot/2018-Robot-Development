@@ -2,6 +2,7 @@ package org.usfirst.frc.team4237.robot;
 
 import org.usfirst.frc.team4237.robot.components.Drivetrain;
 import org.usfirst.frc.team4237.robot.sensors.AMSColorSensor;
+import org.usfirst.frc.team4237.robot.network.AutoSelect4237;
 //import org.usfirst.frc.team4237.robot.components.Elevator;
 //import org.usfirst.frc.team4237.robot.components.Gripper;
 import org.usfirst.frc.team4237.robot.network.RaspberryPiReceiver;
@@ -22,6 +23,7 @@ public class Autonomous
 	 */
 	
 	private DriverStation driverStation = DriverStation.getInstance();
+	private AutoSelect4237 autoSelect4237 = AutoSelect4237.getInstance();
 	private String fieldColors;
 	private DriverStation.Alliance allianceColor;
 	private int angleSign;
@@ -51,7 +53,7 @@ public class Autonomous
 		t.reset();
 		t.start();
 		
-		//grab values from fms
+		//grab values from fms and autoselect
 		fieldColors = driverStation.getGameSpecificMessage();
 		allianceColor = driverStation.getAlliance();
 		if(allianceColor == DriverStation.Alliance.Blue)
@@ -63,7 +65,7 @@ public class Autonomous
 			color = AMSColorSensor.Constants.Color.kRed;
 		}
 
-		if(fieldColors.substring(4).equalsIgnoreCase("right"))
+		if(autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("right"))
 		{
 			angleSign = 1;
 		}
@@ -72,17 +74,65 @@ public class Autonomous
 			angleSign = -1;
 		}
 
-		if((fieldColors.charAt(1) == 'L' && fieldColors.substring(4).equalsIgnoreCase("right"))
-				|| (fieldColors.charAt(1) == 'R' && fieldColors.substring(4).equalsIgnoreCase("left")))
+		if(((fieldColors.charAt(1) == 'L' && autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("right"))
+				|| (fieldColors.charAt(1) == 'R' && autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("left")))
+				&& autoSelect4237.getData().getSelectedTarget().equalsIgnoreCase("scale"))
 		{
 			autoMode = Constants.AutoMode.kScaleOnOppositeSide;
 		}
-		else if((fieldColors.charAt(1) == 'R' && fieldColors.substring(4).equalsIgnoreCase("right"))
-				|| (fieldColors.charAt(1) == 'L' && fieldColors.substring(4).equalsIgnoreCase("left")))
+		else if(((fieldColors.charAt(1) == 'R' && autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("right"))
+				|| (fieldColors.charAt(1) == 'L' && autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("left")))
+				&& autoSelect4237.getData().getSelectedTarget().equalsIgnoreCase("scale"))
 		{
 			autoMode = Constants.AutoMode.kScaleOnSameSide;
 		}
-
+		else if(((fieldColors.charAt(0) == 'L' && autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("left"))
+				|| (fieldColors.charAt(0) == 'R' && autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("right")))
+				&& autoSelect4237.getData().getSelectedTarget().equalsIgnoreCase("switch"))
+		{
+			autoMode = Constants.AutoMode.kSwitchOnSameSide;
+		}
+		else if(fieldColors.charAt(0) == 'L'
+				&& autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("center")
+				&& autoSelect4237.getData().getSelectedTarget().equalsIgnoreCase("switch"))
+		{
+			autoMode = Constants.AutoMode.kSwitchLeftFromMiddle;
+		}
+		else if(fieldColors.charAt(0) == 'R'
+				&& autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("center")
+				&& autoSelect4237.getData().getSelectedTarget().equalsIgnoreCase("switch"))
+		{
+			autoMode = Constants.AutoMode.kSwitchRightFromMiddle;
+		}
+		else if(autoSelect4237.getData().getSelectedTarget().equalsIgnoreCase("auto line"))
+		{
+			autoMode = Constants.AutoMode.kAutoLine;
+		}
+		
+		//backup auto routine
+		if(((fieldColors.charAt(0) == 'L'
+				&& autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("right"))
+			|| (fieldColors.charAt(0) == 'R'
+				&& autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("left")))
+			&& autoSelect4237.getData().getSelectedTarget().equalsIgnoreCase("switch"))
+		{
+			if(autoSelect4237.getData().getSelectedBackupPlan().equalsIgnoreCase("auto line"))
+			{
+				autoMode = Constants.AutoMode.kAutoLine;
+			}
+			else if(autoSelect4237.getData().getSelectedBackupPlan().equalsIgnoreCase("scale"))
+			{
+				if(fieldColors.charAt(1) == 'R'
+					&& autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("right"))
+				{
+					autoMode = Constants.AutoMode.kScaleOnSameSide;
+				}
+				else
+				{
+					autoMode = Constants.AutoMode.kScaleOnOppositeSide;
+				}
+			}
+		}
 		drivetrain.resetEncoder();
 		drivetrain.resetNavX();
 		autoStage = Constants.AutoStage.kDrive1;
@@ -115,7 +165,23 @@ public class Autonomous
 		}
 		else if(autoMode == Constants.AutoMode.kAutoLine)
 		{
+			autoLine();
+		}
+	}
+	
+	public void autoLine()
+	{
+		if(autoStage == Constants.AutoStage.kDrive1)
+		{
+			if(!drivetrain.driveDistance(90, 0.5, 0))
+			{
 
+			}
+			else
+			{
+				autoStage = Constants.AutoStage.kDone;
+				drivetrain.resetEncoder();
+			}
 		}
 	}
 	
@@ -426,7 +492,7 @@ public class Autonomous
 	
 	public static class Constants
 	{
-		enum AutoMode {kScaleOnOppositeSide, kScaleOnSameSide, kSwitchLeftFromMiddle, kSwitchRightFromMiddle, kSwitchOnSameSide, kAutoLine}
+		enum AutoMode {kScaleOnOppositeSide, kScaleOnSameSide, kSwitchLeftFromMiddle, kSwitchRightFromMiddle, kSwitchOnSameSide, kAutoLine, kNone}
 		enum AutoStage {kDone, kDrive1, kSpin1, kDrive2ToLine1, kDrive2Distance1, kDrive2Distance2, kDrive2ToLine2, kDrive2Distance3, kSpin2, kDrive3ToLine}
 	}
 }
