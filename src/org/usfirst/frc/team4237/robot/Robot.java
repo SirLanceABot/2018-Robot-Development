@@ -1,6 +1,7 @@
 package org.usfirst.frc.team4237.robot;
 
 import org.usfirst.frc.team4237.robot.control.Xbox;
+import org.usfirst.frc.team4237.robot.network.AutoSelect4237;
 import org.usfirst.frc.team4237.robot.network.RaspberryPiReceiver;
 import edu.wpi.first.wpilibj.IterativeRobot;
 
@@ -8,6 +9,8 @@ public class Robot extends IterativeRobot
 {
 	private Teleop teleop = Teleop.getInstance();
 	private Autonomous autonomous = Autonomous.getInstance();
+	
+	private AutoSelect4237 autoSelect4237;
 		
 	public Robot()
 	{
@@ -18,6 +21,7 @@ public class Robot extends IterativeRobot
 	public void robotInit()
 	{
 		System.out.println("Starting robot...");
+		
 	}
 	
 	@Override
