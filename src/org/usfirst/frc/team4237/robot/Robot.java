@@ -1,5 +1,6 @@
 package org.usfirst.frc.team4237.robot;
 
+import org.usfirst.frc.team4237.robot.components.Gripper;
 import org.usfirst.frc.team4237.robot.control.Xbox;
 import org.usfirst.frc.team4237.robot.network.AutoSelect4237;
 import org.usfirst.frc.team4237.robot.network.RaspberryPiReceiver;
@@ -21,6 +22,7 @@ public class Robot extends IterativeRobot
 	public void robotInit()
 	{
 		System.out.println("Starting robot...");
+		Gripper.getInstance().start();
 		
 	}
 	

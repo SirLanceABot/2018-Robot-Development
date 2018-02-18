@@ -63,7 +63,7 @@ public class Gripper extends Thread
 		rightIntakeTalon.setSensorPhase(true);
 		rightIntakeTalon.configForwardSoftLimitEnable(false, 0);
 		rightIntakeTalon.configReverseSoftLimitEnable(false, 0);
-		rightIntakeTalon.setInverted(true);
+		rightIntakeTalon.setInverted(false);
 
 		//Pivoter settings
 		pivoter.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder, 0, 0);
@@ -174,8 +174,9 @@ public class Gripper extends Thread
 //		leftIntakeTalon.set(ControlMode.PercentOutput, -0.5);
 //		rightIntakeTalon.set(ControlMode.PercentOutput, -0.5);
 		
-		leftIntakeTalon.set(0.5);
-		rightIntakeTalon.set(0.5);
+		leftIntakeTalon.set(-0.30);
+		rightIntakeTalon.set(-0.30);
+		
 	}
 
 	/**
@@ -189,17 +190,35 @@ public class Gripper extends Thread
 //		leftIntakeTalon.set(ControlMode.PercentOutput, 0.5);
 //		rightIntakeTalon.set(ControlMode.PercentOutput, 0.5);
 		
-		leftIntakeTalon.set(-0.5);
-		rightIntakeTalon.set(-0.5);
+		leftIntakeTalon.set(11);
+		rightIntakeTalon.set(11);
+	}
+	
+	public void stopGripper()
+	{
+		leftIntakeTalon.set(0.0);
+		rightIntakeTalon.set(0.0);
 	}
 
+	public void intakeLeft()
+	{
+		leftIntakeTalon.set(0.0);
+		rightIntakeTalon.set(0.7);
+	}
+	
+	public void intakeRight()
+	{
+		leftIntakeTalon.set(0.7);
+		rightIntakeTalon.set(0.0);
+	}
+	
 	/**
 	 * Spins gripper to the left to move power cubes
 	 */
 	public void spinLeft()
 	{
-		leftIntakeTalon.set(-0.3);
-		rightIntakeTalon.set(0.3);
+		leftIntakeTalon.set(0.3);
+		rightIntakeTalon.set(-0.3);
 		
 //		leftIntakeTalon.set(ControlMode.PercentOutput, -0.3);
 //		rightIntakeTalon.set(ControlMode.PercentOutput, 0.3);
@@ -210,8 +229,8 @@ public class Gripper extends Thread
 	 */
 	public void spinRight()
 	{
-		leftIntakeTalon.set(0.3);
-		rightIntakeTalon.set(-0.3);
+		leftIntakeTalon.set(-0.3);
+		rightIntakeTalon.set(0.3);
 		
 //		leftIntakeTalon.set(ControlMode.PercentOutput, 0.3);
 //		rightIntakeTalon.set(ControlMode.PercentOutput, -0.3);
@@ -233,7 +252,7 @@ public class Gripper extends Thread
 	public void raise()
 	{	
 		setPivoting(true);
-		pivot(0.7);
+		pivot(0.4);
 	}
 	
 	/**
@@ -242,7 +261,7 @@ public class Gripper extends Thread
 	public void lower()
 	{
 		setPivoting(true);
-		pivot(-0.7);
+		pivot(-0.4);
 	}
 		
 	/**
@@ -268,6 +287,10 @@ public class Gripper extends Thread
 			//Intake
 			double rightTrigger = xbox.getRawAxis(Xbox.Constants.RIGHT_TRIGGER_AXIS);
 			double leftTrigger = xbox.getRawAxis(Xbox.Constants.LEFT_TRIGGER_AXIS);
+			
+			int dpadRight = xbox.getPOV();
+			int dpadLeft = xbox.getPOV();
+			
 			
 			
 			//Updates Current Range
@@ -295,6 +318,9 @@ public class Gripper extends Thread
 //				}
 				
 				//Sets starting direction of the pivoter
+				
+				
+				/*
 				if (aButton || autoTargetRange == Constants.Range.floorRange)
 				{
 					targetRange = Constants.Range.floorRange.range();
@@ -348,6 +374,30 @@ public class Gripper extends Thread
 						isAutoPivoterRaisedDone = true;
 					}
 				}
+				
+				*/
+				
+				if (Math.abs(rightTrigger) > 0.3)
+				{
+					eject();
+				}
+				else if (Math.abs(leftTrigger) > 0.3)
+				{
+					intake();
+				}
+				else if (Math.abs(leftTrigger) > 0.3 && bButton)
+				{
+					intakeLeft();
+				}
+				else if (Math.abs(leftTrigger) > 0.3 && xButton)
+				{
+					intakeRight();
+				}
+				else
+				{
+					stopGripper();
+				}
+				
 			}
 			
 			//Keeps pivoter pivoting until target position is reached and switches direction of pivoter if target position is skipped forwhatever reason
@@ -445,6 +495,11 @@ public class Gripper extends Thread
 				}
 			}
 			 */
+			
+			if (yButton) raise();
+			else if (aButton) lower();
+			else pivoterOff();
+			
 			Timer.delay(0.005);
 		}
 	}
@@ -642,7 +697,6 @@ public class Gripper extends Thread
 			}
 		}
 
-		//TODO:change numbers to appropriate values
 		public static final int AUTO_EJECT_ENCODER_STOP_VALUE = -5000;
 		public static final int AUTO_INTAKE_ENCODER_STOP_VALUE = 5000;
 
