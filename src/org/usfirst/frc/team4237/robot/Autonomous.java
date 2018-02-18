@@ -71,75 +71,75 @@ public class Autonomous
 			color = AMSColorSensor.Constants.Color.kRed;
 		}
 
-		if(autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("right"))
-		{
-			angleSign = 1;
-		}
-		else
-		{
-			angleSign = -1;
-		}
-
-		if(((fieldColors.charAt(1) == 'L' && autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("right"))
-				|| (fieldColors.charAt(1) == 'R' && autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("left")))
-				&& autoSelect4237.getData().getSelectedTarget().equalsIgnoreCase("scale"))
-		{
-			autoMode = Constants.AutoMode.kScaleOnOppositeSide;
-		}
-		else if(((fieldColors.charAt(1) == 'R' && autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("right"))
-				|| (fieldColors.charAt(1) == 'L' && autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("left")))
-				&& autoSelect4237.getData().getSelectedTarget().equalsIgnoreCase("scale"))
-		{
-			autoMode = Constants.AutoMode.kScaleOnSameSide;
-		}
-		else if(((fieldColors.charAt(0) == 'L' && autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("left"))
-				|| (fieldColors.charAt(0) == 'R' && autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("right")))
-				&& autoSelect4237.getData().getSelectedTarget().equalsIgnoreCase("switch"))
-		{
-			autoMode = Constants.AutoMode.kSwitchOnSameSide;
-		}
-		else if(fieldColors.charAt(0) == 'L'
-				&& autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("center")
-				&& autoSelect4237.getData().getSelectedTarget().equalsIgnoreCase("switch"))
-		{
-			autoMode = Constants.AutoMode.kSwitchLeftFromMiddle;
-		}
-		else if(fieldColors.charAt(0) == 'R'
-				&& autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("center")
-				&& autoSelect4237.getData().getSelectedTarget().equalsIgnoreCase("switch"))
-		{
-			autoMode = Constants.AutoMode.kSwitchRightFromMiddle;
-		}
-		else if(autoSelect4237.getData().getSelectedTarget().equalsIgnoreCase("auto line"))
-		{
-			autoMode = Constants.AutoMode.kAutoLine;
-		}
-
-		//backup auto routine
-		if(((fieldColors.charAt(0) == 'L'
-				&& autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("right"))
-				|| (fieldColors.charAt(0) == 'R'
-				&& autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("left")))
-				&& autoSelect4237.getData().getSelectedTarget().equalsIgnoreCase("switch"))
-		{
-			if(autoSelect4237.getData().getSelectedBackupPlan().equalsIgnoreCase("auto line"))
-			{
-				autoMode = Constants.AutoMode.kAutoLine;
-			}
-			else if(autoSelect4237.getData().getSelectedBackupPlan().equalsIgnoreCase("scale"))
-			{
-				if(fieldColors.charAt(1) == 'R'
-						&& autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("right"))
-				{
-					autoMode = Constants.AutoMode.kScaleOnSameSide;
-				}
-				else
-				{
-					autoMode = Constants.AutoMode.kScaleOnOppositeSide;
-				}
-			}
-		}
-		System.out.println("AutoMode: " + autoMode);
+//		if(autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("right"))
+//		{
+//			angleSign = 1;
+//		}
+//		else
+//		{
+//			angleSign = -1;
+//		}
+//
+//		if(((fieldColors.charAt(1) == 'L' && autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("right"))
+//				|| (fieldColors.charAt(1) == 'R' && autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("left")))
+//				&& autoSelect4237.getData().getSelectedTarget().equalsIgnoreCase("scale"))
+//		{
+//			autoMode = Constants.AutoMode.kScaleOnOppositeSide;
+//		}
+//		else if(((fieldColors.charAt(1) == 'R' && autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("right"))
+//				|| (fieldColors.charAt(1) == 'L' && autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("left")))
+//				&& autoSelect4237.getData().getSelectedTarget().equalsIgnoreCase("scale"))
+//		{
+//			autoMode = Constants.AutoMode.kScaleOnSameSide;
+//		}
+//		else if(((fieldColors.charAt(0) == 'L' && autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("left"))
+//				|| (fieldColors.charAt(0) == 'R' && autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("right")))
+//				&& autoSelect4237.getData().getSelectedTarget().equalsIgnoreCase("switch"))
+//		{
+//			autoMode = Constants.AutoMode.kSwitchOnSameSide;
+//		}
+//		else if(fieldColors.charAt(0) == 'L'
+//				&& autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("center")
+//				&& autoSelect4237.getData().getSelectedTarget().equalsIgnoreCase("switch"))
+//		{
+//			autoMode = Constants.AutoMode.kSwitchLeftFromMiddle;
+//		}
+//		else if(fieldColors.charAt(0) == 'R'
+//				&& autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("center")
+//				&& autoSelect4237.getData().getSelectedTarget().equalsIgnoreCase("switch"))
+//		{
+//			autoMode = Constants.AutoMode.kSwitchRightFromMiddle;
+//		}
+//		else if(autoSelect4237.getData().getSelectedTarget().equalsIgnoreCase("auto line"))
+//		{
+//			autoMode = Constants.AutoMode.kAutoLine;
+//		}
+//
+//		//backup auto routine
+//		if(((fieldColors.charAt(0) == 'L'
+//				&& autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("right"))
+//				|| (fieldColors.charAt(0) == 'R'
+//				&& autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("left")))
+//				&& autoSelect4237.getData().getSelectedTarget().equalsIgnoreCase("switch"))
+//		{
+//			if(autoSelect4237.getData().getSelectedBackupPlan().equalsIgnoreCase("auto line"))
+//			{
+//				autoMode = Constants.AutoMode.kAutoLine;
+//			}
+//			else if(autoSelect4237.getData().getSelectedBackupPlan().equalsIgnoreCase("scale"))
+//			{
+//				if(fieldColors.charAt(1) == 'R'
+//						&& autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("right"))
+//				{
+//					autoMode = Constants.AutoMode.kScaleOnSameSide;
+//				}
+//				else
+//				{
+//					autoMode = Constants.AutoMode.kScaleOnOppositeSide;
+//				}
+//			}
+//		}
+//		System.out.println("AutoMode: " + autoMode);
 		drivetrain.resetEncoder();
 		drivetrain.resetNavX();
 		greenCameraLight.set(true);
@@ -153,103 +153,104 @@ public class Autonomous
 	 */
 	public void periodic()
 	{
+		autoMode = Constants.AutoMode.kAutoLine;
 		if(autoMode == Constants.AutoMode.kScaleOnOppositeSide)
 		{
 			scaleOnOppositeSide();
 			
-			gripper.autoSetMiddleTargetRange();
-			
-			if(autoStage == Constants.AutoStage.kDrive2ToLine2 || autoStage == Constants.AutoStage.kSpin2)
-			{
-				if(!elevator.inTargetRange() && gripper.isAutoMiddlePivoterDone())
-				{
-					elevator.autoSetScaleTargetRange();
-				}
-			}
-			else if(autoStage == Constants.AutoStage.kDone && elevator.inTargetRange())
-			{
-				gripper.autoEject();
-			}
+//			gripper.autoSetMiddleTargetRange();
+//			
+//			if(autoStage == Constants.AutoStage.kDrive2ToLine2 || autoStage == Constants.AutoStage.kSpin2)
+//			{
+//				if(!elevator.inTargetRange() && gripper.isAutoMiddlePivoterDone())
+//				{
+//					elevator.autoSetScaleTargetRange();
+//				}
+//			}
+//			else if(autoStage == Constants.AutoStage.kDone && elevator.inTargetRange())
+//			{
+//				gripper.autoEject();
+//			}
 		}
 		else if(autoMode == Constants.AutoMode.kScaleOnSameSide)
 		{
 			scaleOnSameSide();
 			
-			gripper.autoSetMiddleTargetRange();
-			
-			if(autoStage == Constants.AutoStage.kSpin2 || autoStage == Constants.AutoStage.kDrive3ToLine)
-			{
-				if(!elevator.inTargetRange() && gripper.isAutoMiddlePivoterDone())
-				{
-					elevator.autoSetScaleTargetRange();
-				}
-			}
-			else if(autoStage == Constants.AutoStage.kDone && elevator.inTargetRange())
-			{
-				gripper.autoEject();
-			}
+//			gripper.autoSetMiddleTargetRange();
+//			
+//			if(autoStage == Constants.AutoStage.kSpin2 || autoStage == Constants.AutoStage.kDrive3ToLine)
+//			{
+//				if(!elevator.inTargetRange() && gripper.isAutoMiddlePivoterDone())
+//				{
+//					elevator.autoSetScaleTargetRange();
+//				}
+//			}
+//			else if(autoStage == Constants.AutoStage.kDone && elevator.inTargetRange())
+//			{
+//				gripper.autoEject();
+//			}
 		}
 		else if(autoMode == Constants.AutoMode.kSwitchOnSameSide)
 		{
 			switchOnSameSide();
 			
-			gripper.autoSetMiddleTargetRange();
-			
-			if(autoStage == Constants.AutoStage.kDrive2Distance1)
-			{
-				if(!elevator.inTargetRange() && gripper.isAutoMiddlePivoterDone())
-				{
-					elevator.autoSetSwitchTargetRange();
-				}
-			}
-			else if(autoStage == Constants.AutoStage.kDone && elevator.inTargetRange())
-			{
-				gripper.autoEject();
-			}
+//			gripper.autoSetMiddleTargetRange();
+//			
+//			if(autoStage == Constants.AutoStage.kDrive2Distance1)
+//			{
+//				if(!elevator.inTargetRange() && gripper.isAutoMiddlePivoterDone())
+//				{
+//					elevator.autoSetSwitchTargetRange();
+//				}
+//			}
+//			else if(autoStage == Constants.AutoStage.kDone && elevator.inTargetRange())
+//			{
+//				gripper.autoEject();
+//			}
 		}
 		else if(autoMode == Constants.AutoMode.kSwitchLeftFromMiddle)
 		{
 			switchLeftFromMiddle();
 			
-			gripper.autoSetMiddleTargetRange();
-			
-			if(autoStage == Constants.AutoStage.kDrive2Distance1)
-			{
-				if(!elevator.inTargetRange() && gripper.isAutoMiddlePivoterDone())
-				{
-					elevator.autoSetSwitchTargetRange();
-				}
-			}
-			else if(autoStage == Constants.AutoStage.kDone && elevator.inTargetRange())
-			{
-				gripper.autoEject();
-			}
+//			gripper.autoSetMiddleTargetRange();
+//			
+//			if(autoStage == Constants.AutoStage.kDrive2Distance1)
+//			{
+//				if(!elevator.inTargetRange() && gripper.isAutoMiddlePivoterDone())
+//				{
+//					elevator.autoSetSwitchTargetRange();
+//				}
+//			}
+//			else if(autoStage == Constants.AutoStage.kDone && elevator.inTargetRange())
+//			{
+//				gripper.autoEject();
+//			}
 		}
 		else if(autoMode == Constants.AutoMode.kSwitchRightFromMiddle)
 		{
 			switchRightFromMiddle();
 			
-			gripper.autoSetMiddleTargetRange();
-			
-			if(autoStage == Constants.AutoStage.kDrive2Distance1)
-			{
-				if(!elevator.inTargetRange() && gripper.isAutoMiddlePivoterDone())
-				{
-					elevator.autoSetSwitchTargetRange();
-				}
-			}
-			else if(autoStage == Constants.AutoStage.kDone && elevator.inTargetRange())
-			{
-				gripper.autoEject();
-			}
+//			gripper.autoSetMiddleTargetRange();
+//			
+//			if(autoStage == Constants.AutoStage.kDrive2Distance1)
+//			{
+//				if(!elevator.inTargetRange() && gripper.isAutoMiddlePivoterDone())
+//				{
+//					elevator.autoSetSwitchTargetRange();
+//				}
+//			}
+//			else if(autoStage == Constants.AutoStage.kDone && elevator.inTargetRange())
+//			{
+//				gripper.autoEject();
+//			}
 		}
 		else if(autoMode == Constants.AutoMode.kAutoLine)
 		{
 			autoLine();
-			
-			gripper.autoSetMiddleTargetRange();
+//			
+//			gripper.autoSetMiddleTargetRange();
 		}
-		
+	
 		if(autoStage == Constants.AutoStage.kDone)
 		{
 			greenCameraLight.set(false);

@@ -269,7 +269,12 @@ public class Gripper extends Thread
 			
 			//Updates Current Range
 			updateCurrentRange();
+<<<<<<< Upstream, based on branch 'master' of https://github.com/SirLanceABot/2018-Robot-Development
 			System.out.println(currentRange);
+=======
+			//System.out.println(currentRange);
+			//if ()
+>>>>>>> 9fa5e25 added stuff to test light ring
 			
 			System.out.println("Encoder Postion" + getPivotEncoder());
 			
