@@ -259,14 +259,21 @@ public class Gripper extends Thread
 	{
 		while (!this.interrupted())
 		{
+			//Pivoter
 			boolean aButton = xbox.getRawButton(Xbox.Constants.A_BUTTON);
 			boolean bButton = xbox.getRawButton(Xbox.Constants.B_BUTTON);
 			boolean yButton = xbox.getRawButton(Xbox.Constants.Y_BUTTON);
 			boolean xButton = xbox.getRawButton(Xbox.Constants.X_BUTTON);
 			
+			//Intake
+			double rightTrigger = xbox.getRawAxis(Xbox.Constants.RIGHT_TRIGGER_AXIS);
+			double leftTrigger = xbox.getRawAxis(Xbox.Constants.LEFT_TRIGGER_AXIS);
+			
+			
 			//Updates Current Range
 			updateCurrentRange();
 			System.out.println(currentRange);
+			//if ()
 			
 			//Start of code copied from Elevator
 			if (!isPivoting() || aButton || yButton || bButton)

@@ -213,6 +213,11 @@ public class Drivetrain extends MecanumDrive
 		return isDoneDriving;
 	}
 
+	public double getNavXYaw()
+	{
+		return navX.getYaw();
+	}
+	
 	public void resetNavX()
 	{
 		navX.reset();

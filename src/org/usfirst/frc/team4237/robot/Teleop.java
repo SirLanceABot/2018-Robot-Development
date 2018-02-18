@@ -5,6 +5,7 @@ import org.usfirst.frc.team4237.robot.components.Drivetrain;
 //import org.usfirst.frc.team4237.robot.components.Gripper;
 import org.usfirst.frc.team4237.robot.control.DriverXbox;
 import org.usfirst.frc.team4237.robot.control.Xbox;
+import org.usfirst.frc.team4237.robot.control.Xbox.Constants;
 
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -14,9 +15,9 @@ public class Teleop
 	private Drivetrain drivetrain = Drivetrain.getInstance();
 	//private Elevator elevator = Elevator.getInstance();
 	//private Gripper gripper = Gripper.getInstance();
-	private DriverXbox xbox = DriverXbox.getInstance();
+	private DriverXbox driverXbox = DriverXbox.getInstance();
 	//private SmartDashboard dash = new SmartDashboard();
-	
+
 	private boolean aButton = false;
 	private boolean bButton = false;
 	private boolean xButton = false;
@@ -48,27 +49,35 @@ public class Teleop
 	{
 		try
 		{
-			if (Math.abs(xbox.getRawAxis(1)) > 0.2)
+			if (Math.abs(driverXbox.getRawAxis(1)) > 0.2)
 			{
-				leftYAxis = -xbox.getRawAxis(Xbox.Constants.LEFT_STICK_Y_AXIS);
+				leftYAxis = -driverXbox.getRawAxis(Xbox.Constants.LEFT_STICK_Y_AXIS);
 			}
 			else leftYAxis = 0;
-			
-			if (Math.abs(xbox.getRawAxis(0)) > 0.2)
+
+			if (Math.abs(driverXbox.getRawAxis(0)) > 0.2)
 			{
-				leftXAxis = xbox.getRawAxis(Xbox.Constants.LEFT_STICK_X_AXIS);
+				leftXAxis = driverXbox.getRawAxis(Xbox.Constants.LEFT_STICK_X_AXIS);
 			}
 			else leftXAxis = 0;
-			
-			if (Math.abs(xbox.getRawAxis(4)) > 0.2)
+
+			if (Math.abs(driverXbox.getRawAxis(4)) > 0.2)
 			{
-				rightXAxis = xbox.getRawAxis(Xbox.Constants.RIGHT_STICK_X_AXIS);
+				rightXAxis = driverXbox.getRawAxis(Xbox.Constants.RIGHT_STICK_X_AXIS);
 			}
 			else rightXAxis = 0;
+
+
+			if(driverXbox.getRawButton(Constants.RIGHT_BUMPER))
+			{
+				drivetrain.driveCartesian(leftXAxis, leftYAxis, (drivetrain.getNavXYaw()) / 50);
+			}
+			else
+			{
+				drivetrain.driveCartesian(leftXAxis, leftYAxis, rightXAxis);
+			}
 			
-			drivetrain.driveCartesian(leftXAxis, leftYAxis, rightXAxis);
 			drivetrain.debugPrintCurrent();
-			
 		}
 		catch(Exception e)
 		{

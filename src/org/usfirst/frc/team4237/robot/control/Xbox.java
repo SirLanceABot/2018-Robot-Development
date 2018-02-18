@@ -40,5 +40,7 @@ public abstract class Xbox extends Joystick
 		public static final int LEFT_STICK_Y_AXIS = 1;
 		public static final int RIGHT_STICK_X_AXIS = 4;
 		public static final int RIGHT_STICK_Y_AXIS = 5;
+		public static final int RIGHT_TRIGGER_AXIS = 3;
+		public static final int LEFT_TRIGGER_AXIS = 2;
 	}
 }
