@@ -1,6 +1,7 @@
 package org.usfirst.frc.team4237.robot;
 
 import org.usfirst.frc.team4237.robot.components.Drivetrain;
+import org.usfirst.frc.team4237.robot.util.LightRing;
 import org.usfirst.frc.team4237.robot.sensors.AMSColorSensor;
 import org.usfirst.frc.team4237.robot.network.AutoSelect4237;
 import org.usfirst.frc.team4237.robot.components.Elevator;
@@ -32,6 +33,9 @@ public class Autonomous
 	private AMSColorSensor.Constants.Color color;
 	private Constants.AutoMode autoMode = Constants.AutoMode.kAutoLine;
 	private Constants.AutoStage autoStage = Constants.AutoStage.kDrive1;
+	private LightRing greenCameraLight = new LightRing(Constants.GREEN_CAMERA_PORT);
+	private LightRing whiteCameraLight = new LightRing(Constants.WHITE_CAMERA_PORT);
+	private LightRing whiteFloorLight = new LightRing(Constants.WHITE_FLOOR_PORT);
 
 	private Timer t = new Timer();
 
@@ -137,6 +141,9 @@ public class Autonomous
 		}
 		drivetrain.resetEncoder();
 		drivetrain.resetNavX();
+		greenCameraLight.set(true);
+		whiteCameraLight.set(true);
+		whiteFloorLight.set(true);
 		autoStage = Constants.AutoStage.kDrive1;
 	}
 
@@ -240,7 +247,13 @@ public class Autonomous
 			autoLine();
 			
 			gripper.autoSetMiddleTargetRange();
-			
+		}
+		
+		if(autoStage == Constants.AutoStage.kDone)
+		{
+			greenCameraLight.set(false);
+			whiteCameraLight.set(false);
+			whiteFloorLight.set(false);
 		}
 	}
 
@@ -569,5 +582,8 @@ public class Autonomous
 	{
 		enum AutoMode {kScaleOnOppositeSide, kScaleOnSameSide, kSwitchLeftFromMiddle, kSwitchRightFromMiddle, kSwitchOnSameSide, kAutoLine, kNone}
 		enum AutoStage {kDone, kDrive1, kSpin1, kDrive2ToLine1, kDrive2Distance1, kDrive2Distance2, kDrive2ToLine2, kDrive2Distance3, kSpin2, kDrive3ToLine}
+		public static final int GREEN_CAMERA_PORT = 10;
+		public static final int WHITE_CAMERA_PORT = 11;
+		public static final int WHITE_FLOOR_PORT = 12;
 	}
 }
