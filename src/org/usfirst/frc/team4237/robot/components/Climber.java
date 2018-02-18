@@ -58,8 +58,8 @@ public class Climber
 	
 	public static class Constants
 	{
-		public static final int CLIMBER_MASTER_PORT = 3;
-		public static final int CLIMBER_SLAVE_PORT = 2;
+		public static final int CLIMBER_MASTER_PORT = 5;
+		public static final int CLIMBER_SLAVE_PORT = 4;
 		
 	}
 }

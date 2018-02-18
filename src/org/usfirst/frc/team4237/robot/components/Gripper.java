@@ -643,9 +643,9 @@ public class Gripper extends Thread
 		public static final int ENCODER_MIDDLE_POSITION = 3000;
 		public static final int ENCODER_RAISED_POSITION = 6000;
 
-		public static final int LEFT_INTAKE_MOTOR_PORT = 9;
-		public static final int RIGHT_INTAKE_MOTOR_PORT = 10;
-		public static final int PIVOTER_MOTOR_PORT = 8;
+		public static final int LEFT_INTAKE_MOTOR_PORT = 8;
+		public static final int RIGHT_INTAKE_MOTOR_PORT = 9;
+		public static final int PIVOTER_MOTOR_PORT = 6;
 
 		public static final int PID_SLOT_ID = 0;
 	}
