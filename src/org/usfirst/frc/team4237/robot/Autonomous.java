@@ -139,6 +139,7 @@ public class Autonomous
 				}
 			}
 		}
+		System.out.println("AutoMode: " + autoMode);
 		drivetrain.resetEncoder();
 		drivetrain.resetNavX();
 		greenCameraLight.set(true);
