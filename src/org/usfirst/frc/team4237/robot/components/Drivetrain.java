@@ -59,9 +59,7 @@ public class Drivetrain extends MecanumDrive
 		System.out.println("Talon 12: " + frontLeftFollowerMotor.getOutputCurrent());
 		System.out.println("Talon 13: " + frontLeftMasterMotor.getOutputCurrent());
 		System.out.println("Talon 14: " + frontRightFollowerMotor.getOutputCurrent());
-		System.out.println("Talon 15: " + frontRightMasterMotor.getOutputCurrent() + "\n\n");
-
-		
+		System.out.println("Talon 15: " + frontRightMasterMotor.getOutputCurrent() + "\n\n");	
 	}
 	
 
@@ -133,15 +131,15 @@ public class Drivetrain extends MecanumDrive
 		{
 			if(x <= startingDistance)
 			{
-				driveCartesian(0, -(((maxSpeed - startingSpeed) / startingDistance) * x + startingSpeed), rotate);
+				driveCartesian(0, ((maxSpeed - startingSpeed) / startingDistance) * x + startingSpeed, -rotate);
 			}
 			else if(x >= startingDistance && x <= inches - stoppingDistance)
 			{
-				driveCartesian(0, -maxSpeed, rotate);
+				driveCartesian(0, maxSpeed, -rotate);
 			}
 			else
 			{
-				driveCartesian(0, -stoppingSpeed, rotate);
+				driveCartesian(0, stoppingSpeed, -rotate);
 			}
 		}
 		else
@@ -169,7 +167,7 @@ public class Drivetrain extends MecanumDrive
 
 		if(Math.abs(bearing - heading) >= threshold)
 		{
-			driveCartesian(0, 0, speed);
+			driveCartesian(0, 0, -speed);
 		}
 		else
 		{
@@ -203,7 +201,7 @@ public class Drivetrain extends MecanumDrive
 		if(!foundTape)
 		{
 
-			driveCartesian(0, -speed, rotate);
+			driveCartesian(0, speed, -rotate);
 		}
 		else
 		{
@@ -227,7 +225,22 @@ public class Drivetrain extends MecanumDrive
 	{
 		enc.reset();
 	}
-
+	
+	public void printColors()
+	{
+		System.out.println(mAMSColorSensor);
+	}
+	
+	public void printHeading()
+	{
+		System.out.println("Heading: " + navX.getYaw());
+	}
+	
+	public void printEncoder()
+	{
+		System.out.println("Encoder: " + enc.getRaw());
+	}
+	
 	public void calibrateNavX()
 	{
 		System.out.println("Calibrating NavX...");
@@ -285,8 +298,8 @@ public class Drivetrain extends MecanumDrive
 			crgbLowerThreshold.G = crgbLowerThreshold.G*LowerThresholdFactor/numSamples;
 			crgbLowerThreshold.B = crgbLowerThreshold.B*LowerThresholdFactor/numSamples;
 
-			crgbUpperThreshold.C = 1500;
-			crgbUpperThreshold.R = 250;
+			crgbUpperThreshold.C = 2000;
+			crgbUpperThreshold.R = 400;
 			crgbUpperThreshold.G = 0;
 			crgbUpperThreshold.B = 300;
 

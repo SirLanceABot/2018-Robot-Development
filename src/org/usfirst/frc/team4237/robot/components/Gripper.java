@@ -219,7 +219,7 @@ public class Gripper extends Thread
 	 */
 	public void pivot(double value)
 	{
-		setPivoting(true);
+		//setPivoting(true);
 		pivotTalon.set(value);
 	}
 	
@@ -228,7 +228,7 @@ public class Gripper extends Thread
 	 */
 	public void raise()
 	{	
-		pivot(0.4);
+		pivot(0.75);
 	}
 	
 	/**
@@ -236,7 +236,7 @@ public class Gripper extends Thread
 	 */
 	public void lower()
 	{
-		pivot(-0.4);
+		pivot(-0.75);
 	}
 		
 	/**
@@ -269,14 +269,8 @@ public class Gripper extends Thread
 			
 			//Updates Current Range
 			updateCurrentRange();
-<<<<<<< Upstream, based on branch 'master' of https://github.com/SirLanceABot/2018-Robot-Development
-			System.out.println(currentRange);
-=======
-			//System.out.println(currentRange);
-			//if ()
->>>>>>> 9fa5e25 added stuff to test light ring
-			
-			System.out.println("Encoder Postion" + getPivotEncoder());
+
+			//System.out.println("Encoder Postion" + getPivotEncoder());
 			
 			//Move pivot arm
 			if (!isPivoting())
@@ -287,24 +281,25 @@ public class Gripper extends Thread
 				if (yButton)
 				{
 					targetRange = currentRange.higherNeighbor().range();
-					//setPivoting(true);
+					setPivoting(true);
 					currentDirection = Constants.Direction.Up;
 				}
 				else if (aButton)
 				{
 					targetRange = currentRange.lowerNeighbor().range();
-					//setPivoting(true);
+					setPivoting(true);
 					currentDirection = Constants.Direction.Down;
 				}
 				else if (rightYAxis < -0.5)
 				{
+					
 					raise();
 				}
 				else if (rightYAxis > 0.5)
 				{
 					lower();
 				}
-				else if (Math.abs(rightYAxis) < 0.5)
+				else// if (Math.abs(rightYAxis) < 0.5)
 				{
 					pivotOff();
 				}

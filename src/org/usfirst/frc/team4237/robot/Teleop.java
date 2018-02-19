@@ -82,11 +82,12 @@ public class Teleop
 				drivetrain.driveCartesian(leftXAxis, leftYAxis, rightXAxis);
 			}
 			
+			drivetrain.printColors();
+			
 			if(driverXbox.getRawButton(Xbox.Constants.A_BUTTON))
 			{
-				greenCameraLight.set(true);
-				whiteCameraLight.set(true);
-				whiteFloorLight.set(true);
+				drivetrain.resetEncoder();
+				drivetrain.resetNavX();
 			}
 			else
 			{
@@ -95,7 +96,7 @@ public class Teleop
 				whiteFloorLight.set(false);
 			}
 			
-			drivetrain.debugPrintCurrent();
+			//drivetrain.debugPrintCurrent();
 		}
 		catch(Exception e)
 		{

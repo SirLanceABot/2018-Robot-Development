@@ -1,5 +1,6 @@
 package org.usfirst.frc.team4237.robot;
 
+import org.usfirst.frc.team4237.robot.components.Drivetrain;
 import org.usfirst.frc.team4237.robot.components.Gripper;
 import org.usfirst.frc.team4237.robot.control.Xbox;
 import org.usfirst.frc.team4237.robot.network.AutoSelect4237;
@@ -10,12 +11,12 @@ public class Robot extends IterativeRobot
 {
 	private Teleop teleop = Teleop.getInstance();
 	private Autonomous autonomous = Autonomous.getInstance();
-	
-	private AutoSelect4237 autoSelect4237;
-		
+	private Drivetrain drivetrain = Drivetrain.getInstance();
+
 	public Robot()
 	{
-
+		drivetrain.calibrateNavX();
+		drivetrain.calibrateColorSensor();
 	}
 	
 	@Override
@@ -23,7 +24,7 @@ public class Robot extends IterativeRobot
 	{
 		System.out.println("Starting robot...");
 		Gripper.getInstance().start();
-		
+		AutoSelect4237.getInstance().start();	
 	}
 	
 	@Override

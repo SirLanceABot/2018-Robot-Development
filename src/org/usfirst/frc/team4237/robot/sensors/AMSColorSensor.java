@@ -349,7 +349,7 @@ public class AMSColorSensor
 
 	public static class Constants
 	{
-		public static final I2C.Port PORT = /*I2C.Port.kMXP*/ I2C.Port.kOnboard;  // select roboRIO I2C port
+		public static final I2C.Port PORT = I2C.Port.kOnboard; //I2C.Port.kMXP; select roboRIO I2C port
 		public static final AMSColorSensor.Address ADDRESS = AMSColorSensor.Address.DEFAULT;	// I2C address on selected port
 		public static enum Color {kBlue, kRed, kWhite};
 	}

@@ -33,9 +33,9 @@ public class Autonomous
 	private AMSColorSensor.Constants.Color color;
 	private Constants.AutoMode autoMode = Constants.AutoMode.kAutoLine;
 	private Constants.AutoStage autoStage = Constants.AutoStage.kDrive1;
-	private LightRing greenCameraLight = new LightRing(Constants.GREEN_CAMERA_PORT);
-	private LightRing whiteCameraLight = new LightRing(Constants.WHITE_CAMERA_PORT);
-	private LightRing whiteFloorLight = new LightRing(Constants.WHITE_FLOOR_PORT);
+//	private LightRing greenCameraLight = new LightRing(Constants.GREEN_CAMERA_PORT);
+//	private LightRing whiteCameraLight = new LightRing(Constants.WHITE_CAMERA_PORT);
+//	private LightRing whiteFloorLight = new LightRing(Constants.WHITE_FLOOR_PORT);
 
 	private Timer t = new Timer();
 
@@ -70,7 +70,10 @@ public class Autonomous
 		{
 			color = AMSColorSensor.Constants.Color.kRed;
 		}
-
+		
+		color = AMSColorSensor.Constants.Color.kRed;
+		
+		angleSign = 1;
 //		if(autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("right"))
 //		{
 //			angleSign = 1;
@@ -139,13 +142,14 @@ public class Autonomous
 //				}
 //			}
 //		}
-//		System.out.println("AutoMode: " + autoMode);
+		System.out.println("AutoMode: " + autoMode);
 		drivetrain.resetEncoder();
 		drivetrain.resetNavX();
-		greenCameraLight.set(true);
-		whiteCameraLight.set(true);
-		whiteFloorLight.set(true);
-		autoStage = Constants.AutoStage.kDrive1;
+//		greenCameraLight.set(true);
+//		whiteCameraLight.set(true);
+//		whiteFloorLight.set(true);
+		autoMode = Constants.AutoMode.kScaleOnSameSide;
+		autoStage = Constants.AutoStage.kSpin1;
 	}
 
 	/**
@@ -153,7 +157,6 @@ public class Autonomous
 	 */
 	public void periodic()
 	{
-		autoMode = Constants.AutoMode.kAutoLine;
 		if(autoMode == Constants.AutoMode.kScaleOnOppositeSide)
 		{
 			scaleOnOppositeSide();
@@ -253,9 +256,9 @@ public class Autonomous
 	
 		if(autoStage == Constants.AutoStage.kDone)
 		{
-			greenCameraLight.set(false);
-			whiteCameraLight.set(false);
-			whiteFloorLight.set(false);
+//			greenCameraLight.set(false);
+//			whiteCameraLight.set(false);
+//			whiteFloorLight.set(false);
 		}
 	}
 
@@ -399,41 +402,47 @@ public class Autonomous
 	{
 		if(autoStage == Constants.AutoStage.kDrive1)
 		{
-			if(!drivetrain.driveDistance(184, 0.75, 0))	//white line is at 288 inches
+			if(!drivetrain.driveDistance(184, 0.4, 0))	//white line is at 288 inches
 			{
 
 			}
 			else
 			{
 				autoStage = Constants.AutoStage.kSpin1;
+				System.out.println(autoStage);
 			}
 		}
 		else if(autoStage == Constants.AutoStage.kSpin1)
 		{
-			if(!drivetrain.spinToBearing(-55 * angleSign, 0.5))
+			if(!drivetrain.spinToBearing(-55 * angleSign, 0.35))
 			{
 
 			}
 			else
 			{
 				autoStage = Constants.AutoStage.kDrive2ToLine1;
+				System.out.println(autoStage);
 			}
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2ToLine1)
 		{
-			if(!drivetrain.driveToColor(color, 0.3, -55 * angleSign))
+			drivetrain.printColors();
+			
+			if(!drivetrain.driveToColor(color, 0.35, -55 * angleSign))
 			{
 
 			}
 			else
 			{
 				autoStage = Constants.AutoStage.kDrive2ToLine2;
+				System.out.println(autoStage);
 				drivetrain.resetEncoder();
 				Timer.delay(0.5);
 			}
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2ToLine2)
 		{
+			drivetrain.printColors();
 			if(!drivetrain.driveToColor(color, -0.175, -55 * angleSign))
 			{
 
@@ -441,18 +450,20 @@ public class Autonomous
 			else
 			{
 				autoStage = Constants.AutoStage.kSpin2;
+				System.out.println(autoStage);
 				drivetrain.resetEncoder();
 			}
 		}
 		else if(autoStage == Constants.AutoStage.kSpin2)
 		{
-			if(!drivetrain.spinToBearing(0 * angleSign, 0.5))
+			if(!drivetrain.spinToBearing(0 * angleSign, 0.35))
 			{
 
 			}
 			else
 			{
 				autoStage = Constants.AutoStage.kDrive3ToLine;
+				System.out.println(autoStage);
 				drivetrain.resetEncoder();
 			}
 		}
@@ -465,6 +476,7 @@ public class Autonomous
 			else
 			{
 				autoStage = Constants.AutoStage.kDone;
+				System.out.println(autoStage);
 				System.out.println("Time: " + t.get());
 			}
 		}
@@ -485,7 +497,7 @@ public class Autonomous
 		}
 		else if(autoStage == Constants.AutoStage.kSpin1)
 		{
-			if(!drivetrain.spinToBearing(-90 * angleSign, 0.5))
+			if(!drivetrain.spinToBearing(-90 * angleSign, 0.35))
 			{
 
 			}
@@ -556,7 +568,7 @@ public class Autonomous
 		}
 		else if(autoStage == Constants.AutoStage.kSpin2)
 		{
-			if(!drivetrain.spinToBearing(0 * angleSign, 0.5))
+			if(!drivetrain.spinToBearing(0 * angleSign, 0.35))
 			{
 
 			}
