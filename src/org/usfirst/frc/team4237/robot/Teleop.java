@@ -7,6 +7,7 @@ import org.usfirst.frc.team4237.robot.control.DriverXbox;
 import org.usfirst.frc.team4237.robot.control.Xbox;
 import org.usfirst.frc.team4237.robot.control.Xbox.Constants;
 import org.usfirst.frc.team4237.robot.util.LightRing;
+import org.usfirst.frc.team4237.robot.Autonomous;
 
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -32,6 +33,8 @@ public class Teleop
 	private LightRing greenCameraLight = new LightRing(10);
 	private LightRing whiteCameraLight = new LightRing(11);
 	private LightRing whiteFloorLight = new LightRing(12);
+	
+	private Autonomous auto = Autonomous.getInstance();
 	
 	private static Teleop instance = new Teleop();
 	public static Teleop getInstance()
@@ -86,6 +89,7 @@ public class Teleop
 			
 			if(driverXbox.getRawButton(Xbox.Constants.A_BUTTON))
 			{
+				auto.init();
 				drivetrain.resetEncoder();
 				drivetrain.resetNavX();
 			}

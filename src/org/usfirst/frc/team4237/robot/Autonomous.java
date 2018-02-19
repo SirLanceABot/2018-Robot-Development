@@ -18,11 +18,6 @@ public class Autonomous
 	//private Gripper gripper = Gripper.getInstance();
 	private RaspberryPiReceiver raspberryPiReceiver = RaspberryPiReceiver.getInstance();
 
-	/*
-	 * This class will handle switching between
-	 * raspberry pi and roborio for vision
-	 */
-
 	private DriverStation driverStation = DriverStation.getInstance();
 	private Elevator elevator = Elevator.getInstance();
 	private Gripper gripper = Gripper.getInstance();
@@ -37,6 +32,10 @@ public class Autonomous
 //	private LightRing whiteCameraLight = new LightRing(Constants.WHITE_CAMERA_PORT);
 //	private LightRing whiteFloorLight = new LightRing(Constants.WHITE_FLOOR_PORT);
 
+	private String selectedTarget = null;
+	private String selectedPosition = null;
+	private String selectedBackupPlan = null;
+	
 	private Timer t = new Timer();
 
 	private static Autonomous instance = new Autonomous();
@@ -48,6 +47,7 @@ public class Autonomous
 	private Autonomous()
 	{
 		raspberryPiReceiver.start();
+		autoSelect4237.start();
 	}
 
 	/**
@@ -62,6 +62,19 @@ public class Autonomous
 		//grab values from fms and autoselect
 		fieldColors = driverStation.getGameSpecificMessage();
 		allianceColor = driverStation.getAlliance();
+		
+		System.out.println("GameSpecificMessage: " + fieldColors);
+		System.out.println("Alliance color: " + allianceColor);
+		
+		
+		selectedPosition = autoSelect4237.getData().getSelectedPosition();
+		selectedTarget = autoSelect4237.getData().getSelectedTarget();
+		selectedBackupPlan = autoSelect4237.getData().getSelectedBackupPlan();
+		
+		System.out.println("Selected position: " + selectedPosition);
+		System.out.println("Selected target: " + selectedTarget);
+		System.out.println("Selected backup plan: " + selectedBackupPlan);
+		
 		if(allianceColor == DriverStation.Alliance.Blue)
 		{
 			color = AMSColorSensor.Constants.Color.kBlue;
@@ -71,85 +84,83 @@ public class Autonomous
 			color = AMSColorSensor.Constants.Color.kRed;
 		}
 		
-		color = AMSColorSensor.Constants.Color.kRed;
 		
 		angleSign = 1;
-//		if(autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("right"))
-//		{
-//			angleSign = 1;
-//		}
-//		else
-//		{
-//			angleSign = -1;
-//		}
-//
-//		if(((fieldColors.charAt(1) == 'L' && autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("right"))
-//				|| (fieldColors.charAt(1) == 'R' && autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("left")))
-//				&& autoSelect4237.getData().getSelectedTarget().equalsIgnoreCase("scale"))
-//		{
-//			autoMode = Constants.AutoMode.kScaleOnOppositeSide;
-//		}
-//		else if(((fieldColors.charAt(1) == 'R' && autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("right"))
-//				|| (fieldColors.charAt(1) == 'L' && autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("left")))
-//				&& autoSelect4237.getData().getSelectedTarget().equalsIgnoreCase("scale"))
-//		{
-//			autoMode = Constants.AutoMode.kScaleOnSameSide;
-//		}
-//		else if(((fieldColors.charAt(0) == 'L' && autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("left"))
-//				|| (fieldColors.charAt(0) == 'R' && autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("right")))
-//				&& autoSelect4237.getData().getSelectedTarget().equalsIgnoreCase("switch"))
-//		{
-//			autoMode = Constants.AutoMode.kSwitchOnSameSide;
-//		}
-//		else if(fieldColors.charAt(0) == 'L'
-//				&& autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("center")
-//				&& autoSelect4237.getData().getSelectedTarget().equalsIgnoreCase("switch"))
-//		{
-//			autoMode = Constants.AutoMode.kSwitchLeftFromMiddle;
-//		}
-//		else if(fieldColors.charAt(0) == 'R'
-//				&& autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("center")
-//				&& autoSelect4237.getData().getSelectedTarget().equalsIgnoreCase("switch"))
-//		{
-//			autoMode = Constants.AutoMode.kSwitchRightFromMiddle;
-//		}
-//		else if(autoSelect4237.getData().getSelectedTarget().equalsIgnoreCase("auto line"))
-//		{
-//			autoMode = Constants.AutoMode.kAutoLine;
-//		}
-//
-//		//backup auto routine
-//		if(((fieldColors.charAt(0) == 'L'
-//				&& autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("right"))
-//				|| (fieldColors.charAt(0) == 'R'
-//				&& autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("left")))
-//				&& autoSelect4237.getData().getSelectedTarget().equalsIgnoreCase("switch"))
-//		{
-//			if(autoSelect4237.getData().getSelectedBackupPlan().equalsIgnoreCase("auto line"))
-//			{
-//				autoMode = Constants.AutoMode.kAutoLine;
-//			}
-//			else if(autoSelect4237.getData().getSelectedBackupPlan().equalsIgnoreCase("scale"))
-//			{
-//				if(fieldColors.charAt(1) == 'R'
-//						&& autoSelect4237.getData().getSelectedPosition().equalsIgnoreCase("right"))
-//				{
-//					autoMode = Constants.AutoMode.kScaleOnSameSide;
-//				}
-//				else
-//				{
-//					autoMode = Constants.AutoMode.kScaleOnOppositeSide;
-//				}
-//			}
-//		}
+		if(selectedPosition.equalsIgnoreCase("left"))
+		{
+			angleSign = -1;
+		}
+		
+
+		if(((fieldColors.charAt(1) == 'L' && selectedPosition.equalsIgnoreCase("right"))
+				|| (fieldColors.charAt(1) == 'R' && selectedPosition.equalsIgnoreCase("left")))
+				&& selectedTarget.equalsIgnoreCase("scale"))
+		{
+			autoMode = Constants.AutoMode.kScaleOnOppositeSide;
+		}
+		else if(((fieldColors.charAt(1) == 'R' && selectedPosition.equalsIgnoreCase("right"))
+				|| (fieldColors.charAt(1) == 'L' && selectedPosition.equalsIgnoreCase("left")))
+				&& selectedTarget.equalsIgnoreCase("scale"))
+		{
+			autoMode = Constants.AutoMode.kScaleOnSameSide;
+		}
+		else if(((fieldColors.charAt(0) == 'L' && selectedPosition.equalsIgnoreCase("left"))
+				|| (fieldColors.charAt(0) == 'R' && selectedPosition.equalsIgnoreCase("right")))
+				&& selectedTarget.equalsIgnoreCase("switch"))
+		{
+			autoMode = Constants.AutoMode.kSwitchOnSameSide;
+		}
+		else if(fieldColors.charAt(0) == 'L'
+				&& selectedPosition.equalsIgnoreCase("center")
+				&& selectedTarget.equalsIgnoreCase("switch"))
+		{
+			autoMode = Constants.AutoMode.kSwitchLeftFromMiddle;
+		}
+		else if(fieldColors.charAt(0) == 'R'
+				&& selectedPosition.equalsIgnoreCase("center")
+				&& selectedTarget.equalsIgnoreCase("switch"))
+		{
+			autoMode = Constants.AutoMode.kSwitchRightFromMiddle;
+		}
+		else if(selectedTarget.equalsIgnoreCase("auto line"))
+		{
+			autoMode = Constants.AutoMode.kAutoLine;
+		}
+
+		//backup auto routine
+		if(((fieldColors.charAt(0) == 'L' && selectedPosition.equalsIgnoreCase("right"))
+				|| (fieldColors.charAt(0) == 'R' && selectedPosition.equalsIgnoreCase("left")))
+				&& selectedTarget.equalsIgnoreCase("switch"))
+		{
+			if(selectedBackupPlan.equalsIgnoreCase("auto line"))
+			{
+				autoMode = Constants.AutoMode.kAutoLine;
+			}
+			else if(selectedBackupPlan.equalsIgnoreCase("scale"))
+			{
+				if(fieldColors.charAt(1) == 'R' && selectedPosition.equalsIgnoreCase("right")
+					|| fieldColors.charAt(1) == 'L' && selectedPosition.equalsIgnoreCase("left"))
+				{
+					autoMode = Constants.AutoMode.kScaleOnSameSide;
+				}
+				else
+				{
+					autoMode = Constants.AutoMode.kScaleOnOppositeSide;
+				}
+			}
+		}
+		
+		if(selectedPosition.equalsIgnoreCase("none"))
+		{
+			autoMode = Constants.AutoMode.kNone;
+		}
+		
 		System.out.println("AutoMode: " + autoMode);
 		drivetrain.resetEncoder();
 		drivetrain.resetNavX();
 //		greenCameraLight.set(true);
 //		whiteCameraLight.set(true);
 //		whiteFloorLight.set(true);
-		autoMode = Constants.AutoMode.kScaleOnSameSide;
-		autoStage = Constants.AutoStage.kSpin1;
 	}
 
 	/**
@@ -161,7 +172,10 @@ public class Autonomous
 		{
 			scaleOnOppositeSide();
 			
-//			gripper.autoSetMiddleTargetRange();
+//			if(gripper.isAutoMiddlePivotDone())
+//			{
+//				gripper.autoSetMiddleTargetRange();
+//			}
 //			
 //			if(autoStage == Constants.AutoStage.kDrive2ToLine2 || autoStage == Constants.AutoStage.kSpin2)
 //			{
@@ -179,7 +193,10 @@ public class Autonomous
 		{
 			scaleOnSameSide();
 			
-//			gripper.autoSetMiddleTargetRange();
+//			if(gripper.isAutoMiddlePivotDone())
+//			{
+//				gripper.autoSetMiddleTargetRange();
+//			}
 //			
 //			if(autoStage == Constants.AutoStage.kSpin2 || autoStage == Constants.AutoStage.kDrive3ToLine)
 //			{
@@ -253,7 +270,11 @@ public class Autonomous
 //			
 //			gripper.autoSetMiddleTargetRange();
 		}
-	
+		else if(autoMode == Constants.AutoMode.kNone)
+		{
+			autoStage = Constants.AutoStage.kDone;
+		}
+		
 		if(autoStage == Constants.AutoStage.kDone)
 		{
 //			greenCameraLight.set(false);
@@ -289,6 +310,7 @@ public class Autonomous
 			else
 			{
 				autoStage = Constants.AutoStage.kDrive2Distance1;
+				System.out.println("Entering: " + autoStage);
 				drivetrain.resetEncoder();
 			}
 		}
@@ -301,6 +323,7 @@ public class Autonomous
 			else
 			{
 				autoStage = Constants.AutoStage.kDrive2Distance2;
+				System.out.println("Entering: " + autoStage);
 				drivetrain.resetEncoder();
 			}
 		}
@@ -313,6 +336,7 @@ public class Autonomous
 			else
 			{
 				autoStage = Constants.AutoStage.kDone;
+				System.out.println("Entering: " + autoStage);
 				System.out.println("Time: " + t.get());
 			}
 		}
@@ -329,6 +353,7 @@ public class Autonomous
 			else
 			{
 				autoStage = Constants.AutoStage.kDrive2Distance1;
+				System.out.println("Entering: " + autoStage);
 				drivetrain.resetEncoder();
 			}
 		}
@@ -341,6 +366,7 @@ public class Autonomous
 			else
 			{
 				autoStage = Constants.AutoStage.kDrive2Distance2;
+				System.out.println("Entering: " + autoStage);
 				drivetrain.resetEncoder();
 			}
 		}
@@ -353,6 +379,7 @@ public class Autonomous
 			else
 			{
 				autoStage = Constants.AutoStage.kDone;
+				System.out.println("Entering: " + autoStage);
 				System.out.println("Time: " + t.get());
 			}
 		}
@@ -369,6 +396,7 @@ public class Autonomous
 			else
 			{
 				autoStage = Constants.AutoStage.kDrive2Distance1;
+				System.out.println("Entering: " + autoStage);
 				drivetrain.resetEncoder();
 			}
 		}
@@ -381,6 +409,7 @@ public class Autonomous
 			else
 			{
 				autoStage = Constants.AutoStage.kDrive2Distance2;
+				System.out.println("Entering: " + autoStage);
 				drivetrain.resetEncoder();
 			}
 		}
@@ -393,6 +422,7 @@ public class Autonomous
 			else
 			{
 				autoStage = Constants.AutoStage.kDone;
+				System.out.println("Entering: " + autoStage);
 				System.out.println("Time: " + t.get());
 			}
 		}
@@ -409,7 +439,7 @@ public class Autonomous
 			else
 			{
 				autoStage = Constants.AutoStage.kSpin1;
-				System.out.println(autoStage);
+				System.out.println("Entering: " + autoStage);
 			}
 		}
 		else if(autoStage == Constants.AutoStage.kSpin1)
@@ -421,7 +451,7 @@ public class Autonomous
 			else
 			{
 				autoStage = Constants.AutoStage.kDrive2ToLine1;
-				System.out.println(autoStage);
+				System.out.println("Entering: " + autoStage);
 			}
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2ToLine1)
@@ -493,6 +523,7 @@ public class Autonomous
 			else
 			{
 				autoStage = Constants.AutoStage.kSpin1;
+				System.out.println("Entering: " + autoStage);
 			}
 		}
 		else if(autoStage == Constants.AutoStage.kSpin1)
@@ -504,6 +535,7 @@ public class Autonomous
 			else
 			{
 				autoStage = Constants.AutoStage.kDrive2ToLine1;
+				System.out.println("Entering: " + autoStage);
 				drivetrain.resetEncoder();
 			}
 		}
@@ -516,6 +548,7 @@ public class Autonomous
 			else
 			{
 				autoStage = Constants.AutoStage.kDrive2Distance1;
+				System.out.println("Entering: " + autoStage);
 				drivetrain.resetEncoder();
 			}
 		}
@@ -528,6 +561,7 @@ public class Autonomous
 			else
 			{
 				autoStage = Constants.AutoStage.kDrive2Distance2;
+				System.out.println("Entering: " + autoStage);
 				drivetrain.resetEncoder();
 			}
 		}
@@ -540,6 +574,7 @@ public class Autonomous
 			else
 			{
 				autoStage = Constants.AutoStage.kDrive2ToLine2;
+				System.out.println("Entering: " + autoStage);
 			}
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2ToLine2)
@@ -552,6 +587,7 @@ public class Autonomous
 			{
 
 				autoStage = Constants.AutoStage.kDrive2Distance3;
+				System.out.println("Entering: " + autoStage);
 				drivetrain.resetEncoder();
 			}
 		}
@@ -564,6 +600,7 @@ public class Autonomous
 			else
 			{
 				autoStage = Constants.AutoStage.kSpin2;
+				System.out.println("Entering: " + autoStage);
 			}
 		}
 		else if(autoStage == Constants.AutoStage.kSpin2)
@@ -575,6 +612,7 @@ public class Autonomous
 			else
 			{
 				autoStage = Constants.AutoStage.kDrive3ToLine;
+				System.out.println("Entering: " + autoStage);
 				drivetrain.resetEncoder();
 			}
 		}
@@ -587,6 +625,7 @@ public class Autonomous
 			else
 			{
 				autoStage = Constants.AutoStage.kDone;
+				System.out.println("Entering: " + autoStage);
 				System.out.println("Time: " + t.get());
 			}
 		}

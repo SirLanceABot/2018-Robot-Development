@@ -68,9 +68,11 @@ public class Gripper extends Thread
 
 		//Pivoter settings
 		pivotTalon.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder, 0, 0);
-		pivotTalon.setSensorPhase(false);
+		pivotTalon.setSensorPhase(true);
 		pivotTalon.configForwardSoftLimitEnable(false, 0);
 		pivotTalon.configReverseSoftLimitEnable(false, 0);
+		
+		
 
 		//PID settings
 //		leftIntakeTalon.selectProfileSlot(Constants.PID_SLOT_ID, 0);
@@ -622,13 +624,13 @@ public class Gripper extends Thread
 		
 		private enum InitRange
 		{
-			floorRange(0, 20),
-			floorHorizontalRange(20, 2090),
-			horizontalRange(2990, 3010),
-			horizontalMiddleRange(3010,3980),
-			middleRange(5980, 6000),
-			middleRaisedRange(6000, 6500),
-			raisedRange(6500, 6510),
+			floorRange(0, 30),
+			floorHorizontalRange(31, 215),
+			horizontalRange(216, 276),
+			horizontalMiddleRange(277,1310),
+			middleRange(1311, 1371),
+			middleRaisedRange(1372, 2032),
+			raisedRange(2033, 2063),
 			none(-1, -1),
 			error(-1, -1);
 

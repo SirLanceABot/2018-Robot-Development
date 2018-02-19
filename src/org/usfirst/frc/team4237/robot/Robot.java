@@ -12,7 +12,7 @@ public class Robot extends IterativeRobot
 	private Teleop teleop = Teleop.getInstance();
 	private Autonomous autonomous = Autonomous.getInstance();
 	private Drivetrain drivetrain = Drivetrain.getInstance();
-
+	
 	public Robot()
 	{
 		drivetrain.calibrateNavX();
@@ -23,8 +23,8 @@ public class Robot extends IterativeRobot
 	public void robotInit()
 	{
 		System.out.println("Starting robot...");
+		
 		Gripper.getInstance().start();
-		AutoSelect4237.getInstance().start();	
 	}
 	
 	@Override
