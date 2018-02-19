@@ -2,24 +2,24 @@ from PySide import QtGui, QtCore
 import sys, threading, time, os, json
 from lib import AboutWindow, RobotPosition, ConfirmSendDialog, GameFrame2016, GameFrame2017, GameFrame2018, RoboRIOTransmitter
 
-VERSION = 3.0                                                                #Version number (changes when something new gets added)
+VERSION = 3.0                                                                
 
-class GUI(QtGui.QMainWindow):                                                #Create class "GUI" that inherits QMainWindow
+class GUI(QtGui.QMainWindow):                                                
     def __init__(self):
-        super(GUI, self).__init__()                                          #Call superclass costructor
-        self.initUI()                                                        #Calls GUI.initUI to create the window
+        super(GUI, self).__init__()
+        self.initUI()
 
-    def initUI(self):                                                        #Method to create the window
-        self.teamNumber = self.getTeamNumber()                               #Get the number of the team using this program
+    def initUI(self):
+        self.teamNumber = self.getTeamNumber()
         print "Found team number " + str(self.teamNumber)
-        self.roboRIOIP = "roborio-" + str(self.teamNumber) + "-frc.local"    #Concatenate strings to form an IP address
-        self.iconSize = 75                                                   #number used for scaling the images in the comboboxes
+        self.roboRIOIP = "roborio-" + str(self.teamNumber) + "-frc.local"
+        self.iconSize = 75
         
         #Misc
         self.transmitter = RoboRIOTransmitter.RoboRIOTransmitter()
-        self.futureLabel = QtGui.QLabel("Coming Soon")                                   #Displays "coming soon" label for next year when there is a tab but no game yet
-        self.futureLabel.setStyleSheet('font-size: 60pt;')                               #Formatting for Futurelabel
-        self.futureLabel.setAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignVCenter)    #Align futurelabel
+        self.futureLabel = QtGui.QLabel("Coming Soon")
+        self.futureLabel.setStyleSheet('font-size: 60pt;')
+        self.futureLabel.setAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignVCenter)
         
         #About window
         self.about = AboutWindow.AboutWindow()
@@ -31,7 +31,7 @@ class GUI(QtGui.QMainWindow):                                                #Cr
         self.DRMLabel = QtGui.QLabel("<font size=8>This program was made by Team 4237.<font>")
         self.DRMLabel.setStyleSheet("QLabel { color : red;}")
         
-        self.teamNotFoundLabel = QtGui.QLabel("A FRC team number could not be found on this computer, make sure the FRC Driver Station is installed")
+        self.teamNotFoundLabel = QtGui.QLabel("An FRC team number could not be found on this computer, make sure the FRC Driver Station is installed")
         self.teamNotFoundLabel.setStyleSheet("QLabel { color : red; }")
                 
         #Actions
@@ -114,7 +114,7 @@ class GUI(QtGui.QMainWindow):                                                #Cr
         
     def sendToRobot2018(self):
         print self.frame2018.getJsonData()
-        self.transmitter.sendMessage(self.frame2018.getJsonData())
+        self.transmitter.sendMessage(json.dumps(self.frame2018.getJsonData()))
 
     '''
     Function to get the current team number from the FRC Driver Station
