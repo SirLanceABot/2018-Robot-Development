@@ -89,6 +89,8 @@ public class Elevator extends Thread
 			boolean rightBumper = xbox.getRawButton(Xbox.Constants.RIGHT_BUMPER);
 			boolean leftBumper = xbox.getRawButton(Xbox.Constants.LEFT_BUMPER);
 			
+			double leftYAxis = xbox.getRawAxis(Xbox.Constants.LEFT_STICK_Y_AXIS);
+			
 			updateCurrentRange();
 
 			if (!isMoving())
@@ -104,6 +106,14 @@ public class Elevator extends Thread
 					targetRange = currentRange.lowerNeighbor().range();
 					isMoving = true;
 					currentDirection = Constants.Direction.Down;
+				}
+				else if (leftYAxis < -0.5)
+				{
+					raise();
+				}
+				else if (leftYAxis < 0.5)
+				{
+					lower();
 				}
 			}
 			
@@ -177,61 +187,42 @@ public class Elevator extends Thread
 				}
 			}
 			Timer.delay(0.005);
-		} // End of while loop
+		} //End of while loop
 	}
 
 	public void updateCurrentRange()
 	{
 		currentValue = getStringPot();
+		System.out.println("Potentiometer Value = " + currentValue);
 		if (currentValue <= Constants.Range.floorRange.topValue())
 		{
 			currentRange = Constants.Range.floorRange;
 			System.out.println("Current Range: " + Constants.Range.floorRange);
 		}
-		else if (currentValue <= Constants.Range.floorExchangeRange.topValue())
+		else if (currentValue <= Constants.Range.floorExchangeAndPortalRange.topValue())
 		{
-			currentRange = Constants.Range.floorExchangeRange;
-			System.out.println("Current Range: " + Constants.Range.floorExchangeRange);
+			currentRange = Constants.Range.floorExchangeAndPortalRange;
+			System.out.println("Current Range: " + Constants.Range.floorExchangeAndPortalRange);
 		}
-		else if (currentValue <= Constants.Range.exchangeRange.topValue())
+		else if (currentValue <= Constants.Range.exchangeAndPortalRange.topValue())
 		{
-			currentRange = Constants.Range.exchangeRange;
-			System.out.println("Current Range: " + Constants.Range.exchangeRange);
+			currentRange = Constants.Range.exchangeAndPortalRange;
+			System.out.println("Current Range: " + Constants.Range.exchangeAndPortalRange);
 		}
-		else if (currentValue <= Constants.Range.exchangePortalRange.topValue())
+		else if (currentValue <= Constants.Range.exchangeAndPortalSwitchRange.topValue())
 		{
-			currentRange = Constants.Range.exchangePortalRange;
-			System.out.println("Current Range: " + Constants.Range.exchangePortalRange);
+			currentRange = Constants.Range.exchangeAndPortalSwitchRange;
+			System.out.println("Current Range: " + Constants.Range.exchangeAndPortalSwitchRange);
 		}
-		else if (currentValue <= Constants.Range.portalRange.topValue())
+		else if (currentValue <= Constants.Range.switchRange.topValue())
 		{
-			currentRange = Constants.Range.portalRange;
-			System.out.println("Current Range: " + Constants.Range.portalRange);
+			currentRange = Constants.Range.switchRange;
+			System.out.println("Current Range: " + Constants.Range.switchRange);
 		}
-		else if (currentValue <= Constants.Range.portalBottomSwitchRange.topValue())
+		else if (currentValue <= Constants.Range.switchBottomScaleRange.topValue())
 		{
-			currentRange = Constants.Range.portalBottomSwitchRange;
-			System.out.println("Current Range: " + Constants.Range.portalBottomSwitchRange);
-		}
-		else if (currentValue <= Constants.Range.bottomSwitchRange.topValue())
-		{
-			currentRange = Constants.Range.bottomSwitchRange;
-			System.out.println("Current Range: " + Constants.Range.bottomSwitchRange);
-		}
-		else if (currentValue <= Constants.Range.bottomSwitchTopSwitchRange.topValue())
-		{
-			currentRange = Constants.Range.bottomSwitchTopSwitchRange;
-			System.out.println("Current Range: " + Constants.Range.bottomSwitchTopSwitchRange);
-		}
-		else if (currentValue <= Constants.Range.topSwitchRange.topValue())
-		{
-			currentRange = Constants.Range.topSwitchRange;
-			System.out.println("Current Range: " + Constants.Range.topSwitchRange);
-		}
-		else if (currentValue <= Constants.Range.topSwitchBottomScaleRange.topValue())
-		{
-			currentRange = Constants.Range.topSwitchBottomScaleRange;
-			System.out.println("Current Range: " + Constants.Range.topSwitchBottomScaleRange);
+			currentRange = Constants.Range.switchBottomScaleRange;
+			System.out.println("Current Range: " + Constants.Range.switchBottomScaleRange);
 		}
 		else if (currentValue <= Constants.Range.bottomScaleRange.topValue())
 		{
@@ -299,7 +290,7 @@ public class Elevator extends Thread
 	
 	public void autoSetSwitchTargetRange()
 	{
-		targetRange = Constants.Range.topSwitchRange.range;
+		targetRange = Constants.Range.switchRange.range;
 	}
 	
 	public void autoSetFloorTargetRange()
@@ -313,21 +304,31 @@ public class Elevator extends Thread
 	{
 		private enum InitRange
 		{
-			floorRange(0.101, .1549230769), //>= 0 and < 1
-			floorExchangeRange(0.1549230769, 0.2078461538), //>= 1 and < 2
-			exchangeRange(0.2078461538, 0.26076923076923),
-			exchangePortalRange(0.26076923076923, 0.31369230769231),
-			portalRange(0.31369230769231, 0.36661538461539),
-			portalBottomSwitchRange(0.36661538461539, 0.41953846153846),
-			bottomSwitchRange(0.41953846153846, 0.47246153846154),
-			bottomSwitchTopSwitchRange(0.47246153846154, 0.52538461538462),
-			topSwitchRange(0.52538461538462, 0.57830769230769),
-			topSwitchBottomScaleRange(0.57830769230769, 0.63123076923077),
+			
+			floorRange(0.130, 0.141),
+			floorExchangeAndPortalRange(0.141, .268),
+			exchangeAndPortalRange(0.268, 0.288),
+			exchangeAndPortalSwitchRange(0.288, 0.298),
+			switchRange(0.298, 0.318),
+			switchBottomScaleRange(0.318, 0.573),
+			bottomScaleRange(0.573, 0.593),
+			bottomScaleTopScaleRange(0.593, 0.762),
+			topScaleRange(0.762, .773),
+			none(-1, -1),
+			error(-1, -1);
+			
+			/*floorRange(),
+			floorExchangeAlongWithPortalRangeAsWellToo(),
+			exchangeIncludingWithTheZonePortalRangeAreaPlace(),
+			exchangeAlongWithPortalRangeAsWellTooSwitchRange(0.36661538461539, 0.41953846153846),
+			switchRange(0.41953846153846, 0.47246153846154),
+			switchBottomScaleRange(0.57830769230769, 0.63123076923077),
 			bottomScaleRange(0.63123076923077, 0.68415384615385),
 			bottomScaleTopScaleRange(0.68415384615385, 0.73707692307692),
 			topScaleRange(0.73707692307692, .8),
 			none(-1, -1),
 			error(-1, -1);
+			*/
 
 			private final double[] range;
 
@@ -354,20 +355,16 @@ public class Elevator extends Thread
 
 		public enum Range
 		{
-			floorRange(                 InitRange.floorRange.range(),                 InitRange.floorRange,        InitRange.exchangeRange),
-			floorExchangeRange(         InitRange.floorExchangeRange.range(),         InitRange.floorRange,        InitRange.exchangeRange),
-			exchangeRange(              InitRange.exchangeRange.range(),              InitRange.floorRange,        InitRange.portalRange),
-			exchangePortalRange(        InitRange.exchangePortalRange.range(),        InitRange.exchangeRange,     InitRange.portalRange),
-			portalRange(                InitRange.portalRange.range(),                InitRange.exchangeRange,     InitRange.bottomSwitchRange),
-			portalBottomSwitchRange(    InitRange.portalBottomSwitchRange.range(),    InitRange.portalRange,       InitRange.bottomSwitchRange),
-			bottomSwitchRange(          InitRange.bottomSwitchRange.range(),          InitRange.portalRange,       InitRange.topSwitchRange),
-			bottomSwitchTopSwitchRange( InitRange.bottomSwitchTopSwitchRange.range(), InitRange.bottomSwitchRange, InitRange.topSwitchRange),
-			topSwitchRange(             InitRange.topSwitchRange.range(),             InitRange.bottomSwitchRange, InitRange.bottomScaleRange),
-			topSwitchBottomScaleRange(  InitRange.topSwitchBottomScaleRange.range(),  InitRange.topSwitchRange,    InitRange.bottomScaleRange),
-			bottomScaleRange(           InitRange.bottomScaleRange.range(),           InitRange.topSwitchRange,    InitRange.topScaleRange), 
-			bottomScaleTopScaleRange(   InitRange.bottomScaleTopScaleRange.range(),   InitRange.bottomScaleRange,  InitRange.topScaleRange),
-			topScaleRange(              InitRange.topScaleRange.range(),              InitRange.bottomScaleRange,  InitRange.topScaleRange),
-			error(                      InitRange.error.range(),                      InitRange.error,             InitRange.error);
+			floorRange(                		InitRange.floorRange.range(),                 	InitRange.floorRange,        			InitRange.exchangeAndPortalRange),
+			floorExchangeAndPortalRange(    InitRange.floorExchangeAndPortalRange.range(),	InitRange.floorRange,        			InitRange.exchangeAndPortalRange),
+			exchangeAndPortalRange(         InitRange.exchangeAndPortalRange.range(),		InitRange.floorRange,        			InitRange.switchRange),
+			exchangeAndPortalSwitchRange(   InitRange.exchangeAndPortalSwitchRange.range(),	InitRange.exchangeAndPortalRange,       InitRange.switchRange),
+			switchRange(					InitRange.switchRange.range(),					InitRange.exchangeAndPortalRange,		InitRange.bottomScaleRange),
+			switchBottomScaleRange(  		InitRange.switchBottomScaleRange.range(),  		InitRange.switchRange,    				InitRange.bottomScaleRange),
+			bottomScaleRange(           	InitRange.bottomScaleRange.range(),          	InitRange.switchRange,    				InitRange.topScaleRange), 
+			bottomScaleTopScaleRange(   	InitRange.bottomScaleTopScaleRange.range(),   	InitRange.bottomScaleRange,  			InitRange.topScaleRange),
+			topScaleRange(              	InitRange.topScaleRange.range(),              	InitRange.bottomScaleRange,  			InitRange.topScaleRange),
+			error(                      	InitRange.error.range(),                      	InitRange.error,             			InitRange.error);
 
 			private final double[] range;
 			private final InitRange higherNeighbor;
@@ -417,8 +414,8 @@ public class Elevator extends Thread
 
 		public static final int ACCEPTABLE_TICK_RANGE = 10;
 
-		public static final int MASTER_MOTOR_PORT = 10;
-		public static final int SLAVE_MOTOR_PORT = 11;
+		public static final int MASTER_MOTOR_PORT = 0;
+		public static final int SLAVE_MOTOR_PORT = 1;
 		public static final int STRING_POT_PORT = 3;
 
 		public static final double STRING_POT_SCALE = 1.0;
