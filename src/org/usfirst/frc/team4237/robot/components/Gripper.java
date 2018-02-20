@@ -2,6 +2,8 @@ package org.usfirst.frc.team4237.robot.components;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import java.util.HashMap;
+
 import org.usfirst.frc.team4237.robot.components.Elevator.Constants;
 import org.usfirst.frc.team4237.robot.control.OperatorXbox;
 import org.usfirst.frc.team4237.robot.control.Xbox;
@@ -20,6 +22,8 @@ public class Gripper extends Thread implements Component
 	private WPI_TalonSRX leftIntakeTalon = new WPI_TalonSRX(Constants.LEFT_INTAKE_MOTOR_PORT);
 	private WPI_TalonSRX rightIntakeTalon = new WPI_TalonSRX(Constants.RIGHT_INTAKE_MOTOR_PORT);
 	private WPI_TalonSRX pivotTalon = new WPI_TalonSRX(Constants.PIVOTER_MOTOR_PORT);
+	
+	private HashMap<Integer, WPI_TalonSRX> talonSRXHashMap = new HashMap<Integer, WPI_TalonSRX>();
 
 	private boolean isAutoEjecting = false;
 	private boolean isAutoIntaking = false;
@@ -31,7 +35,9 @@ public class Gripper extends Thread implements Component
 	private int[] targetRange = Constants.Range.raisedRange.range;
 	private Constants.Direction currentDirection = Constants.Direction.None;
 
-
+	private int currentTestKeyPosition = 0;
+	
+	private boolean y_
 
 	//Quarantine
 	boolean isIntakeDone = true;
