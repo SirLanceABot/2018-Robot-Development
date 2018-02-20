@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 public class Robot extends IterativeRobot
 {
 	private Autonomous autonomous = Autonomous.getInstance();
-	private Gripper gripper = Gripper.getInstance();
 	
 	public Robot()
 	{
@@ -49,7 +48,7 @@ public class Robot extends IterativeRobot
 	public void teleopInit()
 	{
 		System.out.println("Entering teleop");
-		gripper.setTeleopLimits();
+		Gripper.getInstance().setTeleopLimits();
 	}
 	
 	@Override
@@ -62,7 +61,7 @@ public class Robot extends IterativeRobot
 	public void autonomousInit()
 	{
 		System.out.println("Entering autonomous");
-		gripper.setAutoLimits();
+		Gripper.getInstance().setAutoLimits();
 		autonomous.init();
 	}
 	
