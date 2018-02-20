@@ -138,7 +138,7 @@ public class Gripper extends Thread
 			setAutoEjecting(false);
 		}
 	}
-	
+
 	public void autoDrop()
 	{
 		if (rightIntakeTalon.getSelectedSensorPosition(0) <= Constants.AUTO_EJECT_ENCODER_STOP_VALUE)
@@ -199,7 +199,7 @@ public class Gripper extends Thread
 		leftIntakeTalon.set(-1.0);
 		rightIntakeTalon.set(-1.0);
 	}
-	
+
 	public void ejectDrop()
 	{
 		leftIntakeTalon.set(-0.2);
@@ -259,185 +259,206 @@ public class Gripper extends Thread
 		setPivoting(false);
 		pivotTalon.set(0.0);
 	}
-	
+
 	public int getLeftIntakeEncoder()
 	{
 		return leftIntakeTalon.getSelectedSensorPosition(0);
 	}
-	
+
 	public int getRightIntakeEncoder()
 	{
 		return rightIntakeTalon.getSelectedSensorPosition(0);
 	}
 
-	@Override
-	public void run()
+	public synchronized void run()
 	{
 		while (!this.interrupted())
-		{
-			//Pivot
-			boolean aButton = xbox.getRawButton(Xbox.Constants.A_BUTTON);		//Pivot down one level
-			boolean bButton = xbox.getRawButton(Xbox.Constants.B_BUTTON);		//Spin Cube right
-			boolean yButton = xbox.getRawButton(Xbox.Constants.Y_BUTTON);		//Pivot up one level
-			boolean xButton = xbox.getRawButton(Xbox.Constants.X_BUTTON);		//Spin Cube left
-			boolean startButton = xbox.getRawButton(Xbox.Constants.START_BUTTON);
-			boolean backButton = xbox.getRawButton(Xbox.Constants.BACK_BUTTON);
-			
-			double rightYAxis = xbox.getRawAxis(Xbox.Constants.RIGHT_STICK_Y_AXIS);					//Free moving pivot
-
-
-			//Intake
-			double rightTrigger = xbox.getRawAxis(Xbox.Constants.RIGHT_TRIGGER_AXIS);		//Eject
-			double leftTrigger = xbox.getRawAxis(Xbox.Constants.LEFT_TRIGGER_AXIS);			//Intake
-
-			if(startButton)
-			{
-				resetPivotEncoder();
-			}
-			
-			if(backButton)
-			{
-				zeroPivotEncoder();
-			}
-
-			//Updates Current Range
+		{	
 			updateCurrentRange();
 
-			System.out.println("Encoder Postion: " + getPivotEncoder());
-
-			//Move pivot arm
-			if (!isPivoting())
+			if (DriverStation.getInstance().isOperatorControl())
 			{
-
-				//Some alternative code to make it work like the elevator
-
-				if (yButton)
-				{
-					targetRange = currentRange.higherNeighbor().range();
-					setPivoting(true);
-					currentDirection = Constants.Direction.Up;
-				}
-				else if (aButton)
-				{
-					targetRange = currentRange.lowerNeighbor().range();
-					setPivoting(true);
-					currentDirection = Constants.Direction.Down;
-				}
-				else if (rightYAxis < -0.5)
-				{
-
-					raise();
-				}
-				else if (rightYAxis > 0.5)
-				{
-					lower();
-				}
-				else// if (Math.abs(rightYAxis) < 0.5)
-				{
-					pivotOff();
-				}
-
-			}
-			else if(isPivoting() && !DriverStation.getInstance().isAutonomous())
-			{
-
-				System.out.println("Is Pivoting");
-				if (currentDirection == Constants.Direction.Up)
-				{
-					if (yButton)
-					{
-						targetRange = currentRange.higherNeighbor.range();
-					}
-					else if (aButton)
-					{
-						currentDirection = Constants.Direction.None;
-						pivotOff();
-					}
-				}
-				else if (currentDirection == Constants.Direction.Down) 
-				{
-					if (aButton)
-					{
-						targetRange = currentRange.lowerNeighbor.range();
-					}
-					else if (yButton)
-					{
-						currentDirection = Constants.Direction.None;
-						pivotOff();
-					}
-				}
-
-
-				if ( (currentValue >= targetRange[0]) && (currentValue < targetRange[1]) )
-				{
-					System.out.println("In target range");
-					isPivoting = false;
-					currentDirection = Constants.Direction.None;
-					pivotOff();
-				}
-				else if (currentDirection == Constants.Direction.Up)
-				{
-					System.out.println("Raising");
-					raise();
-				}
-				else if (currentDirection == Constants.Direction.Down)
-				{
-					lower();
-					System.out.println("Lowering");
-				}
+				teleop();
 			}
 			else if (DriverStation.getInstance().isAutonomous())
 			{
-
-				if ( (currentValue >= targetRange[0]) && (currentValue <= targetRange[1]) )
-				{
-					System.out.println("Pivot ArmIn target range");
-					pivotOff();	
-				}
-				else if (currentValue < targetRange[0])
-				{
-					System.out.println("Pivot Arm Raising");
-					raise();				
-				}
-				else if (currentValue > targetRange[1])
-				{
-					lower();
-					System.out.println("Pivot Arm Lowering");
-				}
-
-				if(isAutoEjecting())
-				{
-					autoEject();
-				}
-				else
-				{
-					intakeOff();
-				}
+				autonomous();
 			}
-
-			//Intake
-			if (Math.abs(rightTrigger) > 0.3)
+			else if (DriverStation.getInstance().isTest())
 			{
-				ejectShoot();
-			}
-			else if (Math.abs(leftTrigger) > 0.3)
-			{
-				intake();
-			}
-			else if (Math.abs(leftTrigger) > 0.3 && bButton)
-			{
-				intakeRotateCubeLeft();
-			}
-			else if (xButton)
-			{
-				ejectDrop();
-			}
-			else
-			{
-				intakeOff();
+				test();
 			}
 			Timer.delay(0.005);
+		} //End of while loop
+	}
+
+	public void teleop()
+	{
+		//Pivot
+		boolean aButton = xbox.getRawButton(Xbox.Constants.A_BUTTON);		//Pivot down one level
+		boolean bButton = xbox.getRawButton(Xbox.Constants.B_BUTTON);		//Spin Cube right
+		boolean yButton = xbox.getRawButton(Xbox.Constants.Y_BUTTON);		//Pivot up one level
+		boolean xButton = xbox.getRawButton(Xbox.Constants.X_BUTTON);		//Spin Cube left
+		boolean startButton = xbox.getRawButton(Xbox.Constants.START_BUTTON);
+		boolean backButton = xbox.getRawButton(Xbox.Constants.BACK_BUTTON);
+
+		double rightYAxis = xbox.getRawAxis(Xbox.Constants.RIGHT_STICK_Y_AXIS);					//Free moving pivot
+
+
+		//Intake
+		double rightTrigger = xbox.getRawAxis(Xbox.Constants.RIGHT_TRIGGER_AXIS);		//Eject
+		double leftTrigger = xbox.getRawAxis(Xbox.Constants.LEFT_TRIGGER_AXIS);			//Intake
+
+		if(startButton)
+		{
+			resetPivotEncoder();
 		}
+
+		if(backButton)
+		{
+			zeroPivotEncoder();
+		}
+
+		//Updates Current Range
+		updateCurrentRange();
+
+
+		//Move pivot arm
+		if (!isPivoting())
+		{
+
+			//Some alternative code to make it work like the elevator
+
+			if (yButton)
+			{
+				targetRange = currentRange.higherNeighbor().range();
+				setPivoting(true);
+				currentDirection = Constants.Direction.Up;
+			}
+			else if (aButton)
+			{
+				targetRange = currentRange.lowerNeighbor().range();
+				setPivoting(true);
+				currentDirection = Constants.Direction.Down;
+			}
+			else if (rightYAxis < -0.5)
+			{
+
+				raise();
+			}
+			else if (rightYAxis > 0.5)
+			{
+				lower();
+			}
+			else// if (Math.abs(rightYAxis) < 0.5)
+			{
+				pivotOff();
+			}
+
+		}
+		else if(isPivoting() && !DriverStation.getInstance().isAutonomous())
+		{
+
+			System.out.println("Is Pivoting");
+			if (currentDirection == Constants.Direction.Up)
+			{
+				if (yButton)
+				{
+					targetRange = currentRange.higherNeighbor.range();
+				}
+				else if (aButton)
+				{
+					currentDirection = Constants.Direction.None;
+					pivotOff();
+				}
+			}
+			else if (currentDirection == Constants.Direction.Down) 
+			{
+				if (aButton)
+				{
+					targetRange = currentRange.lowerNeighbor.range();
+				}
+				else if (yButton)
+				{
+					currentDirection = Constants.Direction.None;
+					pivotOff();
+				}
+			}
+
+
+			if ( (currentValue >= targetRange[0]) && (currentValue < targetRange[1]) )
+			{
+				System.out.println("In target range");
+				isPivoting = false;
+				currentDirection = Constants.Direction.None;
+				pivotOff();
+			}
+			else if (currentDirection == Constants.Direction.Up)
+			{
+				System.out.println("Raising");
+				raise();
+			}
+			else if (currentDirection == Constants.Direction.Down)
+			{
+				lower();
+				System.out.println("Lowering");
+			}
+		}
+
+		//Intake
+		if (Math.abs(rightTrigger) > 0.3)
+		{
+			ejectShoot();
+		}
+		else if (Math.abs(leftTrigger) > 0.3)
+		{
+			intake();
+		}
+		else if (Math.abs(leftTrigger) > 0.3 && bButton)
+		{
+			intakeRotateCubeLeft();
+		}
+		else if (xButton)
+		{
+			ejectDrop();
+		}
+		else
+		{
+			intakeOff();
+		}
+	}
+
+	public void autonomous()
+	{
+		if ( (currentValue >= targetRange[0]) && (currentValue <= targetRange[1]) )
+		{
+			System.out.println("Pivot ArmIn target range");
+			pivotOff();	
+		}
+		else if (currentValue < targetRange[0])
+		{
+			System.out.println("Pivot Arm Raising");
+			raise();				
+		}
+		else if (currentValue > targetRange[1])
+		{
+			lower();
+			System.out.println("Pivot Arm Lowering");
+		}
+
+		if(isAutoEjecting())
+		{
+			autoEject();
+		}
+		else
+		{
+			intakeOff();
+		}
+	}
+	
+	public void test()
+	{
+		
 	}
 
 	//Updates the current range depending on the encoder value
@@ -564,7 +585,7 @@ public class Gripper extends Thread
 	{
 		pivotTalon.setSelectedSensorPosition(3575,0,0);
 	}
-	
+
 	public void zeroPivotEncoder()
 	{
 		pivotTalon.setSelectedSensorPosition(0,0,0);
@@ -573,7 +594,7 @@ public class Gripper extends Thread
 	{
 		System.out.printf("Pivot = %5d		Left Intake = %5d		Right Intake = %5d", getPivotEncoder(), getLeftIntakeEncoder(), getRightIntakeEncoder());
 	}
-	
+
 	public void resetIntakeEncoder()
 	{
 		rightIntakeTalon.setSelectedSensorPosition(0, 0, 0);		// set encoder position
