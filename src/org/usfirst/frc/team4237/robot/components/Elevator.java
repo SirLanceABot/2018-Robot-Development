@@ -342,11 +342,6 @@ public class Elevator extends Thread implements Component
 		targetRange = Constants.Range.exchangeAndSwitchAndPortalRange.range;
 	}
 	
-	public void printPotentiometers()
-	{
-		System.out.printf("Port4 = %f1.4 Port5 = %f1.4 Port6 = %f1.4 Port7 = %f1.4\n",  stringPot4.get(), stringPot5.get(), stringPot.get(), stringPot7.get());
-	}
-	
 	public void autoSetFloorTargetRange()
 	{
 		targetRange = Constants.Range.floorRange.range;
