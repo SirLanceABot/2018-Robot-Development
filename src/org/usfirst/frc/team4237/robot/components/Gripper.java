@@ -37,7 +37,9 @@ public class Gripper extends Thread implements Component
 
 	private int currentTestKeyPosition = 0;
 	
-	private boolean y_
+	private boolean leftBumper;
+	private boolean rightBumper;
+	private boolean aButton;
 
 	//Quarantine
 	boolean isIntakeDone = true;
@@ -74,13 +76,17 @@ public class Gripper extends Thread implements Component
 		//Pivoter settings
 		pivotTalon.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder, 0, 0);
 		pivotTalon.setSensorPhase(true);
-		pivotTalon.configForwardSoftLimitThreshold(3575, 0);
+		pivotTalon.configForwardSoftLimitThreshold(2590, 0);
 		pivotTalon.configReverseSoftLimitThreshold(0, 0);
 		pivotTalon.configForwardSoftLimitEnable(true, 0);
 		pivotTalon.configReverseSoftLimitEnable(true, 0);
 
 		//Reset Encoders to correct values
 		pivotTalon.setSelectedSensorPosition(3575,0,0);
+		
+		talonSRXHashMap.put(Constants.LEFT_INTAKE_MOTOR_PORT, leftIntakeTalon);
+		talonSRXHashMap.put(Constants.RIGHT_INTAKE_MOTOR_PORT, rightIntakeTalon);
+		talonSRXHashMap.put(Constants.PIVOTER_MOTOR_PORT, pivotTalon);
 
 		//PID settings
 		//		leftIntakeTalon.selectProfileSlot(Constants.PID_SLOT_ID, 0);
@@ -275,8 +281,18 @@ public class Gripper extends Thread implements Component
 	{
 		return rightIntakeTalon.getSelectedSensorPosition(0);
 	}
+	
+	public void setAutoLimits()
+	{
+		pivotTalon.configForwardSoftLimitThreshold(2590, 0);
+	}
+	
+	public void setTeleopLimits()
+	{
+		pivotTalon.configForwardSoftLimitThreshold(1966, 0);
+	}
 
-	public synchronized void run()
+	public void run()
 	{
 		while (!this.interrupted())
 		{	
@@ -464,7 +480,7 @@ public class Gripper extends Thread implements Component
 	
 	public void test()
 	{
-		
+
 	}
 
 	//Updates the current range depending on the encoder value
@@ -491,9 +507,17 @@ public class Gripper extends Thread implements Component
 		{
 			currentRange = Constants.Range.middleRange;
 		}
-		else if (currentValue <= Constants.Range.middleRaisedRange.topValue())
+		else if (currentValue <= Constants.Range.middleTeleopMaxRange.topValue())
 		{
-			currentRange = Constants.Range.middleRaisedRange;
+			currentRange = Constants.Range.middleTeleopMaxRange;
+		}
+		else if (currentValue <= Constants.Range.teleopMaxRange.topValue())
+		{
+			currentRange = Constants.Range.teleopMaxRange;
+		}
+		else if (currentValue <= Constants.Range.teleopMaxRaisedRange.topValue())
+		{
+			currentRange = Constants.Range.teleopMaxRaisedRange;
 		}
 		else if (currentValue <= Constants.Range.raisedRange.topValue())
 		{
@@ -620,13 +644,15 @@ public class Gripper extends Thread implements Component
 
 		private enum InitRange
 		{
-			floorRange(0, 30),
-			floorHorizontalRange(31, 848),
-			horizontalRange(849, 909),
-			horizontalMiddleRange(910,2057),
-			middleRange(2058, 2118),
-			middleRaisedRange(2119, 3544),
-			raisedRange(3545, 3575),
+			floorRange(0, 15),
+			floorHorizontalRange(16, 141),
+			horizontalRange(142, 172),
+			horizontalMiddleRange(173,1271),
+			middleRange(1272, 1302),
+			middleTeleopMaxRange(1303, 1951),
+			teleopMaxRange(1952,1981),
+			teleopMaxRaisedRange(1982,2574),
+			raisedRange(2575, 2590),
 			none(-1, -1),
 			error(-1, -1);
 
@@ -660,9 +686,11 @@ public class Gripper extends Thread implements Component
 			floorHorizontalRange(  	InitRange.floorHorizontalRange.range(),		InitRange.floorRange,  		InitRange.horizontalRange),
 			horizontalRange(		InitRange.horizontalRange.range(), 			InitRange.floorRange,		InitRange.middleRange),
 			horizontalMiddleRange(	InitRange.horizontalMiddleRange.range(),	InitRange.horizontalRange,	InitRange.middleRange),
-			middleRange(       		InitRange.middleRange.range(),       		InitRange.horizontalRange,  InitRange.raisedRange),
-			middleRaisedRange( 		InitRange.middleRaisedRange.range(), 		InitRange.middleRange,		InitRange.raisedRange),
-			raisedRange(      		InitRange.raisedRange.range(),       		InitRange.middleRange,		InitRange.raisedRange),
+			middleRange(       		InitRange.middleRange.range(),       		InitRange.horizontalRange,  InitRange.teleopMaxRange),
+			middleTeleopMaxRange( 	InitRange.middleTeleopMaxRange.range(), 	InitRange.middleRange,		InitRange.teleopMaxRange),
+			teleopMaxRange(			InitRange.teleopMaxRange.range(),			InitRange.middleRange,		InitRange.raisedRange),
+			teleopMaxRaisedRange(	InitRange.teleopMaxRaisedRange.range(),		InitRange.teleopMaxRange,	InitRange.raisedRange),
+			raisedRange(      		InitRange.raisedRange.range(),       		InitRange.teleopMaxRange,	InitRange.raisedRange),
 			error(             		InitRange.error.range(),             		InitRange.error,      		InitRange.error);
 
 			private final int[] range;
