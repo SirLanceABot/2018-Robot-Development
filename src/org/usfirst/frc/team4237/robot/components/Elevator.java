@@ -258,6 +258,7 @@ public class Elevator extends Thread implements Component
 				talonSRXHashMap.get(i).set(ControlMode.PercentOutput, 0.0);
 			}
 		}
+		printTestInfo();
 	}
 
 	public void updateCurrentRange()
@@ -367,7 +368,6 @@ public class Elevator extends Thread implements Component
 	{		
 		private enum InitRange
 		{
-			
 			floorRange(118, 128),
 			floorExchangeAndSwitchAndPortalRange(118, 228),
 			exchangeAndSwitchAndPortalRange(228, 248),
