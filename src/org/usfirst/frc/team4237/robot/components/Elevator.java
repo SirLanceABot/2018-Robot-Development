@@ -208,24 +208,24 @@ public class Elevator extends Thread
 		currentValue = getStringPot();
 //		printPotentiometers();
 		System.out.println("Potentiometer Value = " + currentValue);
-		if (currentValue <= Constants.Range.floorAndSwitchRange.topValue())
+		if (currentValue <= Constants.Range.floorRange.topValue())
 		{
-			currentRange = Constants.Range.floorAndSwitchRange;
+			currentRange = Constants.Range.floorRange;
 //			System.out.println("Current Range: " + Constants.Range.floorRange);
 		}
-		else if (currentValue <= Constants.Range.floorAndSwitchExchangeAndPortalRange.topValue())
+		else if (currentValue <= Constants.Range.floorExchangeAndSwitchAndPortalRange.topValue())
 		{
-			currentRange = Constants.Range.floorAndSwitchExchangeAndPortalRange;
+			currentRange = Constants.Range.floorExchangeAndSwitchAndPortalRange;
 //			System.out.println("Current Range: " + Constants.Range.floorAndSwitchExchangeAndPortalRange);
 		}
-		else if (currentValue <= Constants.Range.exchangeAndPortalRange.topValue())
+		else if (currentValue <= Constants.Range.exchangeAndSwitchAndPortalRange.topValue())
 		{
-			currentRange = Constants.Range.exchangeAndPortalRange;
+			currentRange = Constants.Range.exchangeAndSwitchAndPortalRange;
 //			System.out.println("Current Range: " + Constants.Range.exchangeAndPortalRange);
 		}
-		else if (currentValue <= Constants.Range.exchangeAndPortalBottomScaleRange.topValue())
+		else if (currentValue <= Constants.Range.exchangeAndSwitchAndPortalBottomScaleRange.topValue())
 		{
-			currentRange = Constants.Range.exchangeAndPortalBottomScaleRange;
+			currentRange = Constants.Range.exchangeAndSwitchAndPortalBottomScaleRange;
 //			System.out.println("Current Range: " + Constants.Range.exchangeAndPortalSwitchRange);
 		}
 		else if (currentValue <= Constants.Range.bottomScaleRange.topValue())
@@ -288,7 +288,7 @@ public class Elevator extends Thread
 	
 	public void autoSetSwitchTargetRange()
 	{
-		targetRange = Constants.Range.floorAndSwitchRange.range;
+		targetRange = Constants.Range.exchangeAndSwitchAndPortalRange.range;
 	}
 	
 	public void printPotentiometers()
@@ -298,20 +298,23 @@ public class Elevator extends Thread
 	
 	public void autoSetFloorTargetRange()
 	{
-		targetRange = Constants.Range.floorAndSwitchRange.range;
+		targetRange = Constants.Range.floorRange.range;
 	}
 
-
+	public void testElevator()
+	{
+		
+	}
 	
 	public static class Constants
 	{
 		private enum InitRange
 		{
 			
-			floorAndSwitchRange(118, 128),
-			floorAndSwitchExchangeAndPortalRange(118, 228),
-			exchangeAndPortalRange(228, 248),
-			exchangeAndPortalBottomScaleRange(248, 416),
+			floorRange(118, 128),
+			floorExchangeAndSwitchAndPortalRange(118, 228),
+			exchangeAndSwitchAndPortalRange(228, 248),
+			exchangeAndSwitchAndPortalBottomScaleRange(248, 416),
 			bottomScaleRange(416, 436),
 			bottomScaleTopScaleRange(436, 578),
 			topScaleRange(578, 588),
@@ -356,11 +359,11 @@ public class Elevator extends Thread
 
 		public enum Range
 		{
-			floorAndSwitchRange(     				InitRange.floorAndSwitchRange.range(),                 	InitRange.floorAndSwitchRange,        			InitRange.exchangeAndPortalRange),
-			floorAndSwitchExchangeAndPortalRange(   InitRange.floorAndSwitchExchangeAndPortalRange.range(),	InitRange.floorAndSwitchRange,        			InitRange.exchangeAndPortalRange),
-			exchangeAndPortalRange(         		InitRange.exchangeAndPortalRange.range(),				InitRange.floorAndSwitchRange,        			InitRange.bottomScaleRange),
-			exchangeAndPortalBottomScaleRange(   	InitRange.exchangeAndPortalBottomScaleRange.range(),	InitRange.exchangeAndPortalRange,       		InitRange.bottomScaleRange),
-			bottomScaleRange(           			InitRange.bottomScaleRange.range(),          			InitRange.exchangeAndPortalRange,    			InitRange.topScaleRange), 
+			floorRange(     				InitRange.floorRange.range(),                 	InitRange.floorRange,        			InitRange.exchangeAndSwitchAndPortalRange),
+			floorExchangeAndSwitchAndPortalRange(   InitRange.floorExchangeAndSwitchAndPortalRange.range(),	InitRange.floorRange,        			InitRange.exchangeAndSwitchAndPortalRange),
+			exchangeAndSwitchAndPortalRange(         		InitRange.exchangeAndSwitchAndPortalRange.range(),				InitRange.floorRange,        			InitRange.bottomScaleRange),
+			exchangeAndSwitchAndPortalBottomScaleRange(   	InitRange.exchangeAndSwitchAndPortalBottomScaleRange.range(),	InitRange.exchangeAndSwitchAndPortalRange,       		InitRange.bottomScaleRange),
+			bottomScaleRange(           			InitRange.bottomScaleRange.range(),          			InitRange.exchangeAndSwitchAndPortalRange,    			InitRange.topScaleRange), 
 			bottomScaleTopScaleRange(   			InitRange.bottomScaleTopScaleRange.range(),   			InitRange.bottomScaleRange,  					InitRange.topScaleRange),
 			topScaleRange(              			InitRange.topScaleRange.range(),              			InitRange.bottomScaleRange,  					InitRange.topScaleRange),
 			error(                      			InitRange.error.range(),                      			InitRange.error,             					InitRange.error);

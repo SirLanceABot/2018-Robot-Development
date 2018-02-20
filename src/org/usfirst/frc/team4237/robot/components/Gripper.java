@@ -130,7 +130,20 @@ public class Gripper extends Thread
 	{
 		if (rightIntakeTalon.getSelectedSensorPosition(0) <= Constants.AUTO_EJECT_ENCODER_STOP_VALUE)
 		{
-			eject();
+			ejectShoot();
+		}
+		else
+		{
+			intakeOff();
+			setAutoEjecting(false);
+		}
+	}
+	
+	public void autoDrop()
+	{
+		if (rightIntakeTalon.getSelectedSensorPosition(0) <= Constants.AUTO_EJECT_ENCODER_STOP_VALUE)
+		{
+			ejectDrop();
 		}
 		else
 		{
@@ -175,7 +188,7 @@ public class Gripper extends Thread
 	/**
 	 * Eject for use during tele-op
 	 */
-	public void eject()
+	public void ejectShoot()
 	{
 		//leftIntakeTalon.set(ControlMode.Velocity, 500);
 		//rightIntakeTalon.set(ControlMode.Velocity, 500);
@@ -185,6 +198,12 @@ public class Gripper extends Thread
 
 		leftIntakeTalon.set(-1.0);
 		rightIntakeTalon.set(-1.0);
+	}
+	
+	public void ejectDrop()
+	{
+		leftIntakeTalon.set(-0.2);
+		rightIntakeTalon.set(-0.2);
 	}
 
 
@@ -389,7 +408,7 @@ public class Gripper extends Thread
 			//Intake
 			if (Math.abs(rightTrigger) > 0.3)
 			{
-				eject();
+				ejectShoot();
 			}
 			else if (Math.abs(leftTrigger) > 0.3)
 			{
@@ -399,9 +418,9 @@ public class Gripper extends Thread
 			{
 				intakeRotateCubeLeft();
 			}
-			else if (Math.abs(leftTrigger) > 0.3 && xButton)
+			else if (xButton)
 			{
-				intakeRotateCubeRight();
+				ejectDrop();
 			}
 			else
 			{
