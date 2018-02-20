@@ -51,10 +51,6 @@ public class Elevator extends Thread implements Component
 	private boolean rightBumper;
 	private boolean aButton;
 	
-	private boolean wasLeftBumper;
-	private boolean wasRightBumper;
-	private boolean wasAButton;
-	
 	private static Elevator instance = new Elevator();
 
 	public static Elevator getInstance()
