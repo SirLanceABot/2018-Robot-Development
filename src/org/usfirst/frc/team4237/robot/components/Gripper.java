@@ -259,6 +259,16 @@ public class Gripper extends Thread
 		setPivoting(false);
 		pivotTalon.set(0.0);
 	}
+	
+	public int getLeftIntakeEncoder()
+	{
+		return leftIntakeTalon.getSelectedSensorPosition(0);
+	}
+	
+	public int getRightIntakeEncoder()
+	{
+		return rightIntakeTalon.getSelectedSensorPosition(0);
+	}
 
 	@Override
 	public void run()
@@ -558,6 +568,10 @@ public class Gripper extends Thread
 	public void zeroPivotEncoder()
 	{
 		pivotTalon.setSelectedSensorPosition(0,0,0);
+	}
+	public void printEncoderValues()
+	{
+		System.out.printf("Pivot = %5d		Left Intake = %5d		Right Intake = %5d", getPivotEncoder(), getLeftIntakeEncoder(), getRightIntakeEncoder());
 	}
 	
 	public void resetIntakeEncoder()
