@@ -9,9 +9,10 @@ class RoboRIOTransmitter():
 
     def sendMessage(self, message):
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+         
         print message
-        s.connect((self.JAVA_SERVER_HOST, self.JAVA_SERVER_PORT))
         try:
+            s.connect((self.JAVA_SERVER_HOST, self.JAVA_SERVER_PORT))
             s.sendall(message)
             print "Successfully sent message"
         except Exception as e:

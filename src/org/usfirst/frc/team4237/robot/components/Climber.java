@@ -21,8 +21,6 @@ public class Climber
 	
 	private static Climber instance = new Climber();
 	
-	
-	
 	public static Climber getInstance()
 	{
 		return instance;

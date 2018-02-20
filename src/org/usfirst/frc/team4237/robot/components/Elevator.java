@@ -28,20 +28,32 @@ public class Elevator extends Thread
 	private WPI_TalonSRX masterTalonSRX = new WPI_TalonSRX(Constants.MASTER_MOTOR_PORT); 
 	private WPI_TalonSRX slaveTalonSRX = new WPI_TalonSRX(Constants.SLAVE_MOTOR_PORT);
 
+	private HashMap<Integer, WPI_TalonSRX> talonSRXHashMap = new HashMap<Integer, WPI_TalonSRX>();
+	
 	private AnalogPotentiometer stringPot = new AnalogPotentiometer(Constants.STRING_POT_PORT);
 	private AnalogPotentiometer stringPot4 = new AnalogPotentiometer(4);
 	private AnalogPotentiometer stringPot5 = new AnalogPotentiometer(5);
 	private AnalogPotentiometer stringPot7 = new AnalogPotentiometer(7);
 
 	private double currentValue;
-	private Constants.Range currentRange;
 	private double[] targetRange = Constants.Range.error.range;
+
+	private Constants.Range currentRange;
 	private Constants.Direction currentDirection = Constants.Direction.None;
+	
 	private boolean isMoving = false;
 	private boolean inTargetRange = false;
 
-	
 	private Constants.InitRange autoTargetRange = Constants.InitRange.error;
+	
+	private int currentTestKeyPosition = 0;
+	
+	//Joystick buttons
+	private boolean leftBumper;
+	private boolean rightBumper;
+	
+	private boolean wasLeftBumper;
+	private boolean wasRightBumper;
 	
 	private static Elevator instance = new Elevator();
 
@@ -68,9 +80,11 @@ public class Elevator extends Thread
 		masterTalonSRX.configReverseSoftLimitThreshold(118, 0);
 		masterTalonSRX.configForwardSoftLimitEnable(true, 0);
 		masterTalonSRX.configReverseSoftLimitEnable(true, 0);
-		
 
 		slaveTalonSRX.follow(masterTalonSRX); // Sets slaveTalonSRX to follow masterTalonSrx
+		
+		talonSRXHashMap.put(Constants.MASTER_MOTOR_PORT, masterTalonSRX);
+		talonSRXHashMap.put(Constants.SLAVE_MOTOR_PORT, slaveTalonSRX);
 	}
 
 	/**
@@ -94,113 +108,136 @@ public class Elevator extends Thread
 	public synchronized void run()
 	{
 		while (!this.interrupted())
-		{
-			boolean rightBumper = xbox.getRawButton(Xbox.Constants.RIGHT_BUMPER);
-			boolean leftBumper = xbox.getRawButton(Xbox.Constants.LEFT_BUMPER);
-			
-			double leftYAxis = xbox.getRawAxis(Xbox.Constants.LEFT_STICK_Y_AXIS);
-			
+		{	
 			updateCurrentRange();
 
-			if (!isMoving())
+			if (DriverStation.getInstance().isOperatorControl())
 			{
-				if (rightBumper)
-				{
-					targetRange = currentRange.higherNeighbor().range();
-					isMoving = true;
-					currentDirection = Constants.Direction.Up;
-				}
-				else if (leftBumper)
-				{
-					targetRange = currentRange.lowerNeighbor().range();
-					isMoving = true;
-					currentDirection = Constants.Direction.Down;
-				}
-				else if (leftYAxis < -0.5)
-				{
-					raise();
-				}
-				else if (leftYAxis > 0.5)
-				{
-					lower();
-				}
-				else
-				{
-					stopMoving();
-				}
-			}
-			
-			if(isMoving() && !DriverStation.getInstance().isAutonomous())
-			{
-				
-				System.out.println("Is Moving");
-				if (currentDirection == Constants.Direction.Up)
-				{
-					if (rightBumper)
-					{
-						targetRange = currentRange.higherNeighbor.range();
-					}
-					else if (leftBumper)
-					{
-						currentDirection = Constants.Direction.None;
-						stopMoving();
-					}
-				}
-				else if (currentDirection == Constants.Direction.Down) 
-				{
-					if (leftBumper)
-					{
-						targetRange = currentRange.lowerNeighbor.range();
-					}
-					else if (rightBumper)
-					{
-						currentDirection = Constants.Direction.None;
-						stopMoving();
-					}
-				}
-			
-				
-				if ( (currentValue >= targetRange[0]) && (currentValue < targetRange[1]) )
-				{
-					System.out.println("In target range");
-					isMoving = false;
-					currentDirection = Constants.Direction.None;
-					stopMoving();
-				}
-				else if (currentDirection == Constants.Direction.Up)
-				{
-					System.out.println("Raising");
-					raise();
-				}
-				else if (currentDirection == Constants.Direction.Down)
-				{
-					lower();
-					System.out.println("Lowering");
-				}
+				teleop();
 			}
 			else if (DriverStation.getInstance().isAutonomous())
 			{
-				inTargetRange = false;
-				
-				if ( (currentValue >= targetRange[0]) && (currentValue <= targetRange[1]) )
-				{
-					System.out.println("In target range");
-					currentDirection = Constants.Direction.None;
-					stopMoving();
-				}
-				else if (currentValue < targetRange[0])
-				{
-					System.out.println("Raising");
-					raise();
-				}
-				else if (currentValue > targetRange[1])
-				{
-					lower();
-					System.out.println("Lowering");
-				}
+				autonomous();
 			}
 			Timer.delay(0.005);
 		} //End of while loop
+	}
+	
+	public void teleop()
+	{
+		rightBumper = xbox.getRawButton(Xbox.Constants.RIGHT_BUMPER);
+		leftBumper = xbox.getRawButton(Xbox.Constants.LEFT_BUMPER);
+		
+		double leftYAxis = xbox.getRawAxis(Xbox.Constants.LEFT_STICK_Y_AXIS);
+		
+		if (!isMoving())
+		{
+			if (rightBumper)
+			{
+				targetRange = currentRange.higherNeighbor().range();
+				isMoving = true;
+				currentDirection = Constants.Direction.Up;
+			}
+			else if (leftBumper)
+			{
+				targetRange = currentRange.lowerNeighbor().range();
+				isMoving = true;
+				currentDirection = Constants.Direction.Down;
+			}
+			else if (leftYAxis < -0.5)
+			{
+				raise();
+			}
+			else if (leftYAxis > 0.5)
+			{
+				lower();
+			}
+			else
+			{
+				stopMoving();
+			}
+		}
+		
+		if(isMoving())
+		{
+			System.out.println("Is Moving");
+			if (currentDirection == Constants.Direction.Up)
+			{
+				if (rightBumper)
+				{
+					targetRange = currentRange.higherNeighbor.range();
+				}
+				else if (leftBumper)
+				{
+					currentDirection = Constants.Direction.None;
+					stopMoving();
+				}
+			}
+			else if (currentDirection == Constants.Direction.Down) 
+			{
+				if (leftBumper)
+				{
+					targetRange = currentRange.lowerNeighbor.range();
+				}
+				else if (rightBumper)
+				{
+					currentDirection = Constants.Direction.None;
+					stopMoving();
+				}
+			}
+		
+			if ( (currentValue >= targetRange[0]) && (currentValue < targetRange[1]) )
+			{
+				System.out.println("In target range");
+				isMoving = false;
+				currentDirection = Constants.Direction.None;
+				stopMoving();
+			}
+			else if (currentDirection == Constants.Direction.Up)
+			{
+				System.out.println("Raising");
+				raise();
+			}
+			else if (currentDirection == Constants.Direction.Down)
+			{
+				lower();
+				System.out.println("Lowering");
+			}
+		}
+	}
+	
+	public void autonomous()
+	{
+		inTargetRange = false;
+		
+		if ((currentValue >= targetRange[0]) && (currentValue <= targetRange[1]))
+		{
+			System.out.println("In target range");
+			currentDirection = Constants.Direction.None;
+			stopMoving();
+		}
+		else if (currentValue < targetRange[0])
+		{
+			System.out.println("Raising");
+			raise();
+		}
+		else if (currentValue > targetRange[1])
+		{
+			lower();
+			System.out.println("Lowering");
+		}
+	}
+	
+	public void test()
+	{
+		leftBumper = xbox.getRawButton(Xbox.Constants.LEFT_BUMPER);
+		rightBumper = xbox.getRawButton(Xbox.Constants.RIGHT_BUMPER);
+		
+		if (leftBumper) currentTestKeyPosition++;
+		if currentTestKeyPosition >= talonSRXHashMap.keySet();
+		
+		wasLeftBumper = leftBumper;
+		wasRightBumper = rightBumper;
 	}
 
 	public void updateCurrentRange()
@@ -301,13 +338,8 @@ public class Elevator extends Thread
 		targetRange = Constants.Range.floorRange.range;
 	}
 
-	public void testElevator()
-	{
-		
-	}
-	
 	public static class Constants
-	{
+	{		
 		private enum InitRange
 		{
 			
@@ -411,8 +443,6 @@ public class Elevator extends Thread
 			Down,
 			None
 		}
-
-		//TODO: Change ALL of these to appropriate values
 
 		public static final int ACCEPTABLE_TICK_RANGE = 10;
 
