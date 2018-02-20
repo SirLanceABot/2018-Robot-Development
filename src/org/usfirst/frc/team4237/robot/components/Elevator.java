@@ -32,9 +32,6 @@ public class Elevator extends Thread implements Component
 	private HashMap<Integer, WPI_TalonSRX> talonSRXHashMap = new HashMap<Integer, WPI_TalonSRX>();
 	
 	private AnalogPotentiometer stringPot = new AnalogPotentiometer(Constants.STRING_POT_PORT);
-	private AnalogPotentiometer stringPot4 = new AnalogPotentiometer(4);
-	private AnalogPotentiometer stringPot5 = new AnalogPotentiometer(5);
-	private AnalogPotentiometer stringPot7 = new AnalogPotentiometer(7);
 
 	private double currentValue;
 	private double[] targetRange = Constants.Range.error.range;
