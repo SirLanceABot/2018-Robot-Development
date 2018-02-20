@@ -1,6 +1,7 @@
 package org.usfirst.frc.team4237.robot;
 
 import org.usfirst.frc.team4237.robot.components.Drivetrain;
+import org.usfirst.frc.team4237.robot.components.Elevator;
 import org.usfirst.frc.team4237.robot.components.Gripper;
 import org.usfirst.frc.team4237.robot.control.Xbox;
 import org.usfirst.frc.team4237.robot.network.AutoSelect4237;
@@ -23,7 +24,7 @@ public class Robot extends IterativeRobot
 	public void robotInit()
 	{
 		System.out.println("Starting robot...");
-		
+		Elevator.getInstance().start();
 		Gripper.getInstance().start();
 	}
 	

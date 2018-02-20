@@ -20,20 +20,19 @@ public class Gripper extends Thread
 	private WPI_TalonSRX leftIntakeTalon = new WPI_TalonSRX(Constants.LEFT_INTAKE_MOTOR_PORT);
 	private WPI_TalonSRX rightIntakeTalon = new WPI_TalonSRX(Constants.RIGHT_INTAKE_MOTOR_PORT);
 	private WPI_TalonSRX pivotTalon = new WPI_TalonSRX(Constants.PIVOTER_MOTOR_PORT);
-	
+
 	private boolean isAutoEjecting = false;
 	private boolean isAutoIntaking = false;
 	private boolean isPivoting = false;
-	
-	private int currentValue = 0;
-	
-	private Constants.Range currentRange = Constants.Range.error;
-	private Constants.Range autoTargetRange = Constants.Range.error;
-	private int[] targetRange = Constants.Range.error.range;
-	private Constants.Direction currentDirection = Constants.Direction.None;
-	
 
-	
+	private int currentValue = 0;
+
+	private Constants.Range currentRange = Constants.Range.raisedRange;
+	private int[] targetRange = Constants.Range.raisedRange.range;
+	private Constants.Direction currentDirection = Constants.Direction.None;
+
+
+
 	//Quarantine
 	boolean isIntakeDone = true;
 	boolean isPivoterRaisedDone = true;
@@ -69,30 +68,29 @@ public class Gripper extends Thread
 		//Pivoter settings
 		pivotTalon.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder, 0, 0);
 		pivotTalon.setSensorPhase(true);
-		pivotTalon.configForwardSoftLimitEnable(false, 0);
-		pivotTalon.configReverseSoftLimitEnable(false, 0);
-		
-		
+		pivotTalon.configForwardSoftLimitThreshold(3575, 0);
+		pivotTalon.configReverseSoftLimitThreshold(0, 0);
+		pivotTalon.configForwardSoftLimitEnable(true, 0);
+		pivotTalon.configReverseSoftLimitEnable(true, 0);
+
+		//Reset Encoders to correct values
+		pivotTalon.setSelectedSensorPosition(3575,0,0);
 
 		//PID settings
-//		leftIntakeTalon.selectProfileSlot(Constants.PID_SLOT_ID, 0);
-//		leftIntakeTalon.config_kP(Constants.PID_SLOT_ID, 2.2, 1);
-//		leftIntakeTalon.config_kI(Constants.PID_SLOT_ID, 0.01, 1);
-//		leftIntakeTalon.config_kD(Constants.PID_SLOT_ID, 0.0001, 1);
-//		leftIntakeTalon.config_kF(Constants.PID_SLOT_ID, 4.3, 1);
-//
-//		rightIntakeTalon.selectProfileSlot(Constants.PID_SLOT_ID, 0);
-//		rightIntakeTalon.config_kP(Constants.PID_SLOT_ID, 2.2, 1);
-//		rightIntakeTalon.config_kI(Constants.PID_SLOT_ID, 0.01, 1);
-//		rightIntakeTalon.config_kD(Constants.PID_SLOT_ID, 0.0001, 1);
-//		rightIntakeTalon.config_kF(Constants.PID_SLOT_ID, 4.3, 1);
-	}
-	public void resetEncoders()
-	{
-		pivotTalon.setSelectedSensorPosition(0,0,0);
+		//		leftIntakeTalon.selectProfileSlot(Constants.PID_SLOT_ID, 0);
+		//		leftIntakeTalon.config_kP(Constants.PID_SLOT_ID, 2.2, 1);
+		//		leftIntakeTalon.config_kI(Constants.PID_SLOT_ID, 0.01, 1);
+		//		leftIntakeTalon.config_kD(Constants.PID_SLOT_ID, 0.0001, 1);
+		//		leftIntakeTalon.config_kF(Constants.PID_SLOT_ID, 4.3, 1);
+		//
+		//		rightIntakeTalon.selectProfileSlot(Constants.PID_SLOT_ID, 0);
+		//		rightIntakeTalon.config_kP(Constants.PID_SLOT_ID, 2.2, 1);
+		//		rightIntakeTalon.config_kI(Constants.PID_SLOT_ID, 0.01, 1);
+		//		rightIntakeTalon.config_kD(Constants.PID_SLOT_ID, 0.0001, 1);
+		//		rightIntakeTalon.config_kF(Constants.PID_SLOT_ID, 4.3, 1);
 	}
 
-	
+
 	/**
 	 * Intake function for autonomous
 	 * @return State of intake, whether it's done or not
@@ -107,8 +105,8 @@ public class Gripper extends Thread
 			intake();
 			//leftIntakeTalon.setSelectedSensorPosition(0,0,0);
 
-//			leftIntakeTalon.set(ControlMode.Velocity, 1);
-//			rightIntakeTalon.set(ControlMode.Velocity, 1);		// set motor
+			//			leftIntakeTalon.set(ControlMode.Velocity, 1);
+			//			rightIntakeTalon.set(ControlMode.Velocity, 1);		// set motor
 		}
 		if(rightIntakeTalon.getSelectedSensorPosition(0) >= Constants.AUTO_INTAKE_ENCODER_STOP_VALUE)
 		{
@@ -128,24 +126,17 @@ public class Gripper extends Thread
 	 * Eject function for autonomous
 	 * @return State of eject, whether it's done or not
 	 */
-	public boolean autoEject()
+	public void autoEject()
 	{
-		if(!isAutoEjecting())
+		if (rightIntakeTalon.getSelectedSensorPosition(0) <= Constants.AUTO_EJECT_ENCODER_STOP_VALUE)
 		{
-			rightIntakeTalon.setSelectedSensorPosition(0, 0, 0);		// set encoder position
-			setAutoEjecting(true);
 			eject();
-
-//			leftIntakeTalon.set(ControlMode.Velocity, -1);
-//			rightIntakeTalon.set(ControlMode.Velocity, -1);
 		}
-		//TODO: Check logic, should it be <= or should it be >= like it was originally?
-		if(rightIntakeTalon.getSelectedSensorPosition(0) <= Constants.AUTO_EJECT_ENCODER_STOP_VALUE)
+		else
 		{
 			intakeOff();
 			setAutoEjecting(false);
 		}
-		return isAutoEjecting();
 	}
 
 	/**
@@ -157,9 +148,9 @@ public class Gripper extends Thread
 		//leftIntakeTalon.set(ControlMode.Velocity, 0);
 		//rightIntakeTalon.set(ControlMode.Velocity, 0);
 
-//		leftIntakeTalon.set(ControlMode.PercentOutput, 0);
-//		rightIntakeTalon.set(ControlMode.PercentOutput, 0);
-	
+		//		leftIntakeTalon.set(ControlMode.PercentOutput, 0);
+		//		rightIntakeTalon.set(ControlMode.PercentOutput, 0);
+
 		leftIntakeTalon.set(0);
 		rightIntakeTalon.set(0);
 	}
@@ -173,12 +164,12 @@ public class Gripper extends Thread
 		//leftIntakeTalon.set(ControlMode.Velocity, -0.5);
 		//rightIntakeTalon.set(ControlMode.Velocity, -0.5);
 
-//		leftIntakeTalon.set(ControlMode.PercentOutput, -0.5);
-//		rightIntakeTalon.set(ControlMode.PercentOutput, -0.5);
-		
-		leftIntakeTalon.set(-0.30);
-		rightIntakeTalon.set(-0.30);
-		
+		//		leftIntakeTalon.set(ControlMode.PercentOutput, -0.5);
+		//		rightIntakeTalon.set(ControlMode.PercentOutput, -0.5);
+
+		leftIntakeTalon.set(0.50);
+		rightIntakeTalon.set(0.50);
+
 	}
 
 	/**
@@ -189,13 +180,13 @@ public class Gripper extends Thread
 		//leftIntakeTalon.set(ControlMode.Velocity, 500);
 		//rightIntakeTalon.set(ControlMode.Velocity, 500);
 
-//		leftIntakeTalon.set(ControlMode.PercentOutput, 0.5);
-//		rightIntakeTalon.set(ControlMode.PercentOutput, 0.5);
-		
-		leftIntakeTalon.set(1.0);
-		rightIntakeTalon.set(1.0);
+		//		leftIntakeTalon.set(ControlMode.PercentOutput, 0.5);
+		//		rightIntakeTalon.set(ControlMode.PercentOutput, 0.5);
+
+		leftIntakeTalon.set(-1.0);
+		rightIntakeTalon.set(-1.0);
 	}
-	
+
 
 	/**
 	 * Spins cube clockwise into left arm
@@ -205,7 +196,7 @@ public class Gripper extends Thread
 		leftIntakeTalon.set(0.0);
 		rightIntakeTalon.set(-0.70);
 	}
-	
+
 	/**
 	 * Spins cube counterclockwise into right arm
 	 */
@@ -214,7 +205,7 @@ public class Gripper extends Thread
 		leftIntakeTalon.set(-0.70);
 		rightIntakeTalon.set(0.0);
 	}
-	
+
 	/**
 	 * Move pivot arm at selected speed
 	 * @param value Value from joystick
@@ -224,7 +215,7 @@ public class Gripper extends Thread
 		//setPivoting(true);
 		pivotTalon.set(value);
 	}
-	
+
 	/**
 	 * Lower pivoter
 	 */
@@ -232,7 +223,7 @@ public class Gripper extends Thread
 	{	
 		pivot(0.75);
 	}
-	
+
 	/**
 	 * Lower pivoter
 	 */
@@ -240,7 +231,7 @@ public class Gripper extends Thread
 	{
 		pivot(-0.75);
 	}
-		
+
 	/**
 	 * Stop pivoting
 	 */
@@ -260,20 +251,31 @@ public class Gripper extends Thread
 			boolean bButton = xbox.getRawButton(Xbox.Constants.B_BUTTON);		//Spin Cube right
 			boolean yButton = xbox.getRawButton(Xbox.Constants.Y_BUTTON);		//Pivot up one level
 			boolean xButton = xbox.getRawButton(Xbox.Constants.X_BUTTON);		//Spin Cube left
+			boolean startButton = xbox.getRawButton(Xbox.Constants.START_BUTTON);
+			boolean backButton = xbox.getRawButton(Xbox.Constants.BACK_BUTTON);
 			
 			double rightYAxis = xbox.getRawAxis(Xbox.Constants.RIGHT_STICK_Y_AXIS);					//Free moving pivot
-			
-			
+
+
 			//Intake
 			double rightTrigger = xbox.getRawAxis(Xbox.Constants.RIGHT_TRIGGER_AXIS);		//Eject
 			double leftTrigger = xbox.getRawAxis(Xbox.Constants.LEFT_TRIGGER_AXIS);			//Intake
-				
+
+			if(startButton)
+			{
+				resetPivotEncoder();
+			}
 			
+			if(backButton)
+			{
+				zeroPivotEncoder();
+			}
+
 			//Updates Current Range
 			updateCurrentRange();
 
-			//System.out.println("Encoder Postion" + getPivotEncoder());
-			
+			System.out.println("Encoder Postion: " + getPivotEncoder());
+
 			//Move pivot arm
 			if (!isPivoting())
 			{
@@ -294,7 +296,7 @@ public class Gripper extends Thread
 				}
 				else if (rightYAxis < -0.5)
 				{
-					
+
 					raise();
 				}
 				else if (rightYAxis > 0.5)
@@ -305,7 +307,7 @@ public class Gripper extends Thread
 				{
 					pivotOff();
 				}
-				
+
 			}
 			else if(isPivoting() && !DriverStation.getInstance().isAutonomous())
 			{
@@ -360,21 +362,30 @@ public class Gripper extends Thread
 
 				if ( (currentValue >= targetRange[0]) && (currentValue <= targetRange[1]) )
 				{
-					System.out.println("In target range");
-					currentDirection = Constants.Direction.None;
+					System.out.println("Pivot ArmIn target range");
+					pivotOff();	
 				}
 				else if (currentValue < targetRange[0])
 				{
-					System.out.println("Raising");
-					raise();
+					System.out.println("Pivot Arm Raising");
+					raise();				
 				}
 				else if (currentValue > targetRange[1])
 				{
 					lower();
-					System.out.println("Lowering");
+					System.out.println("Pivot Arm Lowering");
+				}
+
+				if(isAutoEjecting())
+				{
+					autoEject();
+				}
+				else
+				{
+					intakeOff();
 				}
 			}
-			
+
 			//Intake
 			if (Math.abs(rightTrigger) > 0.3)
 			{
@@ -396,106 +407,10 @@ public class Gripper extends Thread
 			{
 				intakeOff();
 			}
-		
-				
-				//
-//				if (aButton || autoTargetRange == Constants.Range.floorRange)
-//				{
-//		 			targetRange = Constants.Range.floorRange.range();
-//					setPivoting(true);
-//					currentDirection = Constants.Direction.Down;
-//					if ((currentValue >= targetRange[0]) && (currentValue < targetRange[1]))
-//					{
-//						isAutoPivotFloorDone = true;
-//					}
-//				}
-//				else if (bButton || autoTargetRange == Constants.Range.middleRange)
-//				{
-//					targetRange = Constants.Range.middleRange.range();
-//					setPivoting(true);
-//					if (currentValue < Constants.Range.middleRange.bottomValue())
-//					{
-//						currentDirection = Constants.Direction.Up;
-//					}
-//					else if (currentValue > Constants.Range.middleRange.topValue())
-//					{
-//						currentDirection = Constants.Direction.Down;
-//					}
-//					else
-//					{
-//						currentDirection = Constants.Direction.None;
-//					}
-//					
-//					if ((currentValue >= targetRange[0]) && (currentValue < targetRange[1]))
-//					{
-//						isAutoPivotMiddleDone = true;
-//					}
-//				}
-//				else if (yButton || autoTargetRange == Constants.Range.raisedRange)
-//				{
-//					targetRange = Constants.Range.raisedRange.range();
-//					setPivoting(true);
-//					currentDirection = Constants.Direction.Up;
-//					if ((currentValue >= targetRange[0]) && (currentValue < targetRange[1]))
-//					{
-//						isAutoPivotRaisedDone = true;
-//					}
-//				}
-//				
-//				
-//				if (Math.abs(rightTrigger) > 0.3)
-//				{
-//					eject();
-//				}
-//				else if (Math.abs(leftTrigger) > 0.3)
-//				{
-//					intake();
-//				}
-//				else if (Math.abs(leftTrigger) > 0.3 && bButton)
-//				{
-//					intakeRotateCubeLeft();
-//				}
-//				else if (Math.abs(leftTrigger) > 0.3 && xButton)
-//				{
-//					intakeRotateCubeRight();
-//				}
-//				else
-//				{
-//					intakeOff();
-//				}
-//				
-//			}
-//			
-//			//Keeps pivot arm pivoting until target position is reached and switches direction of pivot arm if target position is skipped forwhatever reason
-//			if(isPivoting())
-//			{
-//				if (((currentDirection == Constants.Direction.Down) && (currentValue <= targetRange[1])) || 
-//					((currentDirection == Constants.Direction.Up) && (currentValue >= targetRange[0])) ||
-//					(xButton))
-//				{
-//					System.out.println("In target range");
-//					setPivoting(false);
-//					currentDirection = Constants.Direction.None;
-//					pivotOff();
-//				}
-//				else if (currentDirection == Constants.Direction.Up)
-//				{
-//					System.out.println("Raising");
-//					raise();
-//				}
-//				else if (currentDirection == Constants.Direction.Down)
-//				{
-//					System.out.println("Lowering");
-//					lower();
-//				}
-			//}
-			//End of code copied from elevator
-			
-			
 			Timer.delay(0.005);
 		}
 	}
-	
+
 	//Updates the current range depending on the encoder value
 	public void updateCurrentRange()
 	{
@@ -534,22 +449,22 @@ public class Gripper extends Thread
 	{
 		return isAutoPivotMiddleDone;
 	}
-	
+
 	public boolean isAutoFloorPivotDone()
 	{
 		return isAutoPivotFloorDone;
 	}
-	
+
 	public boolean isAutoRaisedPivotDone()
 	{
 		return isAutoPivotRaisedDone;
 	}
-	
+
 	public int[] getVelocityArray()
 	{
 		return new int[] {leftIntakeTalon.getSelectedSensorVelocity(0), rightIntakeTalon.getSelectedSensorVelocity(0)};
 	}
-	
+
 	public int getPivotEncoder()
 	{
 		return pivotTalon.getSelectedSensorPosition(0);
@@ -562,6 +477,7 @@ public class Gripper extends Thread
 
 	public void setAutoEjecting(boolean isAutoEjecting)
 	{
+		resetIntakeEncoder();
 		this.isAutoEjecting = isAutoEjecting;
 	}
 
@@ -574,40 +490,60 @@ public class Gripper extends Thread
 	{
 		this.isAutoIntaking = isAutoIntaking;
 	}
-	
+
 	public boolean isPivoting()
 	{
 		return isPivoting;
 	}
-	
+
 	public void setPivoting(boolean isPivoting)
 	{
 		this.isPivoting = isPivoting;
 	}
-	
+
+	public boolean inTargetRange()
+	{
+		return  (currentValue >= targetRange[0]) && (currentValue <= targetRange[1]);
+	}
+
 	public void autoSetRaisedTargetRange()
 	{
 		targetRange = Constants.Range.raisedRange.range;
 	}
-	
+
 	public void autoSetMiddleTargetRange()
 	{
 		targetRange = Constants.Range.middleRange.range;
 	}
-	
+
 	public void autoSetHorizontalTargetRange()
 	{
 		targetRange = Constants.Range.horizontalRange.range;
 	}
-	
+
 	public void autoSetFloorTargetRange()
 	{
 		targetRange = Constants.Range.floorRange.range;
 	}
-	
+
 	public Constants.Range getCurrentRange()
 	{
 		return this.currentRange;
+	}
+
+	public void resetPivotEncoder()
+	{
+		pivotTalon.setSelectedSensorPosition(3575,0,0);
+	}
+	
+	public void zeroPivotEncoder()
+	{
+		pivotTalon.setSelectedSensorPosition(0,0,0);
+	}
+	
+	public void resetIntakeEncoder()
+	{
+		rightIntakeTalon.setSelectedSensorPosition(0, 0, 0);		// set encoder position
 	}
 
 	/**
@@ -621,16 +557,16 @@ public class Gripper extends Thread
 			Down,
 			None
 		}
-		
+
 		private enum InitRange
 		{
 			floorRange(0, 30),
-			floorHorizontalRange(31, 215),
-			horizontalRange(216, 276),
-			horizontalMiddleRange(277,1310),
-			middleRange(1311, 1371),
-			middleRaisedRange(1372, 2032),
-			raisedRange(2033, 2063),
+			floorHorizontalRange(31, 848),
+			horizontalRange(849, 909),
+			horizontalMiddleRange(910,2057),
+			middleRange(2058, 2118),
+			middleRaisedRange(2119, 3544),
+			raisedRange(3545, 3575),
 			none(-1, -1),
 			error(-1, -1);
 
@@ -656,7 +592,7 @@ public class Gripper extends Thread
 				return this.range[1];
 			}
 		}
-		
+
 		//Sets lower and upper limits for each range
 		public enum Range
 		{

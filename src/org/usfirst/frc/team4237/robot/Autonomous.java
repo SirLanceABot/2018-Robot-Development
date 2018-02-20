@@ -158,6 +158,7 @@ public class Autonomous
 		System.out.println("AutoMode: " + autoMode);
 		drivetrain.resetEncoder();
 		drivetrain.resetNavX();
+		gripper.resetPivotEncoder();
 //		greenCameraLight.set(true);
 //		whiteCameraLight.set(true);
 //		whiteFloorLight.set(true);
@@ -171,23 +172,6 @@ public class Autonomous
 		if(autoMode == Constants.AutoMode.kScaleOnOppositeSide)
 		{
 			scaleOnOppositeSide();
-			
-//			if(gripper.isAutoMiddlePivotDone())
-//			{
-//				gripper.autoSetMiddleTargetRange();
-//			}
-//			
-//			if(autoStage == Constants.AutoStage.kDrive2ToLine2 || autoStage == Constants.AutoStage.kSpin2)
-//			{
-//				if(!elevator.inTargetRange() && gripper.isAutoMiddlePivoterDone())
-//				{
-//					elevator.autoSetScaleTargetRange();
-//				}
-//			}
-//			else if(autoStage == Constants.AutoStage.kDone && elevator.inTargetRange())
-//			{
-//				gripper.autoEject();
-//			}
 		}
 		else if(autoMode == Constants.AutoMode.kScaleOnSameSide)
 		{
@@ -287,11 +271,7 @@ public class Autonomous
 	{
 		if(autoStage == Constants.AutoStage.kDrive1)
 		{
-			if(!drivetrain.driveDistance(90, 0.5, 0))
-			{
-
-			}
-			else
+			if(drivetrain.driveDistance(90, 0.5, 0))
 			{
 				autoStage = Constants.AutoStage.kDone;
 				drivetrain.resetEncoder();
@@ -303,11 +283,8 @@ public class Autonomous
 	{
 		if(autoStage == Constants.AutoStage.kDrive1)
 		{
-			if(!drivetrain.driveDistance(5, 0.3, 0))
-			{
-
-			}
-			else
+			gripper.autoSetHorizontalTargetRange();
+			if(drivetrain.driveDistance(5, 0.3, 0) && gripper.inTargetRange())
 			{
 				autoStage = Constants.AutoStage.kDrive2Distance1;
 				System.out.println("Entering: " + autoStage);
@@ -316,11 +293,8 @@ public class Autonomous
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2Distance1)
 		{
-			if(!drivetrain.driveDistance(95, 0.75, -45))
-			{
-
-			}
-			else
+			elevator.autoSetSwitchTargetRange();
+			if(drivetrain.driveDistance(95, 0.75, -45) && elevator.inTargetRange())
 			{
 				autoStage = Constants.AutoStage.kDrive2Distance2;
 				System.out.println("Entering: " + autoStage);
@@ -329,14 +303,11 @@ public class Autonomous
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2Distance2)
 		{
-			if(!drivetrain.driveDistance(15, 0.25, 0))
-			{
-
-			}
-			else
+			if(drivetrain.driveDistance(15, 0.25, 0))
 			{
 				autoStage = Constants.AutoStage.kDone;
 				System.out.println("Entering: " + autoStage);
+				gripper.setAutoEjecting(true);
 				System.out.println("Time: " + t.get());
 			}
 		}
@@ -346,11 +317,8 @@ public class Autonomous
 	{
 		if(autoStage == Constants.AutoStage.kDrive1)
 		{
-			if(!drivetrain.driveDistance(5, 0.3, 0))
-			{
-
-			}
-			else
+			gripper.autoSetHorizontalTargetRange();
+			if(drivetrain.driveDistance(5, 0.3, 0) && gripper.inTargetRange())
 			{
 				autoStage = Constants.AutoStage.kDrive2Distance1;
 				System.out.println("Entering: " + autoStage);
@@ -359,11 +327,8 @@ public class Autonomous
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2Distance1)
 		{
-			if(!drivetrain.driveDistance(90, 0.75, 35))
-			{
-
-			}
-			else
+			elevator.autoSetSwitchTargetRange();
+			if(drivetrain.driveDistance(90, 0.75, 35) && elevator.inTargetRange())
 			{
 				autoStage = Constants.AutoStage.kDrive2Distance2;
 				System.out.println("Entering: " + autoStage);
@@ -372,14 +337,11 @@ public class Autonomous
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2Distance2)
 		{
-			if(!drivetrain.driveDistance(9, 0.25, 0))
-			{
-
-			}
-			else
+			if(drivetrain.driveDistance(9, 0.25, 0))
 			{
 				autoStage = Constants.AutoStage.kDone;
 				System.out.println("Entering: " + autoStage);
+				gripper.setAutoEjecting(true);
 				System.out.println("Time: " + t.get());
 			}
 		}
@@ -389,11 +351,8 @@ public class Autonomous
 	{
 		if(autoStage == Constants.AutoStage.kDrive1)
 		{
-			if(!drivetrain.driveDistance(5, 0.3, 0 * angleSign))
-			{
-
-			}
-			else
+			gripper.autoSetHorizontalTargetRange();
+			if(drivetrain.driveDistance(5, 0.3, 0 * angleSign) && gripper.inTargetRange())
 			{
 				autoStage = Constants.AutoStage.kDrive2Distance1;
 				System.out.println("Entering: " + autoStage);
@@ -402,11 +361,8 @@ public class Autonomous
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2Distance1)
 		{
-			if(!drivetrain.driveDistance(95, 0.75, -45 * angleSign))
-			{
-
-			}
-			else
+			elevator.autoSetSwitchTargetRange();
+			if(drivetrain.driveDistance(95, 0.75, -45 * angleSign) && elevator.inTargetRange())
 			{
 				autoStage = Constants.AutoStage.kDrive2Distance2;
 				System.out.println("Entering: " + autoStage);
@@ -415,14 +371,11 @@ public class Autonomous
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2Distance2)
 		{
-			if(!drivetrain.driveDistance(15, 0.25, 0 * angleSign))
-			{
-
-			}
-			else
+			if(drivetrain.driveDistance(15, 0.25, 0 * angleSign))
 			{
 				autoStage = Constants.AutoStage.kDone;
 				System.out.println("Entering: " + autoStage);
+				gripper.setAutoEjecting(true);
 				System.out.println("Time: " + t.get());
 			}
 		}
@@ -432,11 +385,7 @@ public class Autonomous
 	{
 		if(autoStage == Constants.AutoStage.kDrive1)
 		{
-			if(!drivetrain.driveDistance(184, 0.4, 0))	//white line is at 288 inches
-			{
-
-			}
-			else
+			if(drivetrain.driveDistance(184, 0.4, 0))
 			{
 				autoStage = Constants.AutoStage.kSpin1;
 				System.out.println("Entering: " + autoStage);
@@ -444,11 +393,7 @@ public class Autonomous
 		}
 		else if(autoStage == Constants.AutoStage.kSpin1)
 		{
-			if(!drivetrain.spinToBearing(-55 * angleSign, 0.35))
-			{
-
-			}
-			else
+			if(drivetrain.spinToBearing(-55 * angleSign, 0.35))
 			{
 				autoStage = Constants.AutoStage.kDrive2ToLine1;
 				System.out.println("Entering: " + autoStage);
@@ -456,57 +401,41 @@ public class Autonomous
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2ToLine1)
 		{
-			drivetrain.printColors();
-			
-			if(!drivetrain.driveToColor(color, 0.35, -55 * angleSign))
-			{
-
-			}
-			else
+			gripper.autoSetMiddleTargetRange();
+			if(drivetrain.driveToColor(color, 0.35, -55 * angleSign) && gripper.inTargetRange())
 			{
 				autoStage = Constants.AutoStage.kDrive2ToLine2;
-				System.out.println(autoStage);
+				System.out.println("Entering: " + autoStage);
 				drivetrain.resetEncoder();
 				Timer.delay(0.5);
 			}
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2ToLine2)
 		{
-			drivetrain.printColors();
-			if(!drivetrain.driveToColor(color, -0.175, -55 * angleSign))
-			{
-
-			}
-			else
+			if(drivetrain.driveToColor(color, -0.175, -55 * angleSign))
 			{
 				autoStage = Constants.AutoStage.kSpin2;
-				System.out.println(autoStage);
+				System.out.println("Entering: " + autoStage);
 				drivetrain.resetEncoder();
 			}
 		}
 		else if(autoStage == Constants.AutoStage.kSpin2)
 		{
-			if(!drivetrain.spinToBearing(0 * angleSign, 0.35))
-			{
-
-			}
-			else
+			elevator.autoSetScaleTargetRange();
+			if(drivetrain.spinToBearing(0 * angleSign, 0.35) && elevator.inTargetRange())
 			{
 				autoStage = Constants.AutoStage.kDrive3ToLine;
-				System.out.println(autoStage);
+				System.out.println("Entering: " + autoStage);
 				drivetrain.resetEncoder();
 			}
 		}
 		else if(autoStage == Constants.AutoStage.kDrive3ToLine)
 		{
-			if(!drivetrain.driveToColor(AMSColorSensor.Constants.Color.kWhite, 0.2, 0 * angleSign))
-			{
-
-			}
-			else
+			if(drivetrain.driveToColor(AMSColorSensor.Constants.Color.kWhite, 0.2, 0 * angleSign))
 			{
 				autoStage = Constants.AutoStage.kDone;
-				System.out.println(autoStage);
+				System.out.println("Entering: " + autoStage);
+				gripper.setAutoEjecting(true);
 				System.out.println("Time: " + t.get());
 			}
 		}
@@ -516,11 +445,7 @@ public class Autonomous
 	{
 		if(autoStage == Constants.AutoStage.kDrive1)
 		{
-			if(!drivetrain.driveDistance(220, 0.75, 0 * angleSign))
-			{
-
-			}
-			else
+			if(drivetrain.driveDistance(220, 0.75, 0 * angleSign))
 			{
 				autoStage = Constants.AutoStage.kSpin1;
 				System.out.println("Entering: " + autoStage);
@@ -528,11 +453,7 @@ public class Autonomous
 		}
 		else if(autoStage == Constants.AutoStage.kSpin1)
 		{
-			if(!drivetrain.spinToBearing(-90 * angleSign, 0.35))
-			{
-
-			}
-			else
+			if(drivetrain.spinToBearing(-90 * angleSign, 0.35))
 			{
 				autoStage = Constants.AutoStage.kDrive2ToLine1;
 				System.out.println("Entering: " + autoStage);
@@ -541,11 +462,7 @@ public class Autonomous
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2ToLine1)
 		{
-			if(!drivetrain.driveToColor(color, 0.3, -90 * angleSign))
-			{
-
-			}
-			else
+			if(drivetrain.driveToColor(color, 0.3, -90 * angleSign))
 			{
 				autoStage = Constants.AutoStage.kDrive2Distance1;
 				System.out.println("Entering: " + autoStage);
@@ -554,11 +471,7 @@ public class Autonomous
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2Distance1)
 		{
-			if(!drivetrain.driveDistance(55, 0.4, -90 * angleSign))
-			{
-
-			}
-			else
+			if(drivetrain.driveDistance(55, 0.4, -90 * angleSign))
 			{
 				autoStage = Constants.AutoStage.kDrive2Distance2;
 				System.out.println("Entering: " + autoStage);
@@ -567,11 +480,7 @@ public class Autonomous
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2Distance2)
 		{
-			if(!drivetrain.driveDistance(40, 0.25, -90 * angleSign))
-			{
-
-			}
-			else
+			if(drivetrain.driveDistance(40, 0.25, -90 * angleSign))
 			{
 				autoStage = Constants.AutoStage.kDrive2ToLine2;
 				System.out.println("Entering: " + autoStage);
@@ -579,13 +488,9 @@ public class Autonomous
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2ToLine2)
 		{
-			if(!drivetrain.driveToColor(color, 0.3, -90 * angleSign))
+			gripper.autoSetMiddleTargetRange();
+			if(drivetrain.driveToColor(color, 0.3, -90 * angleSign) && gripper.inTargetRange())
 			{
-
-			}
-			else
-			{
-
 				autoStage = Constants.AutoStage.kDrive2Distance3;
 				System.out.println("Entering: " + autoStage);
 				drivetrain.resetEncoder();
@@ -593,11 +498,7 @@ public class Autonomous
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2Distance3)
 		{
-			if(!drivetrain.driveDistance(17, 0.25, -90 * angleSign))
-			{
-
-			}
-			else
+			if(drivetrain.driveDistance(17, 0.25, -90 * angleSign))
 			{
 				autoStage = Constants.AutoStage.kSpin2;
 				System.out.println("Entering: " + autoStage);
@@ -605,11 +506,8 @@ public class Autonomous
 		}
 		else if(autoStage == Constants.AutoStage.kSpin2)
 		{
-			if(!drivetrain.spinToBearing(0 * angleSign, 0.35))
-			{
-
-			}
-			else
+			elevator.autoSetScaleTargetRange();
+			if(drivetrain.spinToBearing(0 * angleSign, 0.35) && elevator.inTargetRange())
 			{
 				autoStage = Constants.AutoStage.kDrive3ToLine;
 				System.out.println("Entering: " + autoStage);
@@ -618,14 +516,11 @@ public class Autonomous
 		}
 		else if(autoStage == Constants.AutoStage.kDrive3ToLine)
 		{
-			if(!drivetrain.driveToColor(AMSColorSensor.Constants.Color.kWhite, 0.2, 0 * angleSign))
-			{
-
-			}
-			else
+			if(drivetrain.driveToColor(AMSColorSensor.Constants.Color.kWhite, 0.2, 0 * angleSign))
 			{
 				autoStage = Constants.AutoStage.kDone;
 				System.out.println("Entering: " + autoStage);
+				gripper.setAutoEjecting(true);
 				System.out.println("Time: " + t.get());
 			}
 		}
