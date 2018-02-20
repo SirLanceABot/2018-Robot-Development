@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.Timer;
  * Gripper class
  * @author Julien Thrum, Erin Lafrenz, Ben Puzycki, Darryl Wong, and Mark Washington
  */
-public class Gripper extends Thread
+public class Gripper extends Thread implements Component
 {
 	private OperatorXbox xbox = OperatorXbox.getInstance();
 
@@ -590,7 +590,7 @@ public class Gripper extends Thread
 	{
 		pivotTalon.setSelectedSensorPosition(0,0,0);
 	}
-	public void printEncoderValues()
+	public void printTestInfo()
 	{
 		System.out.printf("Pivot = %5d		Left Intake = %5d		Right Intake = %5d", getPivotEncoder(), getLeftIntakeEncoder(), getRightIntakeEncoder());
 	}

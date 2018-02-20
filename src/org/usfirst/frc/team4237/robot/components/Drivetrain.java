@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 
-public class Drivetrain extends MecanumDrive
+public class Drivetrain extends MecanumDrive implements Component
 {
 	
 	private static WPI_TalonSRX frontLeftMasterMotor = new WPI_TalonSRX(Constants.FRONT_LEFT_MASTER_MOTOR_PORT);
@@ -317,6 +317,12 @@ public class Drivetrain extends MecanumDrive
 		}
 	}
 	
+	@Override
+	public void printTestInfo()
+	{
+		
+	}
+	
 	/**
 	 * Class for constant variables related to the drivetrain
 	 * @author Mark
@@ -346,4 +352,6 @@ public class Drivetrain extends MecanumDrive
 		
 		public static final double DRIVE_RAMP_TIME = 0.125;
 	}
+
+
 }

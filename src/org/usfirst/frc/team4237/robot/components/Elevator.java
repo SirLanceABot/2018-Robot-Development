@@ -22,7 +22,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
  * @author Ben Puzycki, Darryl Wong, Mark Washington
  *
  */
-public class Elevator extends Thread
+public class Elevator extends Thread implements Component
 {
 	private OperatorXbox xbox = OperatorXbox.getInstance();
 
@@ -237,12 +237,12 @@ public class Elevator extends Thread
 	
 	public void test()
 	{
-		leftBumper = xbox.getRawButton(Xbox.Constants.LEFT_BUMPER);
-		rightBumper = xbox.getRawButton(Xbox.Constants.RIGHT_BUMPER);
+		leftBumper = xbox.getRawButtonPressed(Xbox.Constants.LEFT_BUMPER);
+		rightBumper = xbox.getRawButtonPressed(Xbox.Constants.RIGHT_BUMPER);
 		aButton = xbox.getRawButton(Xbox.Constants.A_BUTTON);
 		
-		if (leftBumper && !wasLeftBumper) currentTestKeyPosition++;
-		else if (rightBumper && !wasRightBumper) currentTestKeyPosition--;
+		if (leftBumper) currentTestKeyPosition++;
+		else if (rightBumper) currentTestKeyPosition--;
 		
 		if (currentTestKeyPosition >= talonSRXHashMap.keySet().size()) currentTestKeyPosition = talonSRXHashMap.size() - 1;
 		else if (currentTestKeyPosition < 0) currentTestKeyPosition = 0;
@@ -258,9 +258,6 @@ public class Elevator extends Thread
 				talonSRXHashMap.get(i).set(ControlMode.PercentOutput, 0.0);
 			}
 		}
-		
-		wasLeftBumper = leftBumper;
-		wasRightBumper = rightBumper;
 	}
 
 	public void updateCurrentRange()
@@ -360,7 +357,12 @@ public class Elevator extends Thread
 	{
 		targetRange = Constants.Range.floorRange.range;
 	}
-
+	
+	public void printTestInfo()
+	{
+		System.out.printf("ID: %2d Potentiometer Position: %.2f", talonSRXHashMap.keySet().toArray()[currentTestKeyPosition], getStringPot());
+	}
+	
 	public static class Constants
 	{		
 		private enum InitRange

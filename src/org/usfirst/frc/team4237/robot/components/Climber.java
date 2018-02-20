@@ -14,7 +14,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
  *
  */
 
-public class Climber 
+public class Climber implements Component
 {
 	private Xbox xbox = OperatorXbox.getInstance();
 	private WPI_TalonSRX climberTalonSRX = new WPI_TalonSRX(Constants.CLIMBER_MASTER_PORT); 
@@ -52,6 +52,12 @@ public class Climber
 	public void lower()
 	{
 		climberTalonSRX.set(-0.5);
+	}
+	
+	@Override
+	public void printTestInfo()
+	{
+		
 	}
 	
 	public static class Constants
