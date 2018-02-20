@@ -11,6 +11,7 @@ import org.usfirst.frc.team4237.robot.control.OperatorXbox;
 import org.usfirst.frc.team4237.robot.control.Xbox;
 
 import com.ctre.phoenix.ParamEnum;
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -51,9 +52,11 @@ public class Elevator extends Thread
 	//Joystick buttons
 	private boolean leftBumper;
 	private boolean rightBumper;
+	private boolean aButton;
 	
 	private boolean wasLeftBumper;
 	private boolean wasRightBumper;
+	private boolean wasAButton;
 	
 	private static Elevator instance = new Elevator();
 
@@ -118,6 +121,10 @@ public class Elevator extends Thread
 			else if (DriverStation.getInstance().isAutonomous())
 			{
 				autonomous();
+			}
+			else if (DriverStation.getInstance().isTest())
+			{
+				test();
 			}
 			Timer.delay(0.005);
 		} //End of while loop
@@ -232,9 +239,25 @@ public class Elevator extends Thread
 	{
 		leftBumper = xbox.getRawButton(Xbox.Constants.LEFT_BUMPER);
 		rightBumper = xbox.getRawButton(Xbox.Constants.RIGHT_BUMPER);
+		aButton = xbox.getRawButton(Xbox.Constants.A_BUTTON);
 		
-		if (leftBumper) currentTestKeyPosition++;
-		if currentTestKeyPosition >= talonSRXHashMap.keySet();
+		if (leftBumper && !wasLeftBumper) currentTestKeyPosition++;
+		else if (rightBumper && !wasRightBumper) currentTestKeyPosition--;
+		
+		if (currentTestKeyPosition >= talonSRXHashMap.keySet().size()) currentTestKeyPosition = talonSRXHashMap.size() - 1;
+		else if (currentTestKeyPosition < 0) currentTestKeyPosition = 0;
+		
+		if (aButton)
+		{
+			talonSRXHashMap.get(currentTestKeyPosition).set(ControlMode.PercentOutput, 0.3);
+		}
+		else
+		{
+			for (int i : talonSRXHashMap.keySet())
+			{
+				talonSRXHashMap.get(i).set(ControlMode.PercentOutput, 0.0);
+			}
+		}
 		
 		wasLeftBumper = leftBumper;
 		wasRightBumper = rightBumper;
