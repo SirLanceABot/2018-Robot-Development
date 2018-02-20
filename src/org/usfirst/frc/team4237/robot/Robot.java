@@ -10,22 +10,26 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 
 public class Robot extends IterativeRobot
 {
-	private Teleop teleop = Teleop.getInstance();
 	private Autonomous autonomous = Autonomous.getInstance();
-	private Drivetrain drivetrain = Drivetrain.getInstance();
 	
 	public Robot()
 	{
-		drivetrain.calibrateNavX();
-		drivetrain.calibrateColorSensor();
+		
 	}
 	
 	@Override
 	public void robotInit()
 	{
-		System.out.println("Starting robot...");
+		System.out.println("Starting robot!");
+		Thread drivetrain = new Thread(Drivetrain.getInstance());
+		drivetrain.start();
+		System.out.println("Drivetrain thread started!");
+		
 		Elevator.getInstance().start();
+		System.out.println("Elevator thread started!");
+		
 		Gripper.getInstance().start();
+		System.out.println("Gripper thread started!");
 	}
 	
 	@Override
@@ -44,13 +48,12 @@ public class Robot extends IterativeRobot
 	public void teleopInit()
 	{
 		System.out.println("Entering teleop");
-		teleop.init();
 	}
 	
 	@Override
 	public void teleopPeriodic()
 	{
-		teleop.periodic();
+
 	}
 	
 	@Override
