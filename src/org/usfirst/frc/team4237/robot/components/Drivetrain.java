@@ -329,6 +329,11 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 		System.out.println("Encoder: " + enc.getRaw());
 	}
 	
+	public double getServo()
+	{
+		return servo.get();
+	}
+	
 	public void calibrateNavX()
 	{
 		System.out.println("Calibrating NavX...");
