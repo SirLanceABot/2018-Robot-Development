@@ -1,5 +1,6 @@
 package org.usfirst.frc.team4237.robot.components;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import java.util.HashMap;
@@ -82,7 +83,7 @@ public class Gripper extends Thread implements Component
 		pivotTalon.configReverseSoftLimitEnable(true, 0);
 
 		//Reset Encoders to correct values
-		pivotTalon.setSelectedSensorPosition(3575,0,0);
+		pivotTalon.setSelectedSensorPosition(2590,0,0);
 		
 		talonSRXHashMap.put(Constants.LEFT_INTAKE_MOTOR_PORT, leftIntakeTalon);
 		talonSRXHashMap.put(Constants.RIGHT_INTAKE_MOTOR_PORT, rightIntakeTalon);
@@ -298,19 +299,19 @@ public class Gripper extends Thread implements Component
 		{	
 			updateCurrentRange();
 
-			if (DriverStation.getInstance().isOperatorControl())
+			if (DriverStation.getInstance().isOperatorControl() && DriverStation.getInstance().isEnabled())
 			{
 				teleop();
 			}
-			else if (DriverStation.getInstance().isAutonomous())
+			else if (DriverStation.getInstance().isAutonomous() && DriverStation.getInstance().isEnabled())
 			{
 				autonomous();
 			}
-			else if (DriverStation.getInstance().isTest())
+			else if (DriverStation.getInstance().isTest() && DriverStation.getInstance().isEnabled())
 			{
 				test();
 			}
-			Timer.delay(0.005);
+			Timer.delay(0.01);
 		} //End of while loop
 	}
 
@@ -341,8 +342,6 @@ public class Gripper extends Thread implements Component
 			zeroPivotEncoder();
 		}
 
-		//Updates Current Range
-		updateCurrentRange();
 
 
 		//Move pivot arm
@@ -378,7 +377,7 @@ public class Gripper extends Thread implements Component
 			}
 
 		}
-		else if(isPivoting() && !DriverStation.getInstance().isAutonomous())
+		else if(isPivoting())
 		{
 
 			System.out.println("Is Pivoting");
@@ -408,10 +407,11 @@ public class Gripper extends Thread implements Component
 			}
 
 
-			if ( (currentValue >= targetRange[0]) && (currentValue < targetRange[1]) )
+			if ( (currentValue >= targetRange[0] && currentDirection == Constants.Direction.Up) || 
+					(currentValue < targetRange[1] && currentDirection == Constants.Direction.Down))
 			{
 				System.out.println("In target range");
-				isPivoting = false;
+				setPivoting(false);
 				currentDirection = Constants.Direction.None;
 				pivotOff();
 			}
@@ -454,18 +454,18 @@ public class Gripper extends Thread implements Component
 	{
 		if ( (currentValue >= targetRange[0]) && (currentValue <= targetRange[1]) )
 		{
-			System.out.println("Pivot ArmIn target range");
+			//System.out.println("Pivot Arm in target range");
 			pivotOff();	
 		}
 		else if (currentValue < targetRange[0])
 		{
-			System.out.println("Pivot Arm Raising");
+			//System.out.println("Pivot Arm Raising");
 			raise();				
 		}
 		else if (currentValue > targetRange[1])
 		{
 			lower();
-			System.out.println("Pivot Arm Lowering");
+			//System.out.println("Pivot Arm Lowering");
 		}
 
 		if(isAutoEjecting())
@@ -480,13 +480,48 @@ public class Gripper extends Thread implements Component
 	
 	public void test()
 	{
+		leftBumper = xbox.getRawButtonPressed(Xbox.Constants.LEFT_BUMPER);
+		rightBumper = xbox.getRawButtonPressed(Xbox.Constants.RIGHT_BUMPER);
+		aButton = xbox.getRawButton(Xbox.Constants.A_BUTTON);
 
+		if (leftBumper) 
+		{
+			currentTestKeyPosition--;
+
+		}
+		else if (rightBumper) 
+		{
+			currentTestKeyPosition++;
+		}
+
+		if (currentTestKeyPosition >= talonSRXHashMap.keySet().size()) 
+		{
+			currentTestKeyPosition = talonSRXHashMap.size() - 1;
+		}
+		else if (currentTestKeyPosition < 0) 
+		{
+			currentTestKeyPosition = 0;
+		}
+		
+		if (aButton)
+		{
+			talonSRXHashMap.get(currentTestKeyPosition).set(ControlMode.PercentOutput, 0.3);
+		}
+		else
+		{
+			for (int i : talonSRXHashMap.keySet())
+			{
+				talonSRXHashMap.get(i).set(ControlMode.PercentOutput, 0.0);
+			}
+		}
+		printTestInfo();
 	}
 
 	//Updates the current range depending on the encoder value
 	public void updateCurrentRange()
 	{
 		currentValue = getPivotEncoder();
+		System.out.println(getPivotEncoder());
 		if (currentValue <= Constants.Range.floorRange.topValue())
 		{
 			currentRange = Constants.Range.floorRange;
@@ -613,7 +648,7 @@ public class Gripper extends Thread implements Component
 
 	public void resetPivotEncoder()
 	{
-		pivotTalon.setSelectedSensorPosition(3575,0,0);
+		pivotTalon.setSelectedSensorPosition(2590,0,0);
 	}
 
 	public void zeroPivotEncoder()

@@ -11,16 +11,18 @@ import org.usfirst.frc.team4237.robot.util.LightRing;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 
 public class Drivetrain extends MecanumDrive implements Component, Runnable
 {
 	private DriverXbox xbox = DriverXbox.getInstance();
-	
+
 	private boolean aButton = false;
 	private boolean bButton = false;
 	private boolean xButton = false;
@@ -30,26 +32,27 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 	private double rightYAxis = 0.0;
 	private double leftXAxis = 0.0;
 	private double leftYAxis = 0.0;
-	
-	
+
+
 	private static WPI_TalonSRX frontLeftMasterMotor = new WPI_TalonSRX(Constants.FRONT_LEFT_MASTER_MOTOR_PORT);
 	private static WPI_TalonSRX frontLeftFollowerMotor = new WPI_TalonSRX(Constants.FRONT_LEFT_FOLLOWER_MOTOR_PORT);
-	
+
 	private static WPI_TalonSRX frontRightMasterMotor = new WPI_TalonSRX(Constants.FRONT_RIGHT_MASTER_MOTOR_PORT);
 	private static WPI_TalonSRX frontRightFollowerMotor = new WPI_TalonSRX(Constants.FRONT_RIGHT_FOLLOWER_MOTOR_PORT);
-	
+
 	private static WPI_TalonSRX rearLeftMasterMotor = new WPI_TalonSRX(Constants.REAR_LEFT_MASTER_MOTOR_PORT);
 	private static WPI_TalonSRX rearLeftFollowerMotor = new WPI_TalonSRX(Constants.REAR_LEFT_FOLOWER_MOTOR_PORT);
-	
+
 	private static WPI_TalonSRX rearRightMasterMotor = new WPI_TalonSRX(Constants.REAR_RIGHT_MASTER_MOTOR_PORT);
 	private static WPI_TalonSRX rearRightFollowerMotor = new WPI_TalonSRX(Constants.REAR_RIGHT_FOLLOWER_MOTOR_PORT);
 	
 	private static Servo servo = new Servo(0);
 	private double position = 0;
 	
+
 	private Encoder enc = new Encoder(0, 1, false, EncodingType.k4X);
 	private AHRS navX = new AHRS(I2C.Port.kMXP);
-	
+
 	//color sensor stuff
 	private AMSColorSensor mAMSColorSensor = new AMSColorSensor(AMSColorSensor.Constants.PORT, AMSColorSensor.Constants.ADDRESS);
 	private Colors crgb = new Colors();
@@ -58,15 +61,13 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 	private Colors crgbLowerThreshold = new Colors();
 	private int UpperThresholdFactor;
 	private int LowerThresholdFactor;
-	
-	private Autonomous autonomous = Autonomous.getInstance();
-	
+
 	private LightRing greenCameraLight = new LightRing(10);
 	private LightRing whiteCameraLight = new LightRing(11);
 	private LightRing whiteFloorLight = new LightRing(12);
-	
+
 	private static Drivetrain instance = new Drivetrain();
-	
+
 	/**
 	 * Returns the instance of Drivetrain
 	 * @return
@@ -75,68 +76,76 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 	{
 		return instance;
 	}
-	
+
 	public void debugPrintCurrent()
 	{
 		System.out.println("Talon 0: " + rearRightMasterMotor.getOutputCurrent());
 		System.out.println("Talon 1: " + rearRightFollowerMotor.getOutputCurrent());
 		System.out.println("Talon 2: " + rearLeftMasterMotor.getOutputCurrent());
 		System.out.println("Talon 3: " + rearLeftFollowerMotor.getOutputCurrent());
-		
+
 		System.out.println("Talon 12: " + frontLeftFollowerMotor.getOutputCurrent());
 		System.out.println("Talon 13: " + frontLeftMasterMotor.getOutputCurrent());
 		System.out.println("Talon 14: " + frontRightFollowerMotor.getOutputCurrent());
-		System.out.println("Talon 15: " + frontRightMasterMotor.getOutputCurrent() + "\n\n");	
+		System.out.println("Talon 15: " + frontRightMasterMotor.getOutputCurrent() + "\n\n");
 	}
-	
+
 
 	private Drivetrain()
 	{
 		super(frontLeftMasterMotor, rearLeftMasterMotor, frontRightMasterMotor, rearRightMasterMotor);
 		this.setSafetyEnabled(false);
-		
+
 		frontLeftFollowerMotor.follow(frontLeftMasterMotor);
 		frontRightFollowerMotor.follow(frontRightMasterMotor);
 		rearLeftFollowerMotor.follow(rearLeftMasterMotor);
 		rearRightFollowerMotor.follow(rearRightMasterMotor);
-		
+
 		frontLeftMasterMotor.configContinuousCurrentLimit(Constants.DRIVE_40_AMP_LIMIT, 10);
 		frontLeftMasterMotor.configPeakCurrentLimit(Constants.DRIVE_40_AMP_TRIGGER, Constants.DRIVE_40_AMP_TIME);
 		frontLeftMasterMotor.configOpenloopRamp(Constants.DRIVE_RAMP_TIME, Constants.DRIVE_RAMP_RATE_TIMEOUT);
-		
+
 		frontLeftFollowerMotor.configContinuousCurrentLimit(Constants.DRIVE_40_AMP_LIMIT, 10);
 		frontLeftFollowerMotor.configPeakCurrentLimit(Constants.DRIVE_40_AMP_TRIGGER, Constants.DRIVE_40_AMP_TIME);
 		frontLeftFollowerMotor.configOpenloopRamp(Constants.DRIVE_RAMP_TIME, Constants.DRIVE_RAMP_RATE_TIMEOUT);
-		
-		
+
+
 		rearLeftMasterMotor.configContinuousCurrentLimit(Constants.DRIVE_40_AMP_LIMIT, 10);
 		rearLeftMasterMotor.configPeakCurrentLimit(Constants.DRIVE_40_AMP_TRIGGER, Constants.DRIVE_40_AMP_TIME);
 		rearLeftMasterMotor.configOpenloopRamp(Constants.DRIVE_RAMP_TIME, Constants.DRIVE_RAMP_RATE_TIMEOUT);
-		
+
 		rearLeftFollowerMotor.configContinuousCurrentLimit(Constants.DRIVE_40_AMP_LIMIT, 10);
 		rearLeftFollowerMotor.configPeakCurrentLimit(Constants.DRIVE_40_AMP_TRIGGER, Constants.DRIVE_40_AMP_TIME);
 		rearLeftFollowerMotor.configOpenloopRamp(Constants.DRIVE_RAMP_TIME, Constants.DRIVE_RAMP_RATE_TIMEOUT);
-		
-		
+
+
 		frontRightMasterMotor.configContinuousCurrentLimit(Constants.DRIVE_40_AMP_LIMIT, 10);
 		frontRightMasterMotor.configPeakCurrentLimit(Constants.DRIVE_40_AMP_TRIGGER, Constants.DRIVE_40_AMP_TIME);
 		frontRightMasterMotor.configOpenloopRamp(Constants.DRIVE_RAMP_TIME, Constants.DRIVE_RAMP_RATE_TIMEOUT);
-		
+
 		frontRightFollowerMotor.configContinuousCurrentLimit(Constants.DRIVE_40_AMP_LIMIT, 10);
 		frontRightFollowerMotor.configPeakCurrentLimit(Constants.DRIVE_40_AMP_TRIGGER, Constants.DRIVE_40_AMP_TIME);
 		frontRightFollowerMotor.configOpenloopRamp(Constants.DRIVE_RAMP_TIME, Constants.DRIVE_RAMP_RATE_TIMEOUT);
-		
-		
+
+
 		rearRightMasterMotor.configContinuousCurrentLimit(Constants.DRIVE_40_AMP_LIMIT, 10);
 		rearRightMasterMotor.configPeakCurrentLimit(Constants.DRIVE_40_AMP_TRIGGER, Constants.DRIVE_40_AMP_TIME);
 		rearRightMasterMotor.configOpenloopRamp(Constants.DRIVE_RAMP_TIME, Constants.DRIVE_RAMP_RATE_TIMEOUT);
-		
+
 		rearRightFollowerMotor.configContinuousCurrentLimit(Constants.DRIVE_40_AMP_LIMIT, 10);
 		rearRightFollowerMotor.configPeakCurrentLimit(Constants.DRIVE_40_AMP_TRIGGER, Constants.DRIVE_40_AMP_TIME);
 		rearRightFollowerMotor.configOpenloopRamp(Constants.DRIVE_RAMP_TIME, Constants.DRIVE_RAMP_RATE_TIMEOUT);
+
+		frontRightMasterMotor.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder, 0, 0);
+		frontRightMasterMotor.setSensorPhase(true);
 		
-		this.calibrateNavX();
-		this.calibrateColorSensor();
+		//this.calibrateNavX();
+		//this.calibrateColorSensor();
+	}
+
+	public double getEncInches()
+	{
+		return frontRightMasterMotor.getSelectedSensorPosition(0) / 135.000000000000000000000000000000000;
 	}
 	
 	@Override
@@ -146,58 +155,62 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 		{
 			try
 			{
-				if (Math.abs(xbox.getRawAxis(1)) > 0.2)
-				{
-					leftYAxis = -xbox.getRawAxis(Xbox.Constants.LEFT_STICK_Y_AXIS);
-				}
-				else leftYAxis = 0;
-
-				if (Math.abs(xbox.getRawAxis(0)) > 0.2)
-				{
-					leftXAxis = xbox.getRawAxis(Xbox.Constants.LEFT_STICK_X_AXIS);
-				}
-				else leftXAxis = 0;
-
-				if (Math.abs(xbox.getRawAxis(4)) > 0.2)
-				{
-					rightXAxis = xbox.getRawAxis(Xbox.Constants.RIGHT_STICK_X_AXIS);
-				}
-				else rightXAxis = 0;
-
-
-				if(xbox.getRawButton(Xbox.Constants.RIGHT_BUMPER))
-				{
-					this.driveCartesian(leftXAxis, leftYAxis, (this.getNavXYaw()) / 50);
-				}
-				else
-				{
-					this.driveCartesian(leftXAxis, leftYAxis, rightXAxis);
-				}
+				System.out.println("Encoder tic: " + frontRightMasterMotor.getSelectedSensorPosition(0) + "  Distance: " + getEncInches());
 				
-				this.printColors();
-				
-				if(xbox.getRawButton(Xbox.Constants.A_BUTTON))
+				if (DriverStation.getInstance().isOperatorControl() && DriverStation.getInstance().isEnabled())
 				{
-					autonomous.init();
-					this.resetEncoder();
-					this.resetNavX();
+					if (Math.abs(xbox.getRawAxis(1)) > 0.2)
+					{
+						leftYAxis = -xbox.getRawAxis(Xbox.Constants.LEFT_STICK_Y_AXIS);
+					}
+					else leftYAxis = 0;
+
+					if (Math.abs(xbox.getRawAxis(0)) > 0.2)
+					{
+						leftXAxis = xbox.getRawAxis(Xbox.Constants.LEFT_STICK_X_AXIS);
+					}
+					else leftXAxis = 0;
+
+					if (Math.abs(xbox.getRawAxis(4)) > 0.2)
+					{
+						rightXAxis = xbox.getRawAxis(Xbox.Constants.RIGHT_STICK_X_AXIS);
+					}
+					else rightXAxis = 0;
+
+
+					if(xbox.getRawButton(Xbox.Constants.RIGHT_BUMPER))
+					{
+						this.driveCartesian(leftXAxis, leftYAxis, (this.getNavXYaw()) / 50);
+					}
+					else
+					{
+						this.driveCartesian(leftXAxis, leftYAxis, rightXAxis);
+					}
+
+					//this.printColors();
+
+					if(xbox.getRawButton(Xbox.Constants.A_BUTTON))
+					{
+						this.resetEncoder();
+						this.resetNavX();
+					}
+					else
+					{
+						greenCameraLight.set(false);
+						whiteCameraLight.set(false);
+						whiteFloorLight.set(false);
+					}
 				}
-				else
-				{
-					greenCameraLight.set(false);
-					whiteCameraLight.set(false);
-					whiteFloorLight.set(false);
-				}
-				
 				//drivetrain.debugPrintCurrent();
 			}
 			catch(Exception e)
 			{
 				e.printStackTrace();
 			}
+			Timer.delay(0.01);
 		}
 	}
-	
+
 	/**
 	 * Drive the distance passed into the method
 	 * @return
@@ -207,8 +220,8 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 		boolean isDoneDriving = false;
 		//			double ticsdPerInch = 76.39437268410976116906420641880689377654;
 		//			double x = Math.abs(frontLeftMotor.getSelectedSensorPosition(0)) / ticsdPerInch; //x is position in inches
-		double ticsdPerInch = 26.9627197708622686479;
-		double x = Math.abs(enc.getRaw()) / ticsdPerInch; //x is position in inches		
+		//double ticsdPerInch = 135.000000000000000000000000000000000;
+		double x = Math.abs(getEncInches());	
 		double startingSpeed = 0.3;
 		double stoppingSpeed = 0.15;
 		int startingDistance = 36;
@@ -303,7 +316,7 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 	{
 		return navX.getYaw();
 	}
-	
+
 	public void resetNavX()
 	{
 		navX.reset();
@@ -311,19 +324,19 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 
 	public void resetEncoder()
 	{
-		enc.reset();
+		frontRightMasterMotor.setSelectedSensorPosition(0, 0, 0);
 	}
-	
+
 	public void printColors()
 	{
 		System.out.println(mAMSColorSensor);
 	}
-	
+
 	public void printHeading()
 	{
 		System.out.println("Heading: " + navX.getYaw());
 	}
-	
+
 	public void printEncoder()
 	{
 		System.out.println("Encoder: " + enc.getRaw());
@@ -334,6 +347,7 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 		return servo.get();
 	}
 	
+
 	public void calibrateNavX()
 	{
 		System.out.println("Calibrating NavX...");
@@ -409,6 +423,7 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 			//e.printStackTrace();
 		}
 	}
+
 	
 	public void raiseServo()
 	{
@@ -420,12 +435,13 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 		servo.set(0.0);
 	}
 	
+
 	@Override
 	public void printTestInfo()
 	{
-		
+
 	}
-	
+
 	/**
 	 * Class for constant variables related to the drivetrain
 	 * @author Mark
@@ -435,30 +451,30 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 	{
 		public static final int FRONT_LEFT_MASTER_MOTOR_PORT = 13;
 		public static final int FRONT_LEFT_FOLLOWER_MOTOR_PORT = 12;
-		
+
 		public static final int FRONT_RIGHT_MASTER_MOTOR_PORT = 15;
 		public static final int FRONT_RIGHT_FOLLOWER_MOTOR_PORT = 14;
-		
+
 		public static final int REAR_LEFT_MASTER_MOTOR_PORT = 2;
 		public static final int REAR_LEFT_FOLOWER_MOTOR_PORT = 3;
-		
+
 		public static final int REAR_RIGHT_MASTER_MOTOR_PORT = 0;
 		public static final int REAR_RIGHT_FOLLOWER_MOTOR_PORT = 1;
-		
+
 		public static final int DRIVE_40_AMP_TRIGGER = 60;
 		public static final int DRIVE_40_AMP_LIMIT = 30;
 		public static final int DRIVE_40_AMP_TIME = 4000;
-		
+
 		public static final int DRIVE_30_AMP_TRIGGER = 45;
 		public static final int DRIVE_30_AMP_LIMIT = 25;
 		public static final int DRIVE_30_AMP_TIME = 3000;
-		
+
 		public static final int DRIVE_RAMP_RATE_TIMEOUT = 10; //ms
-		
+
 		public static final double DRIVE_RAMP_TIME = 0.5;
 	}
 
-	
+
 
 
 }

@@ -2,9 +2,9 @@ package org.usfirst.frc.team4237.robot.network;
 
 public class AutoSelect4237Data
 {
-	private String selectedPosition;
-	private String selectedTarget;
-	private String selectedBackupPlan; 
+	private String selectedPosition = "None";
+	private String selectedTarget = "Auto line";
+	private String selectedBackupPlan = "Auto line"; 
 	
 	public synchronized String getSelectedPosition()
 	{

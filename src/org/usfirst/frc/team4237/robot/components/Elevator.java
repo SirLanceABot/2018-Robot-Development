@@ -5,6 +5,8 @@ import java.util.HashMap;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
+
+import org.usfirst.frc.team4237.robot.components.Gripper.Constants;
 import org.usfirst.frc.team4237.robot.control.OperatorXbox;
 import org.usfirst.frc.team4237.robot.control.Xbox;
 
@@ -28,13 +30,12 @@ public class Elevator extends Thread implements Component
 	private HashMap<Integer, WPI_TalonSRX> talonSRXHashMap = new HashMap<Integer, WPI_TalonSRX>();
 
 	private double currentValue;
-	private double[] targetRange = Constants.Range.error.range;
+	private double[] targetRange = Constants.Range.floorRange.range;
 
 	private Constants.Range currentRange;
 	private Constants.Direction currentDirection = Constants.Direction.None;
 
 	private boolean isMoving = false;
-	private boolean inTargetRange = false;
 
 	private Constants.InitRange autoTargetRange = Constants.InitRange.error;
 
@@ -101,19 +102,19 @@ public class Elevator extends Thread implements Component
 		{	
 			updateCurrentRange();
 
-			if (DriverStation.getInstance().isOperatorControl())
+			if (DriverStation.getInstance().isOperatorControl() && DriverStation.getInstance().isEnabled())
 			{
 				teleop();
 			}
-			else if (DriverStation.getInstance().isAutonomous())
+			else if (DriverStation.getInstance().isAutonomous() && DriverStation.getInstance().isEnabled())
 			{
 				autonomous();
 			}
-			else if (DriverStation.getInstance().isTest())
+			else if (DriverStation.getInstance().isTest() && DriverStation.getInstance().isEnabled())
 			{
 				test();
 			}
-			Timer.delay(0.005);
+			Timer.delay(0.01);
 		} //End of while loop
 	}
 
@@ -152,7 +153,7 @@ public class Elevator extends Thread implements Component
 			}
 		}
 
-		if(isMoving())
+		else if(isMoving())
 		{
 			System.out.println("Is Moving");
 			if (currentDirection == Constants.Direction.Up)
@@ -180,45 +181,45 @@ public class Elevator extends Thread implements Component
 				}
 			}
 
-			if ( (currentValue >= targetRange[0]) && (currentValue < targetRange[1]) )
+			if  ( (currentValue >= targetRange[0] && currentDirection == Constants.Direction.Up) || 
+					(currentValue < targetRange[1] && currentDirection == Constants.Direction.Down))
 			{
-				System.out.println("In target range");
+				//System.out.println("Elevator in target range");
 				isMoving = false;
 				currentDirection = Constants.Direction.None;
 				stopMoving();
 			}
 			else if (currentDirection == Constants.Direction.Up)
 			{
-				System.out.println("Raising");
+				//System.out.println("Elevator raising");
 				raise();
 			}
 			else if (currentDirection == Constants.Direction.Down)
 			{
 				lower();
-				System.out.println("Lowering");
+				//System.out.println("Elevator lowering");
 			}
 		}
 	}
 
 	public void autonomous()
 	{
-		inTargetRange = false;
-
+		
 		if ((currentValue >= targetRange[0]) && (currentValue <= targetRange[1]))
 		{
-			System.out.println("In target range");
+			//System.out.println("Elevator in target range");
 			currentDirection = Constants.Direction.None;
 			stopMoving();
 		}
 		else if (currentValue < targetRange[0])
 		{
-			System.out.println("Raising");
+			//System.out.println("Elevator raising");
 			raise();
 		}
 		else if (currentValue > targetRange[1])
 		{
 			lower();
-			System.out.println("Lowering");
+			//System.out.println("Elevator lowering");
 		}
 	}
 
@@ -264,8 +265,7 @@ public class Elevator extends Thread implements Component
 	public void updateCurrentRange()
 	{
 		currentValue = getStringPot();
-		//		printPotentiometers();
-		System.out.println("Potentiometer Value = " + currentValue);
+		//System.out.println("Potentiometer Value = " + currentValue);
 		if (currentValue <= Constants.Range.floorRange.topValue())
 		{
 			currentRange = Constants.Range.floorRange;
@@ -319,7 +319,7 @@ public class Elevator extends Thread implements Component
 		setMoving(false);
 	}
 
-	public synchronized double getStringPot()
+	public double getStringPot()
 	{
 		return masterTalonSRX.getSelectedSensorPosition(0);
 	}
@@ -363,13 +363,13 @@ public class Elevator extends Thread implements Component
 	{		
 		private enum InitRange
 		{
-			floorRange(118, 128),
-			floorExchangeAndSwitchAndPortalRange(118, 228),
-			exchangeAndSwitchAndPortalRange(228, 248),
-			exchangeAndSwitchAndPortalBottomScaleRange(248, 416),
-			bottomScaleRange(416, 436),
-			bottomScaleTopScaleRange(436, 578),
-			topScaleRange(578, 588),
+			floorRange(118, 138),
+			floorExchangeAndSwitchAndPortalRange(138, 218),
+			exchangeAndSwitchAndPortalRange(218, 258),
+			exchangeAndSwitchAndPortalBottomScaleRange(258, 406),
+			bottomScaleRange(406, 446),
+			bottomScaleTopScaleRange(446, 568),
+			topScaleRange(568, 588),
 			none(-1, -1),
 			error(-1, -1);
 

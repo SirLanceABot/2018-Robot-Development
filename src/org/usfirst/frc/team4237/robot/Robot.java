@@ -20,6 +20,8 @@ public class Robot extends IterativeRobot
 	@Override
 	public void robotInit()
 	{
+		Drivetrain.getInstance().calibrateNavX();
+		Drivetrain.getInstance().calibrateColorSensor();
 		System.out.println("Starting robot!");
 		Thread drivetrain = new Thread(Drivetrain.getInstance());
 		drivetrain.start();
@@ -70,6 +72,7 @@ public class Robot extends IterativeRobot
 	@Override
 	public void autonomousPeriodic()
 	{
+		
 		autonomous.periodic();
 	}
 }

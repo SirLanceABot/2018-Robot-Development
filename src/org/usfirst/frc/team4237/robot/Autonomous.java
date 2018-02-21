@@ -387,7 +387,7 @@ public class Autonomous
 		{
 			if(drivetrain.driveDistance(184, 0.4, 0))
 			{
-				autoStage = Constants.AutoStage.kSpin1;
+				autoStage = Constants.AutoStage.kDone;
 				System.out.println("Entering: " + autoStage);
 			}
 		}
@@ -421,8 +421,8 @@ public class Autonomous
 		}
 		else if(autoStage == Constants.AutoStage.kSpin2)
 		{
-			elevator.autoSetScaleTargetRange();
-			if(drivetrain.spinToBearing(0 * angleSign, 0.35) && elevator.inTargetRange())
+			//elevator.autoSetScaleTargetRange();
+			if(drivetrain.spinToBearing(0 * angleSign, 0.35))// && elevator.inTargetRange())
 			{
 				autoStage = Constants.AutoStage.kDrive3ToLine;
 				System.out.println("Entering: " + autoStage);
@@ -435,7 +435,7 @@ public class Autonomous
 			{
 				autoStage = Constants.AutoStage.kDone;
 				System.out.println("Entering: " + autoStage);
-				gripper.setAutoEjecting(true);
+				//gripper.setAutoEjecting(true);
 				System.out.println("Time: " + t.get());
 			}
 		}
