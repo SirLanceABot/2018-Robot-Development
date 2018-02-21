@@ -13,6 +13,7 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 
@@ -42,6 +43,9 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 	
 	private static WPI_TalonSRX rearRightMasterMotor = new WPI_TalonSRX(Constants.REAR_RIGHT_MASTER_MOTOR_PORT);
 	private static WPI_TalonSRX rearRightFollowerMotor = new WPI_TalonSRX(Constants.REAR_RIGHT_FOLLOWER_MOTOR_PORT);
+	
+	private static Servo servo = new Servo(0);
+	private double position = 0;
 	
 	private Encoder enc = new Encoder(0, 1, false, EncodingType.k4X);
 	private AHRS navX = new AHRS(I2C.Port.kMXP);
@@ -399,6 +403,16 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 		{
 			//e.printStackTrace();
 		}
+	}
+	
+	public void raiseServo()
+	{
+		servo.set(1.0);
+	}
+	
+	public void lowerServo()
+	{
+		servo.set(0.0);
 	}
 	
 	@Override
