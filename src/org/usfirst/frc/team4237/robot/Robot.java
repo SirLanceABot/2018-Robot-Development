@@ -49,6 +49,7 @@ public class Robot extends IterativeRobot
 	{
 		System.out.println("Entering teleop");
 		Gripper.getInstance().setTeleopLimits();
+		Drivetrain.getInstance().raiseServo();
 	}
 	
 	@Override
@@ -62,6 +63,7 @@ public class Robot extends IterativeRobot
 	{
 		System.out.println("Entering autonomous");
 		Gripper.getInstance().setAutoLimits();
+		Drivetrain.getInstance().lowerServo();
 		autonomous.init();
 	}
 	
