@@ -46,8 +46,7 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 	private static WPI_TalonSRX rearRightMasterMotor = new WPI_TalonSRX(Constants.REAR_RIGHT_MASTER_MOTOR_PORT);
 	private static WPI_TalonSRX rearRightFollowerMotor = new WPI_TalonSRX(Constants.REAR_RIGHT_FOLLOWER_MOTOR_PORT);
 	
-	private static Servo servo = new Servo(0);
-	private double position = 0;
+	private static Servo servo = new Servo(Constants.SERVO_PORT);
 	
 
 	private Encoder enc = new Encoder(0, 1, false, EncodingType.k4X);
@@ -155,7 +154,7 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 		{
 			try
 			{
-				System.out.println("Encoder tic: " + frontRightMasterMotor.getSelectedSensorPosition(0) + "  Distance: " + getEncInches());
+				//System.out.println("Encoder tic: " + frontRightMasterMotor.getSelectedSensorPosition(0) + "  Distance: " + getEncInches());
 				
 				if (DriverStation.getInstance().isOperatorControl() && DriverStation.getInstance().isEnabled())
 				{
@@ -427,7 +426,7 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 	
 	public void raiseServo()
 	{
-		servo.set(1.0);
+		servo.set(0.04735);
 	}
 	
 	public void lowerServo()
@@ -472,6 +471,8 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 		public static final int DRIVE_RAMP_RATE_TIMEOUT = 10; //ms
 
 		public static final double DRIVE_RAMP_TIME = 0.5;
+		
+		public static final int SERVO_PORT = 0;
 	}
 
 

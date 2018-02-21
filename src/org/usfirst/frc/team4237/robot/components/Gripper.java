@@ -521,7 +521,7 @@ public class Gripper extends Thread implements Component
 	public void updateCurrentRange()
 	{
 		currentValue = getPivotEncoder();
-		System.out.println(getPivotEncoder());
+		System.out.println("Pivot encoder: " + getPivotEncoder());
 		if (currentValue <= Constants.Range.floorRange.topValue())
 		{
 			currentRange = Constants.Range.floorRange;

@@ -65,7 +65,7 @@ public class Robot extends IterativeRobot
 	{
 		System.out.println("Entering autonomous");
 		Gripper.getInstance().setAutoLimits();
-		Drivetrain.getInstance().lowerServo();
+		//Drivetrain.getInstance().lowerServo();
 		autonomous.init();
 	}
 	
