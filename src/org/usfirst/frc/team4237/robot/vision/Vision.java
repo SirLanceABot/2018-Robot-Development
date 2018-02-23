@@ -14,7 +14,7 @@ import org.usfirst.frc.team4237.robot.control.Xbox.Constants;
 import org.usfirst.frc.team4237.robot.network.RaspberryPiReceiver;
 import org.usfirst.frc.team4237.robot.sensors.Sonar;
 
-public class Vision
+public class Vision extends Thread
 {	
 	private VideoSink cameraServer = CameraServer.getInstance().getServer();
 	private UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
@@ -28,6 +28,12 @@ public class Vision
 	private int midpointX = -1;
 	private int largestHeight = -1;
 	
+	private static Vision instance = new Vision();
+	public static Vision getInstance()
+	{
+		return instance;
+	}
+	
 	public synchronized void update()
 	{
 		visionData = json.fromJson(VisionData.class, raspberryPiReceiver.getRawData());
@@ -37,7 +43,6 @@ public class Vision
 		this.offset = Constants.CENTER - midpointX;
 		this.largestHeight = visionData.getData().get(visionTargetIDs[0]).getHeight();
 	}
-
 	
 	public int getMidpointX()
 	{
