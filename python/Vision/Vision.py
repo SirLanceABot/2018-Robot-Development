@@ -12,6 +12,7 @@ def extra_processing(pipeline):
     global newLogName
     buff = []
     data = {}
+    data["data"] = {}
     dataToSend = ""
     xsum = 0
 
@@ -22,10 +23,11 @@ def extra_processing(pipeline):
         #buff.append(x + w / 2.0)
         #buff.append(h)
         #xsum += (x + w / 2.0) + (h)
-        data["idNum"] = idNum
-        data["idNum"][i] = {"midpointX" : (x + w / 2.0), "height" : h}
+        data["idNum"] = str(idNum)
+        data["data"][i] = {"midpointX" : (x + w / 2), "height" : h}
         i = str(int(i) + 1)
 
+    data["data"] = sorted(data["data"].iteritems(), key=lambda (x, y): y["height"], reverse=True) 
     idNum += 1
     #xsum += idNum
 
@@ -78,7 +80,8 @@ def main():
                 if ret is True:
                     pipeline.process(img)
                     if len(pipeline.filter_contours_output) >= 1 and (idNum % 10) is 0:
-                        print "Writing image to usb"
+                        pass
+                        #print "Writing image to usb"
                         #cv2.imwrite("/mnt/usb/" + str(idNum) + "raw.jpg", img)
                         #cv2.imwrite("/mnt/usb/" + str(idNum) + "filtered.jpg", pipeline.hsl_threshold_output)
                     extra_processing(pipeline)
