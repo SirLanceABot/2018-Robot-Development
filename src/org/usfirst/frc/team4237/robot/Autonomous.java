@@ -381,13 +381,41 @@ public class Autonomous
 		}
 	}
 
+	public void scaleOnSameSideWithStrafe()
+	{
+		if(autoStage == Constants.AutoStage.kDrive1)
+		{
+			if(drivetrain.driveDistance(184, 0.4, 0))
+			{
+				autoStage = Constants.AutoStage.kDrive2Distance1;
+				System.out.println("Entering: " + autoStage);
+			}
+		}
+		else if(autoStage == Constants.AutoStage.kDrive2Distance1)
+		{
+			if(drivetrain.strafeDistanceAt45(-45 * angleSign, 0.4, 0))
+			{
+				autoStage = Constants.AutoStage.kDrive2ToLine1;
+				System.out.println("Entering: " + autoStage);
+			}
+		}
+		else if(autoStage == Constants.AutoStage.kDrive2ToLine1)
+		{
+			if(drivetrain.driveToColor(AMSColorSensor.Constants.Color.kWhite, 0.35, 0))
+			{
+				autoStage = Constants.AutoStage.kDone;
+				System.out.println("Entering: " + autoStage);
+			}
+		}
+	}
+	
 	public void scaleOnSameSide()
 	{
 		if(autoStage == Constants.AutoStage.kDrive1)
 		{
 			if(drivetrain.driveDistance(184, 0.4, 0))
 			{
-				autoStage = Constants.AutoStage.kDone;
+				autoStage = Constants.AutoStage.kSpin1;
 				System.out.println("Entering: " + autoStage);
 			}
 		}

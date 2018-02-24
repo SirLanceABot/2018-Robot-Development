@@ -217,14 +217,11 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 	public boolean driveDistance(int inches, double maxSpeed, int heading)
 	{
 		boolean isDoneDriving = false;
-		//			double ticsdPerInch = 76.39437268410976116906420641880689377654;
-		//			double x = Math.abs(frontLeftMotor.getSelectedSensorPosition(0)) / ticsdPerInch; //x is position in inches
-		//double ticsdPerInch = 135.000000000000000000000000000000000;
 		double x = Math.abs(getEncInches());	
 		double startingSpeed = 0.3;
 		double stoppingSpeed = 0.15;
 		int startingDistance = 36;
-		int stoppingDistance = 80;
+		int stoppingDistance = 60;
 		double rotate = (navX.getYaw() - heading) / 50;
 
 		if (x <= inches)
@@ -251,6 +248,29 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 		return isDoneDriving;
 	}
 
+	public boolean strafeDistanceAt45(int inches, double speed, int heading)
+	{
+		boolean isDoneDriving = false;
+		double strafeSpeed = speed;
+		double x = Math.abs(getEncInches());
+		double rotate = (navX.getYaw() - heading) / 50;
+		if(inches < 0)
+		{
+			strafeSpeed *= -1;
+		}
+		
+		if(x < Math.abs(inches))
+		{
+			driveCartesian(strafeSpeed, -speed, rotate);
+		}
+		else
+		{
+			driveCartesian(0, 0, 0);
+			isDoneDriving = true;
+		}
+		return isDoneDriving;
+	}
+	
 	/**
 	 * Rotate to the bearing passed into the method. 0 degrees is North
 	 * @return
