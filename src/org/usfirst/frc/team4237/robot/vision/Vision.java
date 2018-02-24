@@ -34,7 +34,7 @@ public class Vision extends Thread
 		return instance;
 	}
 	
-	public synchronized void update()
+	public void update()
 	{
 		visionData = json.fromJson(VisionData.class, raspberryPiReceiver.getRawData());
 		visionData.getData().keySet().toArray(visionTargetIDs);
