@@ -112,9 +112,5 @@ public class Vision extends Thread
 		public static final int CLOSE_TO_TARGET_HEIGHT = 55;
 		public static final int CLOSE_TO_TARGET_DISTANCE_SONAR = 5;
 		public static final int ACCEPTABLE_OFFSET = 6;
-		public static enum TurnDirection
-		{
-
-		}
 	}
 }
