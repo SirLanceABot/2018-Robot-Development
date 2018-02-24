@@ -247,27 +247,34 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 		System.out.println("Distance: " + x);
 		return isDoneDriving;
 	}
-
-	public boolean strafeDistanceAt45(int inches, double speed, int heading)
+	
+	/**
+	 * Strafe at a specific angle. 0 degrees is North
+	 * @return
+	 */
+	public boolean strafeDistanceAtAngle(int inches, double angle, double speed, int heading)
 	{
 		boolean isDoneDriving = false;
-		double strafeSpeed = speed;
 		double x = Math.abs(getEncInches());
 		double rotate = (navX.getYaw() - heading) / 50;
-		if(inches < 0)
+		double strafeSpeed = Math.sin(angle) * speed;
+		double forwardSpeed = Math.cos(angle) * speed;
+		
+		if(angle < 0)
 		{
 			strafeSpeed *= -1;
 		}
 		
-		if(x < Math.abs(inches))
+		if(x < inches)
 		{
-			driveCartesian(strafeSpeed, -speed, rotate);
+			driveCartesian(strafeSpeed, -forwardSpeed, rotate);
 		}
 		else
 		{
 			driveCartesian(0, 0, 0);
 			isDoneDriving = true;
 		}
+		
 		return isDoneDriving;
 	}
 	

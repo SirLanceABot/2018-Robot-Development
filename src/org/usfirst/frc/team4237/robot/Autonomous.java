@@ -393,7 +393,7 @@ public class Autonomous
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2Distance1)
 		{
-			if(drivetrain.strafeDistanceAt45(-45 * angleSign, 0.4, 0))
+			if(drivetrain.strafeDistanceAtAngle(60, -25, 0.5, 0))
 			{
 				autoStage = Constants.AutoStage.kDrive2ToLine1;
 				System.out.println("Entering: " + autoStage);
