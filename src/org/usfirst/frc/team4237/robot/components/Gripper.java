@@ -67,13 +67,20 @@ public class Gripper extends Thread implements Component
 		leftIntakeTalon.configForwardSoftLimitEnable(false, 0);
 		leftIntakeTalon.configReverseSoftLimitEnable(false, 0);
 		leftIntakeTalon.setInverted(false);
+		leftIntakeTalon.configContinuousCurrentLimit(Constants.INTAKE_40_AMP_LIMIT, 10);
+		leftIntakeTalon.configPeakCurrentLimit(Constants.INTAKE_40_AMP_TRIGGER, Constants.INTAKE_40_AMP_TIME);
+		leftIntakeTalon.configOpenloopRamp(Constants.INTAKE_RAMP_TIME, Constants.INTAKE_RAMP_RATE_TIMEOUT);
 
+		
 		rightIntakeTalon.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder, 0, 0);
 		rightIntakeTalon.setSensorPhase(true);
 		rightIntakeTalon.configForwardSoftLimitEnable(false, 0);
 		rightIntakeTalon.configReverseSoftLimitEnable(false, 0);
 		rightIntakeTalon.setInverted(false);
-
+		rightIntakeTalon.configContinuousCurrentLimit(Constants.INTAKE_40_AMP_LIMIT, 10);
+		rightIntakeTalon.configPeakCurrentLimit(Constants.INTAKE_40_AMP_TRIGGER, Constants.INTAKE_40_AMP_TIME);
+		rightIntakeTalon.configOpenloopRamp(Constants.INTAKE_RAMP_TIME, Constants.INTAKE_RAMP_RATE_TIMEOUT);
+		
 		//Pivoter settings
 		pivotTalon.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder, 0, 0);
 		pivotTalon.setSensorPhase(true);
@@ -777,6 +784,13 @@ public class Gripper extends Thread implements Component
 		public static final int PIVOTER_MOTOR_PORT = 6;
 
 		public static final int PID_SLOT_ID = 0;
+		
+		public static final int INTAKE_40_AMP_TRIGGER = 60;
+		public static final int INTAKE_40_AMP_LIMIT = 30;
+		public static final int INTAKE_40_AMP_TIME = 4000;
+		
+		public static final double INTAKE_RAMP_TIME = 0.125;
+		public static final int INTAKE_RAMP_RATE_TIMEOUT = 10;
 	}
 
 }
