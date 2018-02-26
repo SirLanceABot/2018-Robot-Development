@@ -159,9 +159,6 @@ public class Autonomous
 		drivetrain.resetEncoder();
 		drivetrain.resetNavX();
 		gripper.resetPivotEncoder();
-//		greenCameraLight.set(true);
-//		whiteCameraLight.set(true);
-//		whiteFloorLight.set(true);
 	}
 
 	/**
