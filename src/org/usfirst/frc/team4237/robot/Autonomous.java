@@ -378,6 +378,35 @@ public class Autonomous
 		}
 	}
 
+	public void scaleOnSameSideOnAngle()
+	{
+		if(autoStage == Constants.AutoStage.kDrive1)
+		{
+			if(drivetrain.driveDistance(245, 0.75, 0))
+			{
+				autoStage = Constants.AutoStage.kDrive2ToLine1;
+				System.out.println("Entering: " + autoStage);
+			}
+		}
+		if(autoStage == Constants.AutoStage.kDrive2ToLine1)
+		{
+			if(drivetrain.driveToColor(AMSColorSensor.Constants.Color.kWhite, 0.35, 0))
+			{
+				autoStage = Constants.AutoStage.kSpin1;
+				System.out.println("Entering: " + autoStage);
+			}
+		}
+		if(autoStage == Constants.AutoStage.kSpin1)
+		{
+			//TODO: Timer for distance strafing
+			if(drivetrain.spinToBearing(-45, 0.4))
+			{
+				autoStage = Constants.AutoStage.kDone;
+				System.out.println("Entering: " + autoStage);
+			}
+		}
+	}
+	
 	public void scaleOnSameSideWithStrafe()
 	{
 		if(autoStage == Constants.AutoStage.kDrive1)
