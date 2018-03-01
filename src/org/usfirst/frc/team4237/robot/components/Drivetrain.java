@@ -497,7 +497,7 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 
 		public static final int DRIVE_RAMP_RATE_TIMEOUT = 10; //ms
 
-		public static final double DRIVE_RAMP_TIME = 0.5;
+		public static final double DRIVE_RAMP_TIME = 0.25;	//FIXME: normally 0.5
 		
 		public static final int SERVO_PORT = 0;
 	}

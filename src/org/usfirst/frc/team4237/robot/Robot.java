@@ -6,10 +6,17 @@ import org.usfirst.frc.team4237.robot.components.Gripper;
 import org.usfirst.frc.team4237.robot.control.Xbox;
 import org.usfirst.frc.team4237.robot.network.AutoSelect4237;
 import org.usfirst.frc.team4237.robot.network.RaspberryPiReceiver;
+import org.usfirst.frc.team4237.robot.vision.Vision;
+
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.cscore.VideoSink;
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
 
 public class Robot extends IterativeRobot
 {
+//	private UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+	
 	private Autonomous autonomous = Autonomous.getInstance();
 	
 	public Robot()
@@ -32,6 +39,8 @@ public class Robot extends IterativeRobot
 		
 		Gripper.getInstance().start();
 		System.out.println("Gripper thread started!");
+		
+		//Vision.getInstance().start();
 	}
 	
 	@Override

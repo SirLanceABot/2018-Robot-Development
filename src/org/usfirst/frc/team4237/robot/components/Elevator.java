@@ -261,6 +261,9 @@ public class Elevator extends Thread implements Component
 		}
 		printTestInfo();
 	}
+	/**
+	 * Test Code
+	 */
 
 	public void updateCurrentRange()
 	{
@@ -296,16 +299,12 @@ public class Elevator extends Thread implements Component
 			currentRange = Constants.Range.bottomScaleTopScaleRange;
 			//			System.out.println("Current Range: " + Constants.Range.bottomScaleTopScaleRange);
 		}
-		else if (currentValue <= Constants.Range.topScaleRange.topValue())
+		else //if (currentValue <= Constants.Range.topScaleRange.topValue())
 		{
 			currentRange = Constants.Range.topScaleRange;
 			//			System.out.println("Current Range: " + Constants.Range.topScaleRange);
 		}
-		else
-		{
-			//			System.out.println("Something went terribly wrong");
-			//			currentRange = Constants.Range.error;
-		}
+		
 	}
 
 	public Constants.Range getCurrentRange()
@@ -372,19 +371,18 @@ public class Elevator extends Thread implements Component
 			topScaleRange(568, 588),
 			none(-1, -1),
 			error(-1, -1);
+			
+//			floorRange(Constants.FLOOR, Constants.FLOOR + Constants.THRESHOLD),
+//			floorExchangeAndSwitchAndPortalRange(Constants.FLOOR + Constants.THRESHOLD, Constants.SWITCH - Constants.THRESHOLD),
+//			exchangeAndSwitchAndPortalRange(Constants.SWITCH - Constants.THRESHOLD, Constants.SWITCH + Constants.THRESHOLD),
+//			exchangeAndSwitchAndPortalBottomScaleRange(Constants.SWITCH + Constants.THRESHOLD, Constants.BOTTOM_SCALE - Constants.THRESHOLD),
+//			bottomScaleRange(Constants.BOTTOM_SCALE - Constants.THRESHOLD, Constants.BOTTOM_SCALE + Constants.THRESHOLD),
+//			bottomScaleTopScaleRange(Constants.BOTTOM_SCALE + Constants.THRESHOLD, Constants.TOP_SCALE - Constants.THRESHOLD),
+//			topScaleRange(Constants.TOP_SCALE - Constants.THRESHOLD, Constants.TOP_SCALE),
+//			none(-1, -1),
+//			error(-1, -1);
 
-			/*floorRange(),
-			floorExchangeAlongWithPortalRangeAsWellToo(),
-			exchangeIncludingWithTheZonePortalRangeAreaPlace(),
-			exchangeAlongWithPortalRangeAsWellTooSwitchRange(0.36661538461539, 0.41953846153846),
-			switchRange(0.41953846153846, 0.47246153846154),
-			switchBottomScaleRange(0.57830769230769, 0.63123076923077),
-			bottomScaleRange(0.63123076923077, 0.68415384615385),
-			bottomScaleTopScaleRange(0.68415384615385, 0.73707692307692),
-			topScaleRange(0.73707692307692, .8),
-			none(-1, -1),
-			error(-1, -1);
-			 */
+		
 
 			private final double[] range;
 
@@ -411,14 +409,14 @@ public class Elevator extends Thread implements Component
 
 		public enum Range
 		{
-			floorRange(     				InitRange.floorRange.range(),                 	InitRange.floorRange,        			InitRange.exchangeAndSwitchAndPortalRange),
-			floorExchangeAndSwitchAndPortalRange(   InitRange.floorExchangeAndSwitchAndPortalRange.range(),	InitRange.floorRange,        			InitRange.exchangeAndSwitchAndPortalRange),
-			exchangeAndSwitchAndPortalRange(         		InitRange.exchangeAndSwitchAndPortalRange.range(),				InitRange.floorRange,        			InitRange.bottomScaleRange),
-			exchangeAndSwitchAndPortalBottomScaleRange(   	InitRange.exchangeAndSwitchAndPortalBottomScaleRange.range(),	InitRange.exchangeAndSwitchAndPortalRange,       		InitRange.bottomScaleRange),
-			bottomScaleRange(           			InitRange.bottomScaleRange.range(),          			InitRange.exchangeAndSwitchAndPortalRange,    			InitRange.topScaleRange), 
-			bottomScaleTopScaleRange(   			InitRange.bottomScaleTopScaleRange.range(),   			InitRange.bottomScaleRange,  					InitRange.topScaleRange),
-			topScaleRange(              			InitRange.topScaleRange.range(),              			InitRange.bottomScaleRange,  					InitRange.topScaleRange),
-			error(                      			InitRange.error.range(),                      			InitRange.error,             					InitRange.error);
+			floorRange(     								InitRange.floorRange.range(),                 					InitRange.floorRange,        				InitRange.exchangeAndSwitchAndPortalRange),
+			floorExchangeAndSwitchAndPortalRange(   		InitRange.floorExchangeAndSwitchAndPortalRange.range(),			InitRange.floorRange,        				InitRange.exchangeAndSwitchAndPortalRange),
+			exchangeAndSwitchAndPortalRange(         		InitRange.exchangeAndSwitchAndPortalRange.range(),				InitRange.floorRange,        				InitRange.bottomScaleRange),
+			exchangeAndSwitchAndPortalBottomScaleRange(   	InitRange.exchangeAndSwitchAndPortalBottomScaleRange.range(),	InitRange.exchangeAndSwitchAndPortalRange,  InitRange.bottomScaleRange),
+			bottomScaleRange(           					InitRange.bottomScaleRange.range(),          					InitRange.exchangeAndSwitchAndPortalRange, 	InitRange.topScaleRange), 
+			bottomScaleTopScaleRange(   					InitRange.bottomScaleTopScaleRange.range(),   					InitRange.bottomScaleRange,  				InitRange.topScaleRange),
+			topScaleRange(              					InitRange.topScaleRange.range(),              					InitRange.bottomScaleRange,  				InitRange.topScaleRange),
+			error(                      					InitRange.error.range(),                      					InitRange.error,             				InitRange.error);
 
 			private final double[] range;
 			private final InitRange higherNeighbor;
@@ -474,6 +472,13 @@ public class Elevator extends Thread implements Component
 		public static final double STRING_POT_SCALE = 1.0;
 
 		public static final double SPEED = 0.5;
+		
+		public static final int THRESHOLD = 15;
+		public static final int FLOOR = 0;
+		public static final int SWITCH = 238;
+		public static final int BOTTOM_SCALE = 426;
+		public static final int TOP_SCALE = 588;
+	
 	}
 }
 

@@ -16,7 +16,7 @@ import org.usfirst.frc.team4237.robot.sensors.Sonar;
 
 public class Vision extends Thread
 {	
-	private VideoSink cameraServer = CameraServer.getInstance().getServer();
+//	private VideoSink cameraServer = CameraServer.getInstance().getServer();
 	private UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
 	private VisionData visionData;
 	private Json json = new Json();
@@ -32,6 +32,15 @@ public class Vision extends Thread
 	public static Vision getInstance()
 	{
 		return instance;
+	}
+	
+	public void run()
+	{
+		while(!Thread.interrupted())
+		{
+			update();
+			Timer.delay(0.01);
+		}
 	}
 	
 	public void update()

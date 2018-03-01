@@ -83,11 +83,12 @@ public class Gripper extends Thread implements Component
 		
 		//Pivoter settings
 		pivotTalon.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder, 0, 0);
+		//pivotTalon.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.Analog, 0, 0);
 		pivotTalon.setSensorPhase(true);
 		pivotTalon.configForwardSoftLimitThreshold(2590, 0);
 		pivotTalon.configReverseSoftLimitThreshold(0, 0);
-		pivotTalon.configForwardSoftLimitEnable(true, 0);
-		pivotTalon.configReverseSoftLimitEnable(true, 0);
+		pivotTalon.configForwardSoftLimitEnable(false, 0);	//FIXME: change back to true with working sensor
+		pivotTalon.configReverseSoftLimitEnable(false, 0);	//FIXME: change back to true with working sensor
 
 		//Reset Encoders to correct values
 		pivotTalon.setSelectedSensorPosition(2590,0,0);
@@ -222,8 +223,8 @@ public class Gripper extends Thread implements Component
 
 	public void ejectDrop()
 	{
-		leftIntakeTalon.set(-0.2);
-		rightIntakeTalon.set(-0.2);
+		leftIntakeTalon.set(-0.5);
+		rightIntakeTalon.set(-0.5);
 	}
 
 
@@ -457,9 +458,14 @@ public class Gripper extends Thread implements Component
 		}
 	}
 
+	/**
+	 * Test Code
+	 */
 	public void autonomous()
 	{
 		if ( (currentValue >= targetRange[0]) && (currentValue <= targetRange[1]) )
+		//if ( (currentValue >= targetRange[0] && currentDirection == Constants.Direction.Up) || 
+		//	(currentValue < targetRange[1] && currentDirection == Constants.Direction.Down))
 		{
 			//System.out.println("Pivot Arm in target range");
 			pivotOff();	
@@ -697,6 +703,18 @@ public class Gripper extends Thread implements Component
 			raisedRange(2575, 2590),
 			none(-1, -1),
 			error(-1, -1);
+			
+//			floorRange(Constants.FLOOR, Constants.FLOOR + Constants.THRESHOLD),
+//			floorHorizontalRange(Constants.FLOOR + Constants.THRESHOLD, Constants.HORIZONTAL - Constants.THRESHOLD),
+//			horizontalRange(Constants.HORIZONTAL - Constants.THRESHOLD, Constants.HORIZONTAL + Constants.THRESHOLD),
+//			horizontalMiddleRange(Constants.HORIZONTAL + Constants.THRESHOLD, Constants.MIDDLE - Constants.THRESHOLD),
+//			middleRange(Constants.MIDDLE - Constants.THRESHOLD, Constants.MIDDLE + Constants.THRESHOLD),
+//			middleTeleopMaxRange(Constants.MIDDLE + Constants.THRESHOLD, Constants.TELEOP_MAX - Constants.THRESHOLD),
+//			teleopMaxRange(Constants.TELEOP_MAX - Constants.THRESHOLD, Constants.TELEOP_MAX + Constants.THRESHOLD),
+//			teleopMaxRaisedRange(Constants.TELEOP_MAX + Constants.THRESHOLD, Constants.RAISED - Constants.THRESHOLD),
+//			raisedRange(Constants.RAISED - Constants.THRESHOLD, Constants.RAISED),
+//			none(-1, -1),
+//			error(-1, -1);
 
 			private final int[] range;
 
@@ -785,12 +803,21 @@ public class Gripper extends Thread implements Component
 
 		public static final int PID_SLOT_ID = 0;
 		
+<<<<<<< HEAD
 		public static final int INTAKE_40_AMP_TRIGGER = 60;
 		public static final int INTAKE_40_AMP_LIMIT = 30;
 		public static final int INTAKE_40_AMP_TIME = 4000;
 		
 		public static final double INTAKE_RAMP_TIME = 0.125;
 		public static final int INTAKE_RAMP_RATE_TIMEOUT = 10;
+=======
+		public static final int THRESHOLD = 15;
+		public static final int FLOOR = 0;
+		public static final int HORIZONTAL = 157;
+		public static final int MIDDLE  = 1287;
+		public static final int TELEOP_MAX = 1967;
+		public static final int RAISED = 2590;
+>>>>>>> Got the camera to work in robot
 	}
 
 }
