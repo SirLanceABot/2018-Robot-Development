@@ -99,7 +99,7 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 		frontRightFollowerMotor.follow(frontRightMasterMotor);
 		rearLeftFollowerMotor.follow(rearLeftMasterMotor);
 		rearRightFollowerMotor.follow(rearRightMasterMotor);
-
+		
 		frontLeftMasterMotor.configContinuousCurrentLimit(Constants.DRIVE_40_AMP_LIMIT, 10);
 		frontLeftMasterMotor.configPeakCurrentLimit(Constants.DRIVE_40_AMP_TRIGGER, Constants.DRIVE_40_AMP_TIME);
 		frontLeftMasterMotor.configOpenloopRamp(Constants.DRIVE_RAMP_TIME, Constants.DRIVE_RAMP_RATE_TIMEOUT);
