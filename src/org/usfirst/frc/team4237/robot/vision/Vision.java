@@ -14,7 +14,7 @@ import org.usfirst.frc.team4237.robot.control.Xbox.Constants;
 import org.usfirst.frc.team4237.robot.network.RaspberryPiReceiver;
 import org.usfirst.frc.team4237.robot.sensors.Sonar;
 
-public class Vision extends Thread
+public class Vision
 {	
 //	private VideoSink cameraServer = CameraServer.getInstance().getServer();
 	private UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
@@ -34,14 +34,14 @@ public class Vision extends Thread
 		return instance;
 	}
 	
-	public void run()
-	{
-		while(!Thread.interrupted())
-		{
-			update();
-			Timer.delay(0.01);
-		}
-	}
+//	public void run()
+//	{
+//		while(!Thread.interrupted())
+//		{
+//			update();
+//			Timer.delay(0.01);
+//		}
+//	}
 	
 	public void update()
 	{
