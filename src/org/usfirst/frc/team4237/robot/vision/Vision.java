@@ -17,7 +17,7 @@ import org.usfirst.frc.team4237.robot.sensors.Sonar;
 public class Vision
 {	
 //	private VideoSink cameraServer = CameraServer.getInstance().getServer();
-	private UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+	
 	private VisionData visionData;
 	private Json json = new Json();
 	private RaspberryPiReceiver raspberryPiReceiver = RaspberryPiReceiver.getInstance();
@@ -34,14 +34,10 @@ public class Vision
 		return instance;
 	}
 	
-//	public void run()
-//	{
-//		while(!Thread.interrupted())
-//		{
-//			update();
-//			Timer.delay(0.01);
-//		}
-//	}
+	private Vision()
+	{
+		
+	}
 	
 	public void update()
 	{
@@ -106,12 +102,12 @@ public class Vision
 
 	public void increaseExposure()
 	{
-		camera.setExposureManual(13);
+//		camera.setExposureManual(13);
 	}
 
 	public void decreaseExposure()
 	{
-		camera.setExposureManual(0);
+//		camera.setExposureManual(0);
 	}
 
 	public static class Constants

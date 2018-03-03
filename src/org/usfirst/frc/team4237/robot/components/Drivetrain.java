@@ -61,10 +61,6 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 	private int UpperThresholdFactor;
 	private int LowerThresholdFactor;
 
-	private LightRing greenCameraLight = new LightRing(10);
-	private LightRing whiteCameraLight = new LightRing(11);
-	private LightRing whiteFloorLight = new LightRing(12);
-
 	private static Drivetrain instance = new Drivetrain();
 
 	/**
@@ -144,7 +140,7 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 
 	public double getEncInches()
 	{
-		return frontRightMasterMotor.getSelectedSensorPosition(0) / 135.000000000000000000000000000000000;
+		return frontRightMasterMotor.getSelectedSensorPosition(0) / 135.0;
 	}
 	
 	@Override
@@ -186,19 +182,6 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 						this.driveCartesian(leftXAxis, leftYAxis, rightXAxis);
 					}
 
-					//this.printColors();
-
-					if(xbox.getRawButton(Xbox.Constants.A_BUTTON))
-					{
-						this.resetEncoder();
-						this.resetNavX();
-					}
-					else
-					{
-						greenCameraLight.set(false);
-						whiteCameraLight.set(false);
-						whiteFloorLight.set(false);
-					}
 				}
 				//drivetrain.debugPrintCurrent();
 			}
@@ -244,7 +227,7 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 			driveCartesian(0, 0, 0);
 			isDoneDriving = true;
 		}
-		System.out.println("Distance: " + x);
+		//System.out.println("Distance: " + x);
 		return isDoneDriving;
 	}
 	
@@ -301,7 +284,7 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 			driveCartesian(0, 0, 0);
 			isDoneSpinning = true;
 		}
-		System.out.println("heading: " + heading);
+		//System.out.println("heading: " + heading);
 		return isDoneSpinning;
 	}
 
@@ -465,7 +448,7 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 	@Override
 	public void printTestInfo()
 	{
-
+		System.out.println("[Drivetrain] Encoder position: " + getEncInches() + " NavX: " + navX.getYaw() + " colors: " + mAMSColorSensor.toString());
 	}
 
 	/**

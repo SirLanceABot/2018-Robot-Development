@@ -82,16 +82,13 @@ public class Gripper extends Thread implements Component
 		rightIntakeTalon.configOpenloopRamp(Constants.INTAKE_RAMP_TIME, Constants.INTAKE_RAMP_RATE_TIMEOUT);
 		
 		//Pivoter settings
-		pivotTalon.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder, 0, 0);
+		pivotTalon.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.Analog, 0, 0);
 		//pivotTalon.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.Analog, 0, 0);
-		pivotTalon.setSensorPhase(true);
-		pivotTalon.configForwardSoftLimitThreshold(2590, 0);
-		pivotTalon.configReverseSoftLimitThreshold(0, 0);
-		pivotTalon.configForwardSoftLimitEnable(false, 0);	//FIXME: change back to true with working sensor
-		pivotTalon.configReverseSoftLimitEnable(false, 0);	//FIXME: change back to true with working sensor
-
-		//Reset Encoders to correct values
-		pivotTalon.setSelectedSensorPosition(2590,0,0);
+		pivotTalon.setSensorPhase(false);
+		pivotTalon.configForwardSoftLimitThreshold(Constants.RAISED, 0);
+		pivotTalon.configReverseSoftLimitThreshold(Constants.FLOOR, 0);
+		pivotTalon.configForwardSoftLimitEnable(true, 0);	//FIXME: change back to true with working sensor
+		pivotTalon.configReverseSoftLimitEnable(true, 0);	//FIXME: change back to true with working sensor
 		
 		talonSRXHashMap.put(Constants.LEFT_INTAKE_MOTOR_PORT, leftIntakeTalon);
 		talonSRXHashMap.put(Constants.RIGHT_INTAKE_MOTOR_PORT, rightIntakeTalon);
@@ -293,12 +290,12 @@ public class Gripper extends Thread implements Component
 	
 	public void setAutoLimits()
 	{
-		pivotTalon.configForwardSoftLimitThreshold(2590, 0);
+		pivotTalon.configForwardSoftLimitThreshold(Constants.RAISED, 0);
 	}
 	
 	public void setTeleopLimits()
 	{
-		pivotTalon.configForwardSoftLimitThreshold(1966, 0);
+		pivotTalon.configForwardSoftLimitThreshold(Constants.TELEOP_MAX, 0);
 	}
 
 	public void run()
@@ -339,19 +336,7 @@ public class Gripper extends Thread implements Component
 		//Intake
 		double rightTrigger = xbox.getRawAxis(Xbox.Constants.RIGHT_TRIGGER_AXIS);		//Eject
 		double leftTrigger = xbox.getRawAxis(Xbox.Constants.LEFT_TRIGGER_AXIS);			//Intake
-
-		if(startButton)
-		{
-			resetPivotEncoder();
-		}
-
-		if(backButton)
-		{
-			zeroPivotEncoder();
-		}
-
-
-
+		
 		//Move pivot arm
 		if (!isPivoting())
 		{
@@ -533,8 +518,8 @@ public class Gripper extends Thread implements Component
 	//Updates the current range depending on the encoder value
 	public void updateCurrentRange()
 	{
-		currentValue = getPivotEncoder();
-		System.out.println("Pivot encoder: " + getPivotEncoder());
+		currentValue = getPivotPot();
+		System.out.println("Pivot pot: " + getPivotPot());
 		if (currentValue <= Constants.Range.floorRange.topValue())
 		{
 			currentRange = Constants.Range.floorRange;
@@ -593,7 +578,7 @@ public class Gripper extends Thread implements Component
 		return new int[] {leftIntakeTalon.getSelectedSensorVelocity(0), rightIntakeTalon.getSelectedSensorVelocity(0)};
 	}
 
-	public int getPivotEncoder()
+	public int getPivotPot()
 	{
 		return pivotTalon.getSelectedSensorPosition(0);
 	}
@@ -659,18 +644,10 @@ public class Gripper extends Thread implements Component
 		return this.currentRange;
 	}
 
-	public void resetPivotEncoder()
-	{
-		pivotTalon.setSelectedSensorPosition(2590,0,0);
-	}
-
-	public void zeroPivotEncoder()
-	{
-		pivotTalon.setSelectedSensorPosition(0,0,0);
-	}
 	public void printTestInfo()
 	{
-		System.out.printf("Pivot = %5d		Left Intake = %5d		Right Intake = %5d", getPivotEncoder(), getLeftIntakeEncoder(), getRightIntakeEncoder());
+		System.out.printf("Pivot = %5d		Left Intake = %5d		Right Intake = %5d", getPivotPot(), getLeftIntakeEncoder(), getRightIntakeEncoder());
+		System.out.println("[Gripper] Pivot arm potentiometer position: " + getPivotPot());
 	}
 
 	public void resetIntakeEncoder()
@@ -691,30 +668,18 @@ public class Gripper extends Thread implements Component
 		}
 
 		private enum InitRange
-		{
-			floorRange(0, 15),
-			floorHorizontalRange(16, 141),
-			horizontalRange(142, 172),
-			horizontalMiddleRange(173,1271),
-			middleRange(1272, 1302),
-			middleTeleopMaxRange(1303, 1951),
-			teleopMaxRange(1952,1981),
-			teleopMaxRaisedRange(1982,2574),
-			raisedRange(2575, 2590),
+		{	
+			floorRange(Constants.FLOOR, Constants.FLOOR + Constants.THRESHOLD),
+			floorHorizontalRange(Constants.FLOOR + Constants.THRESHOLD, Constants.HORIZONTAL - Constants.THRESHOLD),
+			horizontalRange(Constants.HORIZONTAL - Constants.THRESHOLD, Constants.HORIZONTAL + Constants.THRESHOLD),
+			horizontalMiddleRange(Constants.HORIZONTAL + Constants.THRESHOLD, Constants.MIDDLE - Constants.THRESHOLD),
+			middleRange(Constants.MIDDLE - Constants.THRESHOLD, Constants.MIDDLE + Constants.THRESHOLD),
+			middleTeleopMaxRange(Constants.MIDDLE + Constants.THRESHOLD, Constants.TELEOP_MAX - Constants.THRESHOLD),
+			teleopMaxRange(Constants.TELEOP_MAX - Constants.THRESHOLD, Constants.TELEOP_MAX + Constants.THRESHOLD),
+			teleopMaxRaisedRange(Constants.TELEOP_MAX + Constants.THRESHOLD, Constants.RAISED - Constants.THRESHOLD),
+			raisedRange(Constants.RAISED - Constants.THRESHOLD, Constants.RAISED),
 			none(-1, -1),
 			error(-1, -1);
-			
-//			floorRange(Constants.FLOOR, Constants.FLOOR + Constants.THRESHOLD),
-//			floorHorizontalRange(Constants.FLOOR + Constants.THRESHOLD, Constants.HORIZONTAL - Constants.THRESHOLD),
-//			horizontalRange(Constants.HORIZONTAL - Constants.THRESHOLD, Constants.HORIZONTAL + Constants.THRESHOLD),
-//			horizontalMiddleRange(Constants.HORIZONTAL + Constants.THRESHOLD, Constants.MIDDLE - Constants.THRESHOLD),
-//			middleRange(Constants.MIDDLE - Constants.THRESHOLD, Constants.MIDDLE + Constants.THRESHOLD),
-//			middleTeleopMaxRange(Constants.MIDDLE + Constants.THRESHOLD, Constants.TELEOP_MAX - Constants.THRESHOLD),
-//			teleopMaxRange(Constants.TELEOP_MAX - Constants.THRESHOLD, Constants.TELEOP_MAX + Constants.THRESHOLD),
-//			teleopMaxRaisedRange(Constants.TELEOP_MAX + Constants.THRESHOLD, Constants.RAISED - Constants.THRESHOLD),
-//			raisedRange(Constants.RAISED - Constants.THRESHOLD, Constants.RAISED),
-//			none(-1, -1),
-//			error(-1, -1);
 
 			private final int[] range;
 
@@ -793,9 +758,9 @@ public class Gripper extends Thread implements Component
 		public static final int AUTO_EJECT_ENCODER_STOP_VALUE = -5000;
 		public static final int AUTO_INTAKE_ENCODER_STOP_VALUE = 5000;
 
-		public static final int ENCODER_FLOOR_POSITION = 0;
-		public static final int ENCODER_MIDDLE_POSITION = 3000;
-		public static final int ENCODER_RAISED_POSITION = 6000;
+		public static final int POTENTIOMETER_FLOOR_POSITION = 210;
+		public static final int POTENTIOMETER_MIDDLE_POSITION = 190;
+		public static final int POTENTIOMETER_RAISED_POSITION = 94;
 
 		public static final int LEFT_INTAKE_MOTOR_PORT = 8;
 		public static final int RIGHT_INTAKE_MOTOR_PORT = 9;
@@ -803,21 +768,17 @@ public class Gripper extends Thread implements Component
 
 		public static final int PID_SLOT_ID = 0;
 		
-<<<<<<< HEAD
 		public static final int INTAKE_40_AMP_TRIGGER = 60;
 		public static final int INTAKE_40_AMP_LIMIT = 30;
 		public static final int INTAKE_40_AMP_TIME = 4000;
 		
 		public static final double INTAKE_RAMP_TIME = 0.125;
 		public static final int INTAKE_RAMP_RATE_TIMEOUT = 10;
-=======
-		public static final int THRESHOLD = 15;
-		public static final int FLOOR = 0;
-		public static final int HORIZONTAL = 157;
-		public static final int MIDDLE  = 1287;
-		public static final int TELEOP_MAX = 1967;
-		public static final int RAISED = 2590;
->>>>>>> Got the camera to work in robot
+		public static final int THRESHOLD = 5;
+		public static final int FLOOR = 269;
+		public static final int HORIZONTAL = 333;
+		public static final int MIDDLE  = 425;
+		public static final int TELEOP_MAX = 485;
+		public static final int RAISED = 503;
 	}
-
 }

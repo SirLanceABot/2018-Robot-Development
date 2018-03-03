@@ -8,6 +8,8 @@ import org.usfirst.frc.team4237.robot.components.Elevator;
 import org.usfirst.frc.team4237.robot.components.Gripper;
 import org.usfirst.frc.team4237.robot.network.RaspberryPiReceiver;
 
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 
@@ -28,10 +30,10 @@ public class Autonomous
 	private AMSColorSensor.Constants.Color color;
 	private Constants.AutoMode autoMode = Constants.AutoMode.kAutoLine;
 	private Constants.AutoStage autoStage = Constants.AutoStage.kDrive1;
-//	private LightRing greenCameraLight = new LightRing(Constants.GREEN_CAMERA_PORT);
-//	private LightRing whiteCameraLight = new LightRing(Constants.WHITE_CAMERA_PORT);
-//	private LightRing whiteFloorLight = new LightRing(Constants.WHITE_FLOOR_PORT);
-
+	private LightRing greenCameraLight = new LightRing(Constants.GREEN_CAMERA_PORT);
+	private LightRing whiteCameraLight = new LightRing(Constants.WHITE_CAMERA_PORT);
+	private LightRing whiteFloorLight = new LightRing(Constants.WHITE_FLOOR_PORT);
+	
 	private String selectedTarget = null;
 	private String selectedPosition = null;
 	private String selectedBackupPlan = null;
@@ -158,7 +160,8 @@ public class Autonomous
 		System.out.println("AutoMode: " + autoMode);
 		drivetrain.resetEncoder();
 		drivetrain.resetNavX();
-		gripper.resetPivotEncoder();
+		
+		turnLightRingsOn();
 	}
 
 	/**
@@ -258,12 +261,24 @@ public class Autonomous
 		
 		if(autoStage == Constants.AutoStage.kDone)
 		{
-//			greenCameraLight.set(false);
-//			whiteCameraLight.set(false);
-//			whiteFloorLight.set(false);
+			turnLightRingsOff();
 		}
 	}
 
+	public void turnLightRingsOn()
+	{
+		whiteCameraLight.set(true);
+		greenCameraLight.set(true);
+		whiteFloorLight.set(true);
+	}
+	
+	public void turnLightRingsOff()
+	{
+		whiteCameraLight.set(false);
+		greenCameraLight.set(false);
+		whiteFloorLight.set(false);
+	}
+	
 	public void autoLine()
 	{
 		if(autoStage == Constants.AutoStage.kDrive1)
@@ -437,11 +452,12 @@ public class Autonomous
 	
 	public void scaleOnSameSide()
 	{
+		drivetrain.printTestInfo();
 		if(autoStage == Constants.AutoStage.kDrive1)
 		{
 			if(drivetrain.driveDistance(184, 0.4, 0))
 			{
-				autoStage = Constants.AutoStage.kSpin1;
+				autoStage = Constants.AutoStage.kDone;
 				System.out.println("Entering: " + autoStage);
 			}
 		}

@@ -67,8 +67,8 @@ public class Elevator extends Thread implements Component
 		masterTalonSRX.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 20);
 		masterTalonSRX.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 20);
 
-		masterTalonSRX.configForwardSoftLimitThreshold(612, 0);
-		masterTalonSRX.configReverseSoftLimitThreshold(118, 0);
+		masterTalonSRX.configForwardSoftLimitThreshold(620, 0);
+		masterTalonSRX.configReverseSoftLimitThreshold(135, 0);
 		masterTalonSRX.configForwardSoftLimitEnable(true, 0);
 		masterTalonSRX.configReverseSoftLimitEnable(true, 0);
 
@@ -268,7 +268,7 @@ public class Elevator extends Thread implements Component
 	public void updateCurrentRange()
 	{
 		currentValue = getStringPot();
-		//System.out.println("Potentiometer Value = " + currentValue);
+		System.out.println("Elevator pot: " + currentValue);
 		if (currentValue <= Constants.Range.floorRange.topValue())
 		{
 			currentRange = Constants.Range.floorRange;
@@ -355,32 +355,34 @@ public class Elevator extends Thread implements Component
 
 	public void printTestInfo()
 	{
-		System.out.printf("ID: %2d Potentiometer Position: %.2f", talonSRXHashMap.keySet().toArray()[currentTestKeyPosition], getStringPot());
+		//System.out.printf("ID: %2d Potentiometer Position: %.2f", talonSRXHashMap.keySet().toArray()[currentTestKeyPosition], getStringPot());
+		System.out.println("[Elevator] String-potentiometer position: " + getStringPot());
+	
 	}
 
 	public static class Constants
 	{		
 		private enum InitRange
 		{
-			floorRange(118, 138),
-			floorExchangeAndSwitchAndPortalRange(138, 218),
-			exchangeAndSwitchAndPortalRange(218, 258),
-			exchangeAndSwitchAndPortalBottomScaleRange(258, 406),
-			bottomScaleRange(406, 446),
-			bottomScaleTopScaleRange(446, 568),
-			topScaleRange(568, 588),
-			none(-1, -1),
-			error(-1, -1);
-			
-//			floorRange(Constants.FLOOR, Constants.FLOOR + Constants.THRESHOLD),
-//			floorExchangeAndSwitchAndPortalRange(Constants.FLOOR + Constants.THRESHOLD, Constants.SWITCH - Constants.THRESHOLD),
-//			exchangeAndSwitchAndPortalRange(Constants.SWITCH - Constants.THRESHOLD, Constants.SWITCH + Constants.THRESHOLD),
-//			exchangeAndSwitchAndPortalBottomScaleRange(Constants.SWITCH + Constants.THRESHOLD, Constants.BOTTOM_SCALE - Constants.THRESHOLD),
-//			bottomScaleRange(Constants.BOTTOM_SCALE - Constants.THRESHOLD, Constants.BOTTOM_SCALE + Constants.THRESHOLD),
-//			bottomScaleTopScaleRange(Constants.BOTTOM_SCALE + Constants.THRESHOLD, Constants.TOP_SCALE - Constants.THRESHOLD),
-//			topScaleRange(Constants.TOP_SCALE - Constants.THRESHOLD, Constants.TOP_SCALE),
+//			floorRange(118, 138),
+//			floorExchangeAndSwitchAndPortalRange(138, 218),
+//			exchangeAndSwitchAndPortalRange(218, 258),
+//			exchangeAndSwitchAndPortalBottomScaleRange(258, 406),
+//			bottomScaleRange(406, 446),
+//			bottomScaleTopScaleRange(446, 568),
+//			topScaleRange(568, 588),
 //			none(-1, -1),
 //			error(-1, -1);
+			
+			floorRange(Constants.FLOOR, Constants.FLOOR + Constants.THRESHOLD),
+			floorExchangeAndSwitchAndPortalRange(Constants.FLOOR + Constants.THRESHOLD, Constants.SWITCH - Constants.THRESHOLD),
+			exchangeAndSwitchAndPortalRange(Constants.SWITCH - Constants.THRESHOLD, Constants.SWITCH + Constants.THRESHOLD),
+			exchangeAndSwitchAndPortalBottomScaleRange(Constants.SWITCH + Constants.THRESHOLD, Constants.BOTTOM_SCALE - Constants.THRESHOLD),
+			bottomScaleRange(Constants.BOTTOM_SCALE - Constants.THRESHOLD, Constants.BOTTOM_SCALE + Constants.THRESHOLD),
+			bottomScaleTopScaleRange(Constants.BOTTOM_SCALE + Constants.THRESHOLD, Constants.TOP_SCALE - Constants.THRESHOLD),
+			topScaleRange(Constants.TOP_SCALE - Constants.THRESHOLD, Constants.TOP_SCALE),
+			none(-1, -1),
+			error(-1, -1);
 
 		
 
@@ -462,7 +464,7 @@ public class Elevator extends Thread implements Component
 			None
 		}
 
-		public static final int ACCEPTABLE_TICK_RANGE = 10;
+		public static final int ACCEPTABLE_TICK_RANGE = 5;
 
 		public static final int MASTER_MOTOR_PORT = 10;
 		public static final int SLAVE_MOTOR_PORT = 11;
@@ -474,7 +476,7 @@ public class Elevator extends Thread implements Component
 		public static final double SPEED = 0.5;
 		
 		public static final int THRESHOLD = 15;
-		public static final int FLOOR = 0;
+		public static final int FLOOR = 135;
 		public static final int SWITCH = 238;
 		public static final int BOTTOM_SCALE = 426;
 		public static final int TOP_SCALE = 588;
