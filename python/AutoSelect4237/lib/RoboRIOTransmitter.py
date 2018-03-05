@@ -2,9 +2,9 @@ import socket, threading, SocketServer, time
 
 class RoboRIOTransmitter():
 
-    def __init__(self):
-        self.JAVA_SERVER_HOST = "roborio-4237-frc.local"
-        self.JAVA_SERVER_PORT = 5804
+    def __init__(self, IP):
+        self.ROBOT_IP = IP
+        self.ROBOT_PORT = 5804
 
 
     def sendMessage(self, message):
@@ -12,7 +12,7 @@ class RoboRIOTransmitter():
          
         print message
         try:
-            s.connect((self.JAVA_SERVER_HOST, self.JAVA_SERVER_PORT))
+            s.connect((self.ROBOT_IP, self.ROBOT_PORT))
             s.sendall(message)
             print "Successfully sent message"
         except Exception as e:

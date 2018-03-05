@@ -46,40 +46,50 @@ class GameFrame2018(QtGui.QFrame):
         self.noPositionLabel = QtGui.QLabel("None")
         self.noPositionLabel.setAlignment(QtCore.Qt.AlignCenter)
         
-        self.targetSwitchButton = RobotPosition.RobotPosition(self.switchPixmap.scaledToWidth(self.iconSize))
-        self.targetScaleButton = RobotPosition.RobotPosition(self.transparentScalePixmap.scaledToWidth(self.iconSize))
-        self.targetAutoLineButton = RobotPosition.RobotPosition(self.transparentAutoLinePixmap.scaledToWidth(100))
+        self.planAComboBox = QtGui.QComboBox()
+        self.planBComboBox = QtGui.QComboBox()
+        self.planCComboBox = QtGui.QComboBox()
+        
+        for cb in [self.planAComboBox, self.planBComboBox, self.planCComboBox]:
+            cb.addItem(self.switchPixmap, "Left Switch")
+            cb.addItem(self.switchPixmap, "Right Switch")
+            
+            cb.addItem(self.scalePixmap, "Left Scale")
+            cb.addItem(self.scalePixmap, "Right Scale")
+            
+            cb.addItem(self.autoLinePixmap, "Auto Line")
+            cb.setIconSize(QtCore.QSize(75, 75))
+            
+        self.planALabel = QtGui.QLabel("Plan A")
+        self.planBLabel = QtGui.QLabel("Plan B")
+        self.planCLabel = QtGui.QLabel("Plan C")
+        
+        self.planALabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.planBLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.planCLabel.setAlignment(QtCore.Qt.AlignCenter)
        
-        self.targetSwitchButton.setAlignment(QtCore.Qt.AlignCenter)
-        self.targetScaleButton.setAlignment(QtCore.Qt.AlignCenter)
-        self.targetAutoLineButton.setAlignment(QtCore.Qt.AlignCenter)
-       
-        self.targetSwitchButton.clicked.connect(lambda: self.selectTarget(0))
-        self.targetScaleButton.clicked.connect(lambda: self.selectTarget(1))
-        self.targetAutoLineButton.clicked.connect(lambda: self.selectTarget(2))
-       
-        self.backupPlanLabel = QtGui.QLabel("Backup Plan: ")
-        self.backupPlanLabel.setAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignVCenter)
-       
-        self.backupPlan = QtGui.QComboBox()
-        self.backupPlan.addItems(["Auto Line", "Scale"])
-        self.backupPlan.currentIndexChanged.connect(lambda: self.selectBackupPlan())
-       
+        self.scaleBotOnTeamCheckBox = QtGui.QCheckBox("Scale bot on team")
+        
         self.layout = QtGui.QGridLayout()
-        self.layout.addWidget(self.position1Button, 0, 0)
-        self.layout.addWidget(self.position2Button, 0, 1)
-        self.layout.addWidget(self.position3Button, 0, 2)
-        self.layout.addWidget(self.noPositionButton, 0, 3)
+
+        self.layout.addWidget(self.planAComboBox, 0, 0)
+        self.layout.addWidget(self.planBComboBox, 0, 1)
+        self.layout.addWidget(self.planCComboBox, 0, 2)
+        self.layout.addWidget(self.scaleBotOnTeamCheckBox, 0, 3)
         
-        self.layout.addWidget(self.leftPositionLabel, 1, 0)
-        self.layout.addWidget(self.centerPositionLabel, 1, 1)
-        self.layout.addWidget(self.rightPositionLabel, 1, 2)
-        self.layout.addWidget(self.noPositionLabel, 1, 3)
+        self.layout.addWidget(self.planALabel, 1, 0)
+        self.layout.addWidget(self.planBLabel, 1, 1)
+        self.layout.addWidget(self.planCLabel, 1, 2)
         
-        self.layout.addWidget(self.targetSwitchButton, 2, 0)
-        self.layout.addWidget(self.targetScaleButton, 2, 1)
-        self.layout.addWidget(self.targetAutoLineButton, 2, 2)
-        self.layout.addWidget(self.backupPlan, 2, 3)
+        self.layout.addWidget(self.position1Button, 2, 0)
+        self.layout.addWidget(self.position2Button, 2, 1)
+        self.layout.addWidget(self.position3Button, 2, 2)
+        self.layout.addWidget(self.noPositionButton, 2, 3)
+        
+        self.layout.addWidget(self.leftPositionLabel, 3, 0)
+        self.layout.addWidget(self.centerPositionLabel, 3, 1)
+        self.layout.addWidget(self.rightPositionLabel, 3, 2)
+        self.layout.addWidget(self.noPositionLabel, 3, 3)
         
         self.setLayout(self.layout)
 
@@ -91,16 +101,12 @@ class GameFrame2018(QtGui.QFrame):
         self.position2Button.setPixmap(self.blankPixmap2018.scaledToWidth(75))
         self.position3Button.setPixmap(self.blankPixmap2018.scaledToWidth(75))
         self.noPositionButton.setPixmap(self.blankPixmap2018.scaledToWidth(75))
-        
-        self.targetScaleButton.setEnabled(True)
-        
+                
         if position is 0:
             self.selectedPosition = "Left"
             self.position1Button.setPixmap(self.robotPixmap2018.scaledToWidth(75))
         elif position is 1:
             self.selectedPosition = "Center"
-            self.targetScaleButton.setEnabled(False)
-            self.selectTarget(0)
             self.position2Button.setPixmap(self.robotPixmap2018.scaledToWidth(75))
         elif position is 2:
             self.selectedPosition = "Right"
@@ -109,26 +115,11 @@ class GameFrame2018(QtGui.QFrame):
             self.selectedPosition = "None"
             self.noPositionButton.setPixmap(self.robotPixmap2018.scaledToWidth(75))
         
-    def selectTarget(self, target):
-        self.targetSwitchButton.setPixmap(self.transparentSwitchPixmap.scaledToWidth(self.iconSize))
-        self.targetScaleButton.setPixmap(self.transparentScalePixmap.scaledToWidth(self.iconSize))
-        self.targetAutoLineButton.setPixmap(self.transparentAutoLinePixmap.scaledToWidth(100))
-        if target is 0:
-            self.selectedTarget = "Switch"
-            self.targetSwitchButton.setPixmap(self.switchPixmap.scaledToWidth(self.iconSize))
-        elif target is 1:
-            self.selectedTarget = "Scale"
-            self.targetScaleButton.setPixmap(self.scalePixmap.scaledToWidth(self.iconSize))
-        elif target is 2:
-            self.selectedTarget = "Auto Line"
-            self.targetAutoLineButton.setPixmap(self.autoLinePixmap.scaledToWidth(100))
-    
-    def selectBackupPlan(self):
-        self.selectedBackupPlan = str(self.backupPlan.currentText())
-        
     def getJsonData(self):
         data = {}
         data["selectedPosition"] = self.selectedPosition
-        data["selectedTarget"] = self.selectedTarget
-        data["selectedBackupPlan"] = self.selectedBackupPlan
+        data["planA"] = self.planAComboBox.currentText()
+        data["planB"] = self.planBComboBox.currentText()
+        data["planC"] = self.planCComboBox.currentText()
+        data["scaleBot"] = self.scaleBotOnTeamCheckBox.checked()
         return data

@@ -1,6 +1,6 @@
 from PySide import QtGui, QtCore
 import sys, threading, time, os, json
-from lib import AboutWindow, RobotPosition, ConfirmSendDialog, GameFrame2016, GameFrame2017, GameFrame2018, RoboRIOTransmitter
+from lib import AboutWindow, RobotPosition, GameFrame2016, GameFrame2017, GameFrame2018, RoboRIOTransmitter
 
 VERSION = 3.0                                                                
 
@@ -11,12 +11,13 @@ class GUI(QtGui.QMainWindow):
 
     def initUI(self):
         self.teamNumber = self.getTeamNumber()
-        print "Found team number " + str(self.teamNumber)
+        #self.teamNumber = None
+        print "Team number set to " + str(self.teamNumber)
         self.roboRIOIP = "roborio-" + str(self.teamNumber) + "-frc.local"
         self.iconSize = 75
         
         #Misc
-        self.transmitter = RoboRIOTransmitter.RoboRIOTransmitter()
+        self.transmitter = RoboRIOTransmitter.RoboRIOTransmitter(self.roboRIOIP)
         self.futureLabel = QtGui.QLabel("Coming Soon")
         self.futureLabel.setStyleSheet('font-size: 60pt;')
         self.futureLabel.setAlignment(QtCore.Qt.AlignCenter | QtCore.Qt.AlignVCenter)
@@ -58,10 +59,10 @@ class GUI(QtGui.QMainWindow):
 
         #Layout
         self.tabs = QtGui.QTabWidget()
-        self.tabs.addTab(self.frame2016, self.strongholdIcon, "")
-        self.tabs.addTab(self.frame2017, self.steamworksIcon, "")
         self.tabs.addTab(self.frame2018, self.powerupIcon, "")
-        self.tabs.currentChanged.connect(lambda: self.sendToRobot())
+        self.tabs.addTab(self.frame2017, self.steamworksIcon, "")
+        self.tabs.addTab(self.frame2016, self.strongholdIcon, "")
+        #self.tabs.currentChanged.connect(lambda: self.sendToRobot())
         self.tabs.setIconSize(QtCore.QSize(100, 50))
         
         self.layout = QtGui.QVBoxLayout()
@@ -90,7 +91,7 @@ class GUI(QtGui.QMainWindow):
         #Make sure there are things on NetworkTables
         #self.sendToRobot()
         self.setCentralWidget(self.mainFrame)
-        self.setWindowTitle('AutoSelect 4237 - ' + "Connected @ " + self.roboRIOIP + ' - Version ' + str(VERSION))
+        self.setWindowTitle('AutoSelect 4237 - Version ' + str(VERSION))
         self.setWindowIcon(self.windowIcon)
         self.show()
         
@@ -100,11 +101,11 @@ class GUI(QtGui.QMainWindow):
         
     def sendToRobot(self): #Sends information to the robot over Networktables
         if self.tabs.currentIndex() == 0:
-            self.sendToRobot2016()
+            self.sendToRobot2018()
         elif self.tabs.currentIndex() == 1:
             self.sendToRobot2017()
         elif self.tabs.currentIndex() == 2:
-            self.sendToRobot2018()
+            self.sendToRobot2016()
             
     def sendToRobot2016(self):
         pass
@@ -117,7 +118,7 @@ class GUI(QtGui.QMainWindow):
         self.transmitter.sendMessage(json.dumps(self.frame2018.getJsonData()))
 
     '''
-    Function to get the current team number from the FRC Driver Station
+    Method to get the current team number from the FRC Driver Station
     '''             
     def getTeamNumber(self):
         #Get the team number from the driver station files
