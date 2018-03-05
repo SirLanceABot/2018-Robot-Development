@@ -35,10 +35,11 @@ public class Autonomous
 	private String selectedTarget = null;
 	private String selectedPosition = null;
 	private String selectedBackupPlan = null;
+	private String planA = null;
+	private String planB = null;
+	private String planC = null;
 
 	private Timer t = new Timer();
-
-	private boolean skipRestOfLogic = false;
 
 	private static Autonomous instance = new Autonomous();
 	public static Autonomous getInstance()
@@ -70,17 +71,17 @@ public class Autonomous
 
 
 		selectedPosition = autoSelect4237.getData().getSelectedPosition();
-		//planA = autoSelect4237.getData().getPlanA();
-		//planB = autoSelect4237.getData().getPlanB();
-		//planC = autoSelect4237.getData().getPlanC();
+		planA = autoSelect4237.getData().getPlanA();
+		planB = autoSelect4237.getData().getPlanB();
+		planC = autoSelect4237.getData().getPlanC();
 
-		//		System.out.println("Selected position: " + selectedPosition);
-		//		System.out.println("Plan A: " + planA);
-		//		System.out.println("Plan B: " + planB);
-		//		System.out.println("Plan C: " + planC);
 		System.out.println("Selected position: " + selectedPosition);
-		System.out.println("Selected target: " + selectedTarget);
-		System.out.println("Selected backup plan: " + selectedBackupPlan);
+		System.out.println("Plan A: " + planA);
+		System.out.println("Plan B: " + planB);
+		System.out.println("Plan C: " + planC);
+//		System.out.println("Selected position: " + selectedPosition);
+//		System.out.println("Selected target: " + selectedTarget);
+//		System.out.println("Selected backup plan: " + selectedBackupPlan);
 
 		if(allianceColor == DriverStation.Alliance.Blue)
 		{
@@ -151,75 +152,165 @@ public class Autonomous
 		}
 		else if(selectedPosition.equalsIgnoreCase("center"))
 		{
-			if(planA.equalsIgnoreCase("left switch"))
-		}
-
-
-
-
-
-		if(((fieldColors.charAt(1) == 'L' && selectedPosition.equalsIgnoreCase("right"))
-				|| (fieldColors.charAt(1) == 'R' && selectedPosition.equalsIgnoreCase("left")))
-				&& selectedTarget.equalsIgnoreCase("scale"))
-		{
-			autoMode = Constants.AutoMode.kScaleOnOppositeSide;
-		}
-		else if(((fieldColors.charAt(1) == 'R' && selectedPosition.equalsIgnoreCase("right"))
-				|| (fieldColors.charAt(1) == 'L' && selectedPosition.equalsIgnoreCase("left")))
-				&& selectedTarget.equalsIgnoreCase("scale"))
-		{
-			autoMode = Constants.AutoMode.kScaleOnSameSide;
-		}
-		else if(((fieldColors.charAt(0) == 'L' && selectedPosition.equalsIgnoreCase("left"))
-				|| (fieldColors.charAt(0) == 'R' && selectedPosition.equalsIgnoreCase("right")))
-				&& selectedTarget.equalsIgnoreCase("switch"))
-		{
-			autoMode = Constants.AutoMode.kSwitchOnSameSide;
-		}
-		else if(fieldColors.charAt(0) == 'L'
-				&& selectedPosition.equalsIgnoreCase("center")
-				&& selectedTarget.equalsIgnoreCase("switch"))
-		{
-			autoMode = Constants.AutoMode.kSwitchLeftFromMiddle;
-		}
-		else if(fieldColors.charAt(0) == 'R'
-				&& selectedPosition.equalsIgnoreCase("center")
-				&& selectedTarget.equalsIgnoreCase("switch"))
-		{
-			autoMode = Constants.AutoMode.kSwitchRightFromMiddle;
-		}
-		else if(selectedTarget.equalsIgnoreCase("auto line"))
-		{
-			autoMode = Constants.AutoMode.kAutoLine;
-		}
-
-		//backup auto routine
-		if(((fieldColors.charAt(0) == 'L' && selectedPosition.equalsIgnoreCase("right"))
-				|| (fieldColors.charAt(0) == 'R' && selectedPosition.equalsIgnoreCase("left")))
-				&& selectedTarget.equalsIgnoreCase("switch"))
-		{
-			if(selectedBackupPlan.equalsIgnoreCase("auto line"))
+			if(planA.equalsIgnoreCase("left switch") && fieldColors.charAt(0) == 'L')
+			{
+				autoMode = Constants.AutoMode.kSwitchLeftFromMiddle;
+			}
+			else if(planA.equalsIgnoreCase("right switch") && fieldColors.charAt(0) == 'R')
+			{
+				autoMode = Constants.AutoMode.kSwitchRightFromMiddle;
+			}
+			else if(planA.equalsIgnoreCase("auto line"))
 			{
 				autoMode = Constants.AutoMode.kAutoLine;
 			}
-			else if(selectedBackupPlan.equalsIgnoreCase("scale"))
+			else if(planB.equalsIgnoreCase("left switch") && fieldColors.charAt(0) == 'L')
 			{
-				if(fieldColors.charAt(1) == 'R' && selectedPosition.equalsIgnoreCase("right")
-						|| fieldColors.charAt(1) == 'L' && selectedPosition.equalsIgnoreCase("left"))
-				{
-					autoMode = Constants.AutoMode.kScaleOnSameSide;
-				}
-				else
-				{
-					autoMode = Constants.AutoMode.kScaleOnOppositeSide;
-				}
+				autoMode = Constants.AutoMode.kSwitchLeftFromMiddle;
+			}
+			else if(planB.equalsIgnoreCase("right switch") && fieldColors.charAt(0) == 'R')
+			{
+				autoMode = Constants.AutoMode.kSwitchRightFromMiddle;
+			}
+			else if(planB.equalsIgnoreCase("auto line"))
+			{
+				autoMode = Constants.AutoMode.kAutoLine;
+			}
+			else if(planC.equalsIgnoreCase("left switch") && fieldColors.charAt(0) == 'L')
+			{
+				autoMode = Constants.AutoMode.kSwitchLeftFromMiddle;
+			}
+			else if(planC.equalsIgnoreCase("right switch") && fieldColors.charAt(0) == 'R')
+			{
+				autoMode = Constants.AutoMode.kSwitchRightFromMiddle;
+			}
+			else if(planC.equalsIgnoreCase("auto line"))
+			{
+				autoMode = Constants.AutoMode.kAutoLine;
 			}
 		}
-
-		if(selectedPosition.equalsIgnoreCase("none"))
+		else if(selectedPosition.equalsIgnoreCase("right"))
+		{
+			if(planA.equalsIgnoreCase("right scale") && fieldColors.charAt(1) == 'R')
+			{
+				autoMode = Constants.AutoMode.kScaleOnSameSide;
+			}
+			else if(planA.equalsIgnoreCase("left scale") && fieldColors.charAt(1) == 'L')
+			{
+				autoMode = Constants.AutoMode.kScaleOnOppositeSide;
+			}
+			else if(planA.equalsIgnoreCase("right switch") && fieldColors.charAt(0) == 'R')
+			{
+				autoMode = Constants.AutoMode.kSwitchOnSameSide;
+			}
+			else if(planA.equalsIgnoreCase("auto line"))
+			{
+				autoMode = Constants.AutoMode.kAutoLine;
+			}
+			else if(planB.equalsIgnoreCase("right scale") && fieldColors.charAt(1) == 'R')
+			{
+				autoMode = Constants.AutoMode.kScaleOnSameSide;
+			}
+			else if(planB.equalsIgnoreCase("left scale") && fieldColors.charAt(1) == 'L')
+			{
+				autoMode = Constants.AutoMode.kScaleOnOppositeSide;
+			}
+			else if(planB.equalsIgnoreCase("right switch") && fieldColors.charAt(0) == 'R')
+			{
+				autoMode = Constants.AutoMode.kSwitchOnSameSide;
+			}
+			else if(planB.equalsIgnoreCase("auto line"))
+			{
+				autoMode = Constants.AutoMode.kAutoLine;
+			}
+			else if(planC.equalsIgnoreCase("right scale") && fieldColors.charAt(1) == 'R')
+			{
+				autoMode = Constants.AutoMode.kScaleOnSameSide;
+			}
+			else if(planC.equalsIgnoreCase("left scale") && fieldColors.charAt(1) == 'L')
+			{
+				autoMode = Constants.AutoMode.kScaleOnOppositeSide;
+			}
+			else if(planC.equalsIgnoreCase("right switch") && fieldColors.charAt(0) == 'R')
+			{
+				autoMode = Constants.AutoMode.kSwitchOnSameSide;
+			}
+			else if(planC.equalsIgnoreCase("auto line"))
+			{
+				autoMode = Constants.AutoMode.kAutoLine;
+			}
+		}
+		else
 		{
 			autoMode = Constants.AutoMode.kNone;
 		}
+//
+//
+//
+//
+//
+//		if(((fieldColors.charAt(1) == 'L' && selectedPosition.equalsIgnoreCase("right"))
+//				|| (fieldColors.charAt(1) == 'R' && selectedPosition.equalsIgnoreCase("left")))
+//				&& selectedTarget.equalsIgnoreCase("scale"))
+//		{
+//			autoMode = Constants.AutoMode.kScaleOnOppositeSide;
+//		}
+//		else if(((fieldColors.charAt(1) == 'R' && selectedPosition.equalsIgnoreCase("right"))
+//				|| (fieldColors.charAt(1) == 'L' && selectedPosition.equalsIgnoreCase("left")))
+//				&& selectedTarget.equalsIgnoreCase("scale"))
+//		{
+//			autoMode = Constants.AutoMode.kScaleOnSameSide;
+//		}
+//		else if(((fieldColors.charAt(0) == 'L' && selectedPosition.equalsIgnoreCase("left"))
+//				|| (fieldColors.charAt(0) == 'R' && selectedPosition.equalsIgnoreCase("right")))
+//				&& selectedTarget.equalsIgnoreCase("switch"))
+//		{
+//			autoMode = Constants.AutoMode.kSwitchOnSameSide;
+//		}
+//		else if(fieldColors.charAt(0) == 'L'
+//				&& selectedPosition.equalsIgnoreCase("center")
+//				&& selectedTarget.equalsIgnoreCase("switch"))
+//		{
+//			autoMode = Constants.AutoMode.kSwitchLeftFromMiddle;
+//		}
+//		else if(fieldColors.charAt(0) == 'R'
+//				&& selectedPosition.equalsIgnoreCase("center")
+//				&& selectedTarget.equalsIgnoreCase("switch"))
+//		{
+//			autoMode = Constants.AutoMode.kSwitchRightFromMiddle;
+//		}
+//		else if(selectedTarget.equalsIgnoreCase("auto line"))
+//		{
+//			autoMode = Constants.AutoMode.kAutoLine;
+//		}
+//
+//		//backup auto routine
+//		if(((fieldColors.charAt(0) == 'L' && selectedPosition.equalsIgnoreCase("right"))
+//				|| (fieldColors.charAt(0) == 'R' && selectedPosition.equalsIgnoreCase("left")))
+//				&& selectedTarget.equalsIgnoreCase("switch"))
+//		{
+//			if(selectedBackupPlan.equalsIgnoreCase("auto line"))
+//			{
+//				autoMode = Constants.AutoMode.kAutoLine;
+//			}
+//			else if(selectedBackupPlan.equalsIgnoreCase("scale"))
+//			{
+//				if(fieldColors.charAt(1) == 'R' && selectedPosition.equalsIgnoreCase("right")
+//						|| fieldColors.charAt(1) == 'L' && selectedPosition.equalsIgnoreCase("left"))
+//				{
+//					autoMode = Constants.AutoMode.kScaleOnSameSide;
+//				}
+//				else
+//				{
+//					autoMode = Constants.AutoMode.kScaleOnOppositeSide;
+//				}
+//			}
+//		}
+//
+//		if(selectedPosition.equalsIgnoreCase("none"))
+//		{
+//			autoMode = Constants.AutoMode.kNone;
+//		}
 
 		System.out.println("AutoMode: " + autoMode);
 		drivetrain.resetEncoder();

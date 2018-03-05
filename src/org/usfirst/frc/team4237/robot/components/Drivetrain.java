@@ -299,14 +299,17 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 		if(color == AMSColorSensor.Constants.Color.kRed)
 		{
 			foundTape = crgb.R > crgbUpperThreshold.R;
+			System.out.println("RED COLOR FOUND: " + foundTape);
 		}
 		else if(color == AMSColorSensor.Constants.Color.kBlue)
 		{
 			foundTape = crgb.B > crgbUpperThreshold.B;
+		System.out.println("BLUE COLOR FOUND: " + foundTape);
 		}
 		else if(color == AMSColorSensor.Constants.Color.kWhite)
 		{
 			foundTape = crgb.C > crgbUpperThreshold.C;
+			System.out.println("WHITE COLOR FOUND: " + foundTape);
 		}
 		if(!foundTape)
 		{
