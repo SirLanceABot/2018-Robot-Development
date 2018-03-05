@@ -67,19 +67,16 @@ class GameFrame2018(QtGui.QFrame):
         self.planALabel.setAlignment(QtCore.Qt.AlignCenter)
         self.planBLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.planCLabel.setAlignment(QtCore.Qt.AlignCenter)
-       
-        self.scaleBotOnTeamCheckBox = QtGui.QCheckBox("Scale bot on team")
-        
+               
         self.layout = QtGui.QGridLayout()
-
-        self.layout.addWidget(self.planAComboBox, 0, 0)
-        self.layout.addWidget(self.planBComboBox, 0, 1)
-        self.layout.addWidget(self.planCComboBox, 0, 2)
-        self.layout.addWidget(self.scaleBotOnTeamCheckBox, 0, 3)
         
-        self.layout.addWidget(self.planALabel, 1, 0)
-        self.layout.addWidget(self.planBLabel, 1, 1)
-        self.layout.addWidget(self.planCLabel, 1, 2)
+        self.layout.addWidget(self.planALabel, 0, 0)
+        self.layout.addWidget(self.planBLabel, 0, 1)
+        self.layout.addWidget(self.planCLabel, 0, 2)
+        
+        self.layout.addWidget(self.planAComboBox, 1, 0)
+        self.layout.addWidget(self.planBComboBox, 1, 1)
+        self.layout.addWidget(self.planCComboBox, 1, 2)
         
         self.layout.addWidget(self.position1Button, 2, 0)
         self.layout.addWidget(self.position2Button, 2, 1)
@@ -121,5 +118,4 @@ class GameFrame2018(QtGui.QFrame):
         data["planA"] = self.planAComboBox.currentText()
         data["planB"] = self.planBComboBox.currentText()
         data["planC"] = self.planCComboBox.currentText()
-        data["scaleBot"] = self.scaleBotOnTeamCheckBox.checked()
         return data
