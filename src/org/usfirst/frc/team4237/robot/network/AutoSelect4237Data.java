@@ -3,22 +3,28 @@ package org.usfirst.frc.team4237.robot.network;
 public class AutoSelect4237Data
 {
 	private String selectedPosition = "None";
-	private String selectedTarget = "Auto line";
-	private String selectedBackupPlan = "Auto line"; 
+	private String planA = "Auto Line";
+	private String planB = "Auto Line";
+	private String planC = "Auto Line";
 	
 	public synchronized String getSelectedPosition()
 	{
 		return this.selectedPosition;
 	}
 	
-	public synchronized String getSelectedTarget()
+	public String getPlanA()
 	{
-		return this.selectedTarget;
+		return this.planA;
 	}
 	
-	public synchronized String getSelectedBackupPlan()
+	public String getPlanB()
 	{
-		return this.selectedBackupPlan;
+		return this.planB;
+	}
+	
+	public String getPlanC()
+	{
+		return this.planC;
 	}
 	
 }
