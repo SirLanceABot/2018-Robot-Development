@@ -383,9 +383,8 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 
 	public void calibrateColorSensor()
 	{
-		try 
-		{
-			Thread.sleep(250); // wait for thread to start
+		
+			Timer.delay(0.25); // wait for thread to start
 			mAMSColorSensor.get(crgb); // get initial data to assure there is something for any other robot methods the first time through since robotPeriodic runs after others
 
 			// establish floor color and lighting conditions
@@ -412,7 +411,7 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 				crgbLowerThreshold.R += crgb.R;
 				crgbLowerThreshold.G += crgb.G;
 				crgbLowerThreshold.B += crgb.B;
-				Thread.sleep(18);
+				Timer.delay(0.018);
 			}
 
 			// gap between upper and lower thresholds to prevent jitter between the two states
@@ -441,11 +440,6 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 
 			//System.out.println("robotInit " + mAMSColorSensor);
 			//System.out.println("crgbUpperThreshold " + crgbUpperThreshold + "; crgbLowerThreshold " + crgbLowerThreshold);
-		}
-		catch (InterruptedException e)
-		{
-			//e.printStackTrace();
-		}
 	}
 
 
