@@ -55,7 +55,7 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 	private Timer startUpTimer = new Timer();
 
 	//color sensor stuff
-	private AMSColorSensor mAMSColorSensor = new AMSColorSensor(AMSColorSensor.Constants.PORT, AMSColorSensor.Constants.ADDRESS);
+	private AMSColorSensor colorSensor = new AMSColorSensor(AMSColorSensor.Constants.PORT, AMSColorSensor.Constants.ADDRESS);
 	private Colors crgb = new Colors();
 	private Colors crgbPrevious = new Colors();
 	private Colors crgbUpperThreshold = new Colors();
@@ -298,7 +298,7 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 	{
 		boolean isDoneDriving = false;
 		boolean foundTape = false;
-		mAMSColorSensor.get(crgb);
+		colorSensor.get(crgb);
 
 		double rotate = (navX.getYaw() - heading) / 50;
 
@@ -347,7 +347,7 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 
 	public void printColors()
 	{
-		System.out.println(mAMSColorSensor);
+		System.out.println(colorSensor);
 	}
 
 	public void printHeading()
@@ -386,7 +386,7 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 	{
 		
 			Timer.delay(0.25); // wait for thread to start
-			mAMSColorSensor.get(crgb); // get initial data to assure there is something for any other robot methods the first time through since robotPeriodic runs after others
+			colorSensor.get(crgb); // get initial data to assure there is something for any other robot methods the first time through since robotPeriodic runs after others
 
 			// establish floor color and lighting conditions
 			// loop to get average where the robot is parked at the start
@@ -402,7 +402,7 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 			int numSamples = 60;
 			for (int i = 1; i <= numSamples; i++)
 			{
-				mAMSColorSensor.get(crgb);
+				colorSensor.get(crgb);
 				crgbUpperThreshold.C += crgb.C;
 				crgbUpperThreshold.R += crgb.R;
 				crgbUpperThreshold.G += crgb.G;
@@ -458,7 +458,7 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 	@Override
 	public void printTestInfo()
 	{
-		System.out.println("[Drivetrain] Encoder position: " + getEncInches() + " NavX: " + navX.getYaw() + " colors: " + mAMSColorSensor.toString());
+		System.out.println("[Drivetrain] Encoder position: " + getEncInches() + " NavX: " + navX.getYaw() + " colors: " + colorSensor.toString());
 	}
 
 	/**
