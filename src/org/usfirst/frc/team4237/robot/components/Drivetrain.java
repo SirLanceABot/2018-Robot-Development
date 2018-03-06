@@ -45,12 +45,14 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 
 	private static WPI_TalonSRX rearRightMasterMotor = new WPI_TalonSRX(Constants.REAR_RIGHT_MASTER_MOTOR_PORT);
 	private static WPI_TalonSRX rearRightFollowerMotor = new WPI_TalonSRX(Constants.REAR_RIGHT_FOLLOWER_MOTOR_PORT);
-	
+
 	private static Servo servo = new Servo(Constants.SERVO_PORT);
-	
+
 
 	private Encoder enc = new Encoder(0, 1, false, EncodingType.k4X);
 	private AHRS navX = new AHRS(I2C.Port.kMXP);
+
+	private Timer startUpTimer = new Timer();
 
 	//color sensor stuff
 	private AMSColorSensor mAMSColorSensor = new AMSColorSensor(AMSColorSensor.Constants.PORT, AMSColorSensor.Constants.ADDRESS);
@@ -91,11 +93,14 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 		super(frontLeftMasterMotor, rearLeftMasterMotor, frontRightMasterMotor, rearRightMasterMotor);
 		this.setSafetyEnabled(false);
 
+		startUpTimer.stop();
+		startUpTimer.reset();
+
 		frontLeftFollowerMotor.follow(frontLeftMasterMotor);
 		frontRightFollowerMotor.follow(frontRightMasterMotor);
 		rearLeftFollowerMotor.follow(rearLeftMasterMotor);
 		rearRightFollowerMotor.follow(rearRightMasterMotor);
-		
+
 		frontLeftMasterMotor.configContinuousCurrentLimit(Constants.DRIVE_40_AMP_LIMIT, 10);
 		frontLeftMasterMotor.configPeakCurrentLimit(Constants.DRIVE_40_AMP_TRIGGER, Constants.DRIVE_40_AMP_TIME);
 		frontLeftMasterMotor.configOpenloopRamp(Constants.DRIVE_RAMP_TIME, Constants.DRIVE_RAMP_RATE_TIMEOUT);
@@ -134,7 +139,8 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 		frontRightMasterMotor.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder, 0, 0);
 		frontRightMasterMotor.setSensorPhase(true);
 		
-		//this.calibrateNavX();
+		this.calibrateNavX();
+
 		//this.calibrateColorSensor();
 	}
 
@@ -142,7 +148,7 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 	{
 		return frontRightMasterMotor.getSelectedSensorPosition(0) / 135.0;
 	}
-	
+
 	@Override
 	public void run()
 	{
@@ -151,7 +157,7 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 			try
 			{
 				//System.out.println("Encoder tic: " + frontRightMasterMotor.getSelectedSensorPosition(0) + "  Distance: " + getEncInches());
-				
+
 				if (DriverStation.getInstance().isOperatorControl() && DriverStation.getInstance().isEnabled())
 				{
 					if (Math.abs(xbox.getRawAxis(1)) > 0.2)
@@ -230,7 +236,7 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 		//System.out.println("Distance: " + x);
 		return isDoneDriving;
 	}
-	
+
 	/**
 	 * Strafe at a specific angle. 0 degrees is North
 	 * @return
@@ -242,12 +248,12 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 		double rotate = (navX.getYaw() - heading) / 50;
 		double strafeSpeed = Math.sin(angle) * speed;
 		double forwardSpeed = Math.cos(angle) * speed;
-		
+
 		if(angle < 0)
 		{
 			strafeSpeed *= -1;
 		}
-		
+
 		if(x < inches)
 		{
 			driveCartesian(strafeSpeed, -forwardSpeed, rotate);
@@ -257,10 +263,10 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 			driveCartesian(0, 0, 0);
 			isDoneDriving = true;
 		}
-		
+
 		return isDoneDriving;
 	}
-	
+
 	/**
 	 * Rotate to the bearing passed into the method. 0 degrees is North
 	 * @return
@@ -353,27 +359,33 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 	{
 		System.out.println("Encoder: " + enc.getRaw());
 	}
-	
+
 	public double getServo()
 	{
 		return servo.get();
 	}
-	
+
 
 	public void calibrateNavX()
-	{
+	{	
 		System.out.println("Calibrating NavX...");
-		while(navX.isCalibrating())
-		{
 
+		startUpTimer.start();
+		while(navX.isCalibrating() && startUpTimer.get() < 5.0)
+		{
+			Timer.delay(0.005);
+		}
+		if (startUpTimer.get() >= 5.0)
+		{
+			System.out.println("[Drivetrain] Error while calibrating NavX!");
 		}
 		System.out.println("Calibration done.");
 	}
 
 	public void calibrateColorSensor()
 	{
-		try {
-			Thread.sleep(250); // wait for thread to start
+		
+			Timer.delay(0.25); // wait for thread to start
 			mAMSColorSensor.get(crgb); // get initial data to assure there is something for any other robot methods the first time through since robotPeriodic runs after others
 
 			// establish floor color and lighting conditions
@@ -400,7 +412,7 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 				crgbLowerThreshold.R += crgb.R;
 				crgbLowerThreshold.G += crgb.G;
 				crgbLowerThreshold.B += crgb.B;
-				Thread.sleep(18);
+				Timer.delay(0.018);
 			}
 
 			// gap between upper and lower thresholds to prevent jitter between the two states
@@ -429,24 +441,19 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 
 			//System.out.println("robotInit " + mAMSColorSensor);
 			//System.out.println("crgbUpperThreshold " + crgbUpperThreshold + "; crgbLowerThreshold " + crgbLowerThreshold);
-		}
-		catch (InterruptedException e)
-		{
-			//e.printStackTrace();
-		}
 	}
 
-	
+
 	public void raiseServo()
 	{
 		servo.set(0.04735);
 	}
-	
+
 	public void lowerServo()
 	{
 		servo.set(0.0);
 	}
-	
+
 
 	@Override
 	public void printTestInfo()
@@ -484,7 +491,7 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 		public static final int DRIVE_RAMP_RATE_TIMEOUT = 10; //ms
 
 		public static final double DRIVE_RAMP_TIME = 0.25;	//FIXME: normally 0.5
-		
+
 		public static final int SERVO_PORT = 0;
 	}
 
