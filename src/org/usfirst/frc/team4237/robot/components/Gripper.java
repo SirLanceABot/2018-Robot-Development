@@ -513,7 +513,7 @@ public class Gripper extends Thread implements Component
 	public void updateCurrentRange()
 	{
 		currentValue = getPivotPot();
-		System.out.println("Pivot pot: " + getPivotPot());
+		//System.out.println("Pivot pot: " + getPivotPot());
 		if (currentValue <= Constants.Range.floorRange.topValue())
 		{
 			currentRange = Constants.Range.floorRange;

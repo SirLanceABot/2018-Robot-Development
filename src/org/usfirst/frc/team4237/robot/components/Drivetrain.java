@@ -141,7 +141,7 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 		
 		this.calibrateNavX();
 
-		//this.calibrateColorSensor();
+		this.calibrateColorSensor();
 	}
 
 	public double getEncInches()
@@ -347,12 +347,12 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 
 	public void printColors()
 	{
-		System.out.println(colorSensor);
+		System.out.print(colorSensor);
 	}
 
 	public void printHeading()
 	{
-		System.out.println("Heading: " + navX.getYaw());
+		System.out.print("Heading: " + navX.getYaw());
 	}
 
 	public void printEncoder()

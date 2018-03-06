@@ -176,18 +176,6 @@ public class Autonomous
 			{
 				autoMode = Constants.AutoMode.kAutoLine;
 			}
-			else if(planC.equalsIgnoreCase("left switch") && fieldColors.charAt(0) == 'L')
-			{
-				autoMode = Constants.AutoMode.kSwitchLeftFromMiddle;
-			}
-			else if(planC.equalsIgnoreCase("right switch") && fieldColors.charAt(0) == 'R')
-			{
-				autoMode = Constants.AutoMode.kSwitchRightFromMiddle;
-			}
-			else if(planC.equalsIgnoreCase("auto line"))
-			{
-				autoMode = Constants.AutoMode.kAutoLine;
-			}
 		}
 		else if(selectedPosition.equalsIgnoreCase("right"))
 		{

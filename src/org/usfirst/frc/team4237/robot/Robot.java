@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 
 public class Robot extends IterativeRobot
 {
-	//private UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
 	private Autonomous autonomous = Autonomous.getInstance();
 	
 	public Robot()
@@ -52,7 +51,12 @@ public class Robot extends IterativeRobot
 	@Override
 	public void disabledPeriodic()
 	{
-		//Drivetrain.getInstance().printTestInfo();
+		//print sensor values
+		System.out.print("Encoder: " + Drivetrain.getInstance().getEncInches() + 
+							"\tNavX: " + Drivetrain.getInstance().getNavXYaw() + 
+							"\tColors: "); Drivetrain.getInstance().printColors();
+		System.out.print("\tElevator pot: " + Elevator.getInstance().getStringPot() + 
+							"\tPivot pot: " + Gripper.getInstance().getPivotPot() + '\n');
 	}
 	
 	@Override
@@ -61,16 +65,18 @@ public class Robot extends IterativeRobot
 		//camera.setExposureManual(13);
 		System.out.println("Entering teleop");
 		Gripper.getInstance().setTeleopLimits();
-		//Drivetrain.getInstance().raiseServo();
-		
-		//turn light rings off
+		Drivetrain.getInstance().raiseServo();
 	}
 	
 	@Override
 	public void teleopPeriodic()
 	{
-		
-		//autonomous.turnLightRingsOn();
+		//print sensor values
+		System.out.print("Encoder: " + Drivetrain.getInstance().getEncInches() + 
+							"\tNavX: " + Drivetrain.getInstance().getNavXYaw() + 
+							"\tColors: "); Drivetrain.getInstance().printColors();
+		System.out.print("\tElevator pot: " + Elevator.getInstance().getStringPot() + 
+							"\tPivot pot: " + Gripper.getInstance().getPivotPot() + '\n');
 	}
 	
 	@Override
@@ -86,7 +92,12 @@ public class Robot extends IterativeRobot
 	@Override
 	public void autonomousPeriodic()
 	{
-		
+		//print sensor values
+		System.out.print("Encoder: " + Drivetrain.getInstance().getEncInches() + 
+							"\tNavX: " + Drivetrain.getInstance().getNavXYaw() + 
+							"\tColors: "); Drivetrain.getInstance().printColors();
+		System.out.print("\tElevator pot: " + Elevator.getInstance().getStringPot() + 
+							"\tPivot pot: " + Gripper.getInstance().getPivotPot() + '\n');
 		autonomous.periodic();
 	}
 }

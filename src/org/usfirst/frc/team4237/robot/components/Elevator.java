@@ -265,7 +265,7 @@ public class Elevator extends Thread implements Component
 	public void updateCurrentRange()
 	{
 		currentValue = getStringPot();
-		System.out.println("Elevator pot: " + currentValue);
+		//System.out.println("Elevator pot: " + currentValue);
 		if (currentValue <= Constants.Range.floorRange.topValue())
 		{
 			currentRange = Constants.Range.floorRange;
