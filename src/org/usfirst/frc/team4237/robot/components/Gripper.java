@@ -355,16 +355,11 @@ public class Gripper extends Thread implements Component
 				setPivoting(true);
 				currentDirection = Constants.Direction.Down;
 			}
-			else if (rightYAxis < -0.5)
+			else if (Math.abs(rightYAxis) > 0.1)
 			{
-
-				raise();
+				pivot(-rightYAxis);
 			}
-			else if (rightYAxis > 0.5)
-			{
-				lower();
-			}
-			else// if (Math.abs(rightYAxis) < 0.5)
+			else
 			{
 				pivotOff();
 			}
@@ -448,9 +443,8 @@ public class Gripper extends Thread implements Component
 	 */
 	public void autonomous()
 	{
-		if ( (currentValue >= targetRange[0]) && (currentValue <= targetRange[1]) )
-		//if ( (currentValue >= targetRange[0] && currentDirection == Constants.Direction.Up) || 
-		//	(currentValue < targetRange[1] && currentDirection == Constants.Direction.Down))
+		if ( (currentValue >= targetRange[0] && currentDirection == Constants.Direction.Up) || 
+			(currentValue < targetRange[1] && currentDirection == Constants.Direction.Down))
 		{
 			//System.out.println("Pivot Arm in target range");
 			pivotOff();	

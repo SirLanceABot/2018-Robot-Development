@@ -139,15 +139,9 @@ public class Elevator extends Thread implements Component
 				isMoving = true;
 				currentDirection = Constants.Direction.Down;
 			}
-			else if (leftYAxis < -0.5)
-			//else if(Math.abs(leftYAxis > 0.1)	
+			else if(Math.abs(leftYAxis) > 0.1)	
 			{
-				raise();
-				//masterTalonSRX.set(-leftYAxis);
-			}
-			else if (leftYAxis > 0.5)
-			{
-				lower();
+				masterTalonSRX.set(-leftYAxis);
 			}
 			else
 			{
@@ -207,7 +201,8 @@ public class Elevator extends Thread implements Component
 	public void autonomous()
 	{
 		
-		if ((currentValue >= targetRange[0]) && (currentValue <= targetRange[1]))
+		if ( (currentValue >= targetRange[0] && currentDirection == Constants.Direction.Up) || 
+			(currentValue < targetRange[1] && currentDirection == Constants.Direction.Down))
 		{
 			//System.out.println("Elevator in target range");
 			currentDirection = Constants.Direction.None;
