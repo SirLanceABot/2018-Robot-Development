@@ -140,8 +140,10 @@ public class Elevator extends Thread implements Component
 				currentDirection = Constants.Direction.Down;
 			}
 			else if (leftYAxis < -0.5)
+			//else if(Math.abs(leftYAxis > 0.1)	
 			{
 				raise();
+				//masterTalonSRX.set(-leftYAxis);
 			}
 			else if (leftYAxis > 0.5)
 			{
