@@ -138,8 +138,9 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 
 		frontRightMasterMotor.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder, 0, 0);
 		frontRightMasterMotor.setSensorPhase(true);
+		
+		this.calibrateNavX();
 
-		//this.calibrateNavX();
 		//this.calibrateColorSensor();
 	}
 

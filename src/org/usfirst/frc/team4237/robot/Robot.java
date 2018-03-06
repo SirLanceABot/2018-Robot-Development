@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 
 public class Robot extends IterativeRobot
 {
-	private UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
+	//private UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
 	private Autonomous autonomous = Autonomous.getInstance();
 	
 	public Robot()
@@ -52,8 +52,7 @@ public class Robot extends IterativeRobot
 	@Override
 	public void disabledPeriodic()
 	{
-		//autonomous.turnLightRingsOff();
-		Drivetrain.getInstance().printTestInfo();
+		//Drivetrain.getInstance().printTestInfo();
 	}
 	
 	@Override
