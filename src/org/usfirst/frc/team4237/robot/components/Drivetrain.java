@@ -365,7 +365,7 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 		System.out.println("Calibrating NavX...");
 		while(navX.isCalibrating())
 		{
-
+			Timer.delay(0.005);
 		}
 		System.out.println("Calibration done.");
 	}
