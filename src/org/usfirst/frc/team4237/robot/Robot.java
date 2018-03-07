@@ -72,11 +72,11 @@ public class Robot extends IterativeRobot
 	public void teleopPeriodic()
 	{
 		//print sensor values
-		System.out.print("Encoder: " + Drivetrain.getInstance().getEncInches() + 
-							"\tNavX: " + Drivetrain.getInstance().getNavXYaw() + 
-							"\tColors: "); Drivetrain.getInstance().printColors();
-		System.out.print("\tElevator pot: " + Elevator.getInstance().getStringPot() + 
-							"\tPivot pot: " + Gripper.getInstance().getPivotPot() + '\n');
+//		System.out.print("Encoder: " + Drivetrain.getInstance().getEncInches() + 
+//							"\tNavX: " + Drivetrain.getInstance().getNavXYaw() + 
+//							"\tColors: "); Drivetrain.getInstance().printColors();
+//		System.out.print("\tElevator pot: " + Elevator.getInstance().getStringPot() + 
+//							"\tPivot pot: " + Gripper.getInstance().getPivotPot() + '\n');
 	}
 	
 	@Override
@@ -93,11 +93,11 @@ public class Robot extends IterativeRobot
 	public void autonomousPeriodic()
 	{
 		//print sensor values
-		System.out.print("Encoder: " + Drivetrain.getInstance().getEncInches() + 
-							"\tNavX: " + Drivetrain.getInstance().getNavXYaw() + 
-							"\tColors: "); Drivetrain.getInstance().printColors();
-		System.out.print("\tElevator pot: " + Elevator.getInstance().getStringPot() + 
-							"\tPivot pot: " + Gripper.getInstance().getPivotPot() + '\n');
+//		System.out.print("Encoder: " + Drivetrain.getInstance().getEncInches() + 
+//							"\tNavX: " + Drivetrain.getInstance().getNavXYaw() + 
+//							"\tColors: "); Drivetrain.getInstance().printColors();
+//		System.out.print("\tElevator pot: " + Elevator.getInstance().getStringPot() + 
+//							"\tPivot pot: " + Gripper.getInstance().getPivotPot() + '\n');
 		autonomous.periodic();
 	}
 }

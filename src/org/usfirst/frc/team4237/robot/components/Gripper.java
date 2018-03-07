@@ -146,7 +146,7 @@ public class Gripper extends Thread implements Component
 	 */
 	public void autoEject()
 	{
-		if (rightIntakeTalon.getSelectedSensorPosition(0) <= Constants.AUTO_EJECT_ENCODER_STOP_VALUE)
+		if (rightIntakeTalon.getSelectedSensorPosition(0) >= Constants.AUTO_EJECT_ENCODER_STOP_VALUE)
 		{
 			ejectShoot();
 		}
@@ -159,7 +159,7 @@ public class Gripper extends Thread implements Component
 
 	public void autoDrop()
 	{
-		if (rightIntakeTalon.getSelectedSensorPosition(0) <= Constants.AUTO_EJECT_ENCODER_STOP_VALUE)
+		if (rightIntakeTalon.getSelectedSensorPosition(0) >= Constants.AUTO_EJECT_ENCODER_STOP_VALUE)
 		{
 			ejectDrop();
 		}
@@ -198,8 +198,8 @@ public class Gripper extends Thread implements Component
 		//		leftIntakeTalon.set(ControlMode.PercentOutput, -0.5);
 		//		rightIntakeTalon.set(ControlMode.PercentOutput, -0.5);
 
-		leftIntakeTalon.set(0.50);
-		rightIntakeTalon.set(0.50);
+		leftIntakeTalon.set(-0.50);
+		rightIntakeTalon.set(-0.50);
 
 	}
 
@@ -214,14 +214,14 @@ public class Gripper extends Thread implements Component
 		//		leftIntakeTalon.set(ControlMode.PercentOutput, 0.5);
 		//		rightIntakeTalon.set(ControlMode.PercentOutput, 0.5);
 
-		leftIntakeTalon.set(-1.0);
-		rightIntakeTalon.set(-1.0);
+		leftIntakeTalon.set(1.0);
+		rightIntakeTalon.set(1.0);
 	}
 
 	public void ejectDrop()
 	{
-		leftIntakeTalon.set(-0.5);
-		rightIntakeTalon.set(-0.5);
+		leftIntakeTalon.set(0.5);
+		rightIntakeTalon.set(0.5);
 	}
 
 
@@ -231,7 +231,7 @@ public class Gripper extends Thread implements Component
 	public void intakeRotateCubeLeft()
 	{
 		leftIntakeTalon.set(0.0);
-		rightIntakeTalon.set(-0.70);
+		rightIntakeTalon.set(0.70);
 	}
 
 	/**
@@ -239,7 +239,7 @@ public class Gripper extends Thread implements Component
 	 */
 	public void intakeRotateCubeRight()
 	{
-		leftIntakeTalon.set(-0.70);
+		leftIntakeTalon.set(0.70);
 		rightIntakeTalon.set(0.0);
 	}
 
@@ -254,7 +254,7 @@ public class Gripper extends Thread implements Component
 	}
 
 	/**
-	 * Lower pivoter
+	 * Raise pivoter
 	 */
 	public void raise()
 	{	
@@ -274,6 +274,7 @@ public class Gripper extends Thread implements Component
 	 */
 	public void pivotOff()
 	{
+		currentDirection = Constants.Direction.None;
 		setPivoting(false);
 		pivotTalon.set(0.0);
 	}
@@ -355,7 +356,7 @@ public class Gripper extends Thread implements Component
 				setPivoting(true);
 				currentDirection = Constants.Direction.Down;
 			}
-			else if (Math.abs(rightYAxis) > 0.1)
+			else if (Math.abs(rightYAxis) > 0.2)
 			{
 				pivot(-rightYAxis);
 			}
@@ -449,12 +450,12 @@ public class Gripper extends Thread implements Component
 			//System.out.println("Pivot Arm in target range");
 			pivotOff();	
 		}
-		else if (currentValue < targetRange[0])
+		else if (currentValue < targetRange[0] && currentDirection == Constants.Direction.Up)
 		{
 			//System.out.println("Pivot Arm Raising");
 			raise();				
 		}
-		else if (currentValue > targetRange[1])
+		else if (currentValue > targetRange[1] && currentDirection == Constants.Direction.Down)
 		{
 			lower();
 			//System.out.println("Pivot Arm Lowering");
@@ -462,7 +463,7 @@ public class Gripper extends Thread implements Component
 
 		if(isAutoEjecting())
 		{
-			autoEject();
+			autoDrop();
 		}
 		else
 		{
@@ -587,7 +588,7 @@ public class Gripper extends Thread implements Component
 		resetIntakeEncoder();
 		this.isAutoEjecting = isAutoEjecting;
 	}
-
+	
 	public boolean isAutoIntaking()
 	{
 		return isAutoIntaking;
@@ -620,6 +621,7 @@ public class Gripper extends Thread implements Component
 
 	public void autoSetMiddleTargetRange()
 	{
+		currentDirection = Constants.Direction.Down;
 		targetRange = Constants.Range.middleRange.range;
 	}
 

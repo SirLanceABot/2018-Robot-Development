@@ -39,6 +39,9 @@ public class Autonomous
 	private String planB = null;
 	private String planC = null;
 
+	private boolean doneMovingComponent = false;
+	private boolean doneDriving = false;
+	
 	private Timer t = new Timer();
 
 	private static Autonomous instance = new Autonomous();
@@ -232,73 +235,6 @@ public class Autonomous
 		{
 			autoMode = Constants.AutoMode.kNone;
 		}
-//
-//
-//
-//
-//
-//		if(((fieldColors.charAt(1) == 'L' && selectedPosition.equalsIgnoreCase("right"))
-//				|| (fieldColors.charAt(1) == 'R' && selectedPosition.equalsIgnoreCase("left")))
-//				&& selectedTarget.equalsIgnoreCase("scale"))
-//		{
-//			autoMode = Constants.AutoMode.kScaleOnOppositeSide;
-//		}
-//		else if(((fieldColors.charAt(1) == 'R' && selectedPosition.equalsIgnoreCase("right"))
-//				|| (fieldColors.charAt(1) == 'L' && selectedPosition.equalsIgnoreCase("left")))
-//				&& selectedTarget.equalsIgnoreCase("scale"))
-//		{
-//			autoMode = Constants.AutoMode.kScaleOnSameSide;
-//		}
-//		else if(((fieldColors.charAt(0) == 'L' && selectedPosition.equalsIgnoreCase("left"))
-//				|| (fieldColors.charAt(0) == 'R' && selectedPosition.equalsIgnoreCase("right")))
-//				&& selectedTarget.equalsIgnoreCase("switch"))
-//		{
-//			autoMode = Constants.AutoMode.kSwitchOnSameSide;
-//		}
-//		else if(fieldColors.charAt(0) == 'L'
-//				&& selectedPosition.equalsIgnoreCase("center")
-//				&& selectedTarget.equalsIgnoreCase("switch"))
-//		{
-//			autoMode = Constants.AutoMode.kSwitchLeftFromMiddle;
-//		}
-//		else if(fieldColors.charAt(0) == 'R'
-//				&& selectedPosition.equalsIgnoreCase("center")
-//				&& selectedTarget.equalsIgnoreCase("switch"))
-//		{
-//			autoMode = Constants.AutoMode.kSwitchRightFromMiddle;
-//		}
-//		else if(selectedTarget.equalsIgnoreCase("auto line"))
-//		{
-//			autoMode = Constants.AutoMode.kAutoLine;
-//		}
-//
-//		//backup auto routine
-//		if(((fieldColors.charAt(0) == 'L' && selectedPosition.equalsIgnoreCase("right"))
-//				|| (fieldColors.charAt(0) == 'R' && selectedPosition.equalsIgnoreCase("left")))
-//				&& selectedTarget.equalsIgnoreCase("switch"))
-//		{
-//			if(selectedBackupPlan.equalsIgnoreCase("auto line"))
-//			{
-//				autoMode = Constants.AutoMode.kAutoLine;
-//			}
-//			else if(selectedBackupPlan.equalsIgnoreCase("scale"))
-//			{
-//				if(fieldColors.charAt(1) == 'R' && selectedPosition.equalsIgnoreCase("right")
-//						|| fieldColors.charAt(1) == 'L' && selectedPosition.equalsIgnoreCase("left"))
-//				{
-//					autoMode = Constants.AutoMode.kScaleOnSameSide;
-//				}
-//				else
-//				{
-//					autoMode = Constants.AutoMode.kScaleOnOppositeSide;
-//				}
-//			}
-//		}
-//
-//		if(selectedPosition.equalsIgnoreCase("none"))
-//		{
-//			autoMode = Constants.AutoMode.kNone;
-//		}
 
 		System.out.println("AutoMode: " + autoMode);
 		drivetrain.resetEncoder();
@@ -538,7 +474,7 @@ public class Autonomous
 		{
 			if(drivetrain.driveDistance(184, 0.4, 0))
 			{
-				autoStage = Constants.AutoStage.kDone;
+				autoStage = Constants.AutoStage.kSpin1;
 				System.out.println("Entering: " + autoStage);
 			}
 		}
@@ -552,12 +488,27 @@ public class Autonomous
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2ToLine1)
 		{
-			gripper.autoSetMiddleTargetRange();
-			if(drivetrain.driveToColor(color, 0.35, -55 * angleSign) && gripper.inTargetRange())
+			if(!doneDriving && !doneMovingComponent)
+			{
+				gripper.autoSetMiddleTargetRange();
+				doneDriving = drivetrain.driveToColor(color, 0.25, -55 * angleSign);
+				doneMovingComponent = gripper.inTargetRange();
+			}
+			else if(!doneMovingComponent)
+			{
+				doneMovingComponent = gripper.inTargetRange();
+			}
+			else if(!doneDriving)
+			{
+				doneDriving = drivetrain.driveToColor(color, 0.25, -55 * angleSign);
+			}
+			else
 			{
 				autoStage = Constants.AutoStage.kDrive2ToLine2;
 				System.out.println("Entering: " + autoStage);
 				drivetrain.resetEncoder();
+				doneDriving = false;
+				doneMovingComponent = false;
 				Timer.delay(0.5);
 			}
 		}
@@ -572,21 +523,44 @@ public class Autonomous
 		}
 		else if(autoStage == Constants.AutoStage.kSpin2)
 		{
-			//elevator.autoSetScaleTargetRange();
-			if(drivetrain.spinToBearing(0 * angleSign, 0.35))// && elevator.inTargetRange())
+		
+			if(!doneDriving && !doneMovingComponent)
+			{
+				elevator.autoSetScaleTargetRange();
+				doneDriving = drivetrain.spinToBearing(0 * angleSign, 0.35);
+				doneMovingComponent = elevator.inTargetRange();
+			}
+			else if(!doneMovingComponent)
+			{
+				doneMovingComponent = elevator.inTargetRange();
+			}
+			else if(!doneDriving)
+			{
+				doneDriving = drivetrain.spinToBearing(0 * angleSign, 0.35);
+			}
+			else
 			{
 				autoStage = Constants.AutoStage.kDrive3ToLine;
 				System.out.println("Entering: " + autoStage);
+				doneDriving = false;
+				doneMovingComponent = false;
 				drivetrain.resetEncoder();
 			}
 		}
+//		else if(autoStage == Constants.AutoStage.kDrive2Distance3)
+//		{
+//			if(drivetrain.driveDistance(-3, 0.4, 0))
+//			{
+//				
+//			}
+//		}
 		else if(autoStage == Constants.AutoStage.kDrive3ToLine)
 		{
 			if(drivetrain.driveToColor(AMSColorSensor.Constants.Color.kWhite, 0.2, 0 * angleSign))
 			{
-				autoStage = Constants.AutoStage.kDone;
+				autoStage = Constants.AutoStage.kDrive2Distance3;
 				System.out.println("Entering: " + autoStage);
-				//gripper.setAutoEjecting(true);
+				gripper.setAutoEjecting(true);
 				System.out.println("Time: " + t.get());
 			}
 		}

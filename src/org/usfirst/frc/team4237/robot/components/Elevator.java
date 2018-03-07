@@ -139,7 +139,7 @@ public class Elevator extends Thread implements Component
 				isMoving = true;
 				currentDirection = Constants.Direction.Down;
 			}
-			else if(Math.abs(leftYAxis) > 0.1)	
+			else if(Math.abs(leftYAxis) > 0.2)	
 			{
 				masterTalonSRX.set(-leftYAxis);
 			}
@@ -208,12 +208,12 @@ public class Elevator extends Thread implements Component
 			currentDirection = Constants.Direction.None;
 			stopMoving();
 		}
-		else if (currentValue < targetRange[0])
+		else if (currentValue < targetRange[0] && currentDirection == Constants.Direction.Up)
 		{
 			//System.out.println("Elevator raising");
 			raise();
 		}
-		else if (currentValue > targetRange[1])
+		else if (currentValue > targetRange[1] && currentDirection == Constants.Direction.Down)
 		{
 			lower();
 			//System.out.println("Elevator lowering");
@@ -311,6 +311,7 @@ public class Elevator extends Thread implements Component
 
 	public void stopMoving()
 	{
+		currentDirection = Constants.Direction.None;
 		masterTalonSRX.set(0.0);
 		setMoving(false);
 	}
@@ -338,11 +339,13 @@ public class Elevator extends Thread implements Component
 	public void autoSetScaleTargetRange()
 	{
 		targetRange = Constants.Range.topScaleRange.range;
+		currentDirection = Constants.Direction.Up;
 	}
 
 	public void autoSetSwitchTargetRange()
 	{
 		targetRange = Constants.Range.exchangeAndSwitchAndPortalRange.range;
+		currentDirection = Constants.Direction.Up;
 	}
 
 	public void autoSetFloorTargetRange()
@@ -472,11 +475,11 @@ public class Elevator extends Thread implements Component
 
 		public static final double SPEED = 0.5;
 		
-		public static final int THRESHOLD = 15;
+		public static final int THRESHOLD = 5;
 		public static final int FLOOR = 135;
 		public static final int SWITCH = 238;
 		public static final int BOTTOM_SCALE = 426;
-		public static final int TOP_SCALE = 588;
+		public static final int TOP_SCALE = 605;
 	
 	}
 }
