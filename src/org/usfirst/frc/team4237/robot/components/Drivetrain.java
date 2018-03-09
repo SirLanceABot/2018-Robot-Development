@@ -195,7 +195,7 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 			{
 				e.printStackTrace();
 			}
-			Timer.delay(0.01);
+			Timer.delay(0.05);
 		}
 	}
 

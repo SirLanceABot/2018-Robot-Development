@@ -317,7 +317,7 @@ public class Gripper extends Thread implements Component
 			{
 				test();
 			}
-			Timer.delay(0.01);
+			Timer.delay(0.05);
 		} //End of while loop
 	}
 
