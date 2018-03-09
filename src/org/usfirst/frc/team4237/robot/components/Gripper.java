@@ -614,6 +614,7 @@ public class Gripper implements Component
 
 	public void autoSetRaisedTargetRange()
 	{
+		currentDirection = Constants.Direction.Down;
 		targetRange = Constants.Range.raisedRange.range;
 	}
 
@@ -625,11 +626,13 @@ public class Gripper implements Component
 
 	public void autoSetHorizontalTargetRange()
 	{
+		currentDirection = Constants.Direction.Down;
 		targetRange = Constants.Range.horizontalRange.range;
 	}
 
 	public void autoSetFloorTargetRange()
 	{
+		currentDirection = Constants.Direction.Down;
 		targetRange = Constants.Range.floorRange.range;
 	}
 

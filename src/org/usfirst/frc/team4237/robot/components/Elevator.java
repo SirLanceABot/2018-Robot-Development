@@ -333,8 +333,8 @@ public class Elevator implements Component
 
 	public void autoSetScaleTargetRange()
 	{
-		targetRange = Constants.Range.topScaleRange.range;
 		currentDirection = Constants.Direction.Up;
+		targetRange = Constants.Range.topScaleRange.range;
 	}
 
 	public void autoSetSwitchTargetRange()
@@ -345,6 +345,7 @@ public class Elevator implements Component
 
 	public void autoSetFloorTargetRange()
 	{
+		currentDirection = Constants.Direction.Up;
 		targetRange = Constants.Range.floorRange.range;
 	}
 
