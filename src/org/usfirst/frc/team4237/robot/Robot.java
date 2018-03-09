@@ -83,6 +83,10 @@ public class Robot extends IterativeRobot
 	public void autonomousPeriodic()
 	{
 		//printSensorValues();
+		drivetrain.run();
+		elevator.run();
+		gripper.run();
+		
 		autonomous.periodic();
 		
 		Timer.delay(0.05);
