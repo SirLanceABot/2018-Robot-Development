@@ -13,6 +13,7 @@ import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.VideoSink;
 import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.IterativeRobot;
+import edu.wpi.first.wpilibj.Timer;
 
 public class Robot extends IterativeRobot
 {
@@ -84,6 +85,7 @@ public class Robot extends IterativeRobot
 	{
 		//printSensorValues();
 		autonomous.periodic();
+		Timer.delay(0.05);
 	}
 
 	public void printSensorValues()
