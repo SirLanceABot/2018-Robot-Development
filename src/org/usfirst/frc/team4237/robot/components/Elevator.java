@@ -20,7 +20,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
  * @author Ben Puzycki, Darryl Wong, Mark Washington
  *
  */
-public class Elevator extends Thread implements Component
+public class Elevator implements Component
 {
 	private OperatorXbox xbox = OperatorXbox.getInstance();
 
@@ -95,28 +95,23 @@ public class Elevator extends Thread implements Component
 	}
 
 
-	@Override
 	public void run()
 	{
-		while (!this.interrupted())
-		{	
-			updateCurrentRange();
+		if (DriverStation.getInstance().isOperatorControl() && DriverStation.getInstance().isEnabled())
+		{
+			teleop();
+		}
+		else if (DriverStation.getInstance().isAutonomous() && DriverStation.getInstance().isEnabled())
+		{
+			autonomous();
+		}
+		else if (DriverStation.getInstance().isTest() && DriverStation.getInstance().isEnabled())
+		{
+			test();
+		}
+		Timer.delay(0.05);
+	} //End of while loop
 
-			if (DriverStation.getInstance().isOperatorControl() && DriverStation.getInstance().isEnabled())
-			{
-				teleop();
-			}
-			else if (DriverStation.getInstance().isAutonomous() && DriverStation.getInstance().isEnabled())
-			{
-				autonomous();
-			}
-			else if (DriverStation.getInstance().isTest() && DriverStation.getInstance().isEnabled())
-			{
-				test();
-			}
-			Timer.delay(0.05);
-		} //End of while loop
-	}
 
 	public void teleop()
 	{
@@ -200,9 +195,9 @@ public class Elevator extends Thread implements Component
 
 	public void autonomous()
 	{
-		
+
 		if ( (currentValue >= targetRange[0] && currentDirection == Constants.Direction.Up) || 
-			(currentValue < targetRange[1] && currentDirection == Constants.Direction.Down))
+				(currentValue < targetRange[1] && currentDirection == Constants.Direction.Down))
 		{
 			//System.out.println("Elevator in target range");
 			currentDirection = Constants.Direction.None;
@@ -244,7 +239,7 @@ public class Elevator extends Thread implements Component
 		{
 			currentTestKeyPosition = 0;
 		}
-		
+
 		if (aButton)
 		{
 			talonSRXHashMap.get(currentTestKeyPosition).set(ControlMode.PercentOutput, 0.3);
@@ -301,7 +296,7 @@ public class Elevator extends Thread implements Component
 			currentRange = Constants.Range.topScaleRange;
 			//			System.out.println("Current Range: " + Constants.Range.topScaleRange);
 		}
-		
+
 	}
 
 	public Constants.Range getCurrentRange()
@@ -357,23 +352,23 @@ public class Elevator extends Thread implements Component
 	{
 		//System.out.printf("ID: %2d Potentiometer Position: %.2f", talonSRXHashMap.keySet().toArray()[currentTestKeyPosition], getStringPot());
 		System.out.println("[Elevator] String-potentiometer position: " + getStringPot());
-	
+
 	}
 
 	public static class Constants
 	{		
 		private enum InitRange
 		{
-//			floorRange(118, 138),
-//			floorExchangeAndSwitchAndPortalRange(138, 218),
-//			exchangeAndSwitchAndPortalRange(218, 258),
-//			exchangeAndSwitchAndPortalBottomScaleRange(258, 406),
-//			bottomScaleRange(406, 446),
-//			bottomScaleTopScaleRange(446, 568),
-//			topScaleRange(568, 588),
-//			none(-1, -1),
-//			error(-1, -1);
-			
+			//			floorRange(118, 138),
+			//			floorExchangeAndSwitchAndPortalRange(138, 218),
+			//			exchangeAndSwitchAndPortalRange(218, 258),
+			//			exchangeAndSwitchAndPortalBottomScaleRange(258, 406),
+			//			bottomScaleRange(406, 446),
+			//			bottomScaleTopScaleRange(446, 568),
+			//			topScaleRange(568, 588),
+			//			none(-1, -1),
+			//			error(-1, -1);
+
 			floorRange(Constants.FLOOR, Constants.FLOOR + Constants.THRESHOLD),
 			floorExchangeAndSwitchAndPortalRange(Constants.FLOOR + Constants.THRESHOLD, Constants.SWITCH - Constants.THRESHOLD),
 			exchangeAndSwitchAndPortalRange(Constants.SWITCH - Constants.THRESHOLD, Constants.SWITCH + Constants.THRESHOLD),
@@ -384,7 +379,7 @@ public class Elevator extends Thread implements Component
 			none(-1, -1),
 			error(-1, -1);
 
-		
+
 
 			private final double[] range;
 
@@ -474,13 +469,13 @@ public class Elevator extends Thread implements Component
 		public static final double STRING_POT_SCALE = 1.0;
 
 		public static final double SPEED = 0.5;
-		
+
 		public static final int THRESHOLD = 5;
 		public static final int FLOOR = 135;
 		public static final int SWITCH = 238;
 		public static final int BOTTOM_SCALE = 426;
 		public static final int TOP_SCALE = 605;
-	
+
 	}
 }
 

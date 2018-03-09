@@ -19,6 +19,10 @@ public class Robot extends IterativeRobot
 {
 	private Autonomous autonomous = Autonomous.getInstance();
 
+	private Drivetrain drivetrain = Drivetrain.getInstance();
+	private Gripper gripper = Gripper.getInstance();
+	private Elevator elevator = Elevator.getInstance();
+	
 	public Robot()
 	{
 
@@ -27,19 +31,11 @@ public class Robot extends IterativeRobot
 	@Override
 	public void robotInit()
 	{
-		Drivetrain.getInstance().calibrateNavX();
-		Drivetrain.getInstance().calibrateColorSensor();
+		drivetrain.calibrateNavX();
+		drivetrain.calibrateColorSensor();
+		
 		System.out.println("Starting robot!");
-		Thread drivetrain = new Thread(Drivetrain.getInstance());
-		drivetrain.start();
-		System.out.println("Drivetrain thread started!");
-
-		Elevator.getInstance().start();
-		System.out.println("Elevator thread started!");
-
-		Gripper.getInstance().start();
-		System.out.println("Gripper thread started!");
-
+		
 		//Vision.getInstance();
 	}
 
@@ -68,6 +64,7 @@ public class Robot extends IterativeRobot
 	public void teleopPeriodic()
 	{
 		//printSensorValues();
+		
 	}
 
 	@Override
