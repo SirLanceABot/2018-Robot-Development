@@ -54,16 +54,18 @@ public class Robot extends IterativeRobot
 	@Override
 	public void teleopInit()
 	{
-		//camera.setExposureManual(13);
 		System.out.println("Entering teleop");
-		Gripper.getInstance().setTeleopLimits();
-		Drivetrain.getInstance().raiseServo();
+		gripper.setTeleopLimits();
+		
+		drivetrain.raiseServo();
 	}
 
 	@Override
 	public void teleopPeriodic()
 	{
-		//printSensorValues();
+		drivetrain.run();
+		elevator.run();
+		gripper.run();
 		
 	}
 
@@ -82,6 +84,7 @@ public class Robot extends IterativeRobot
 	{
 		//printSensorValues();
 		autonomous.periodic();
+		
 		Timer.delay(0.05);
 	}
 
