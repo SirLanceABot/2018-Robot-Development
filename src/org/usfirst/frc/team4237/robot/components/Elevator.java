@@ -110,7 +110,7 @@ public class Elevator implements Component
 			test();
 		}
 		Timer.delay(0.05);
-	} //End of while loop
+	}
 
 
 	public void teleop()

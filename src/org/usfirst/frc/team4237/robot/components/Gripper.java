@@ -16,14 +16,14 @@ import edu.wpi.first.wpilibj.Timer;
  * Gripper class
  * @author Julien Thrum, Erin Lafrenz, Ben Puzycki, Darryl Wong, and Mark Washington
  */
-public class Gripper extends Thread implements Component
+public class Gripper implements Component
 {
 	private OperatorXbox xbox = OperatorXbox.getInstance();
 
 	private WPI_TalonSRX leftIntakeTalon = new WPI_TalonSRX(Constants.LEFT_INTAKE_MOTOR_PORT);
 	private WPI_TalonSRX rightIntakeTalon = new WPI_TalonSRX(Constants.RIGHT_INTAKE_MOTOR_PORT);
 	private WPI_TalonSRX pivotTalon = new WPI_TalonSRX(Constants.PIVOTER_MOTOR_PORT);
-	
+
 	private HashMap<Integer, WPI_TalonSRX> talonSRXHashMap = new HashMap<Integer, WPI_TalonSRX>();
 
 	private boolean isAutoEjecting = false;
@@ -37,7 +37,7 @@ public class Gripper extends Thread implements Component
 	private Constants.Direction currentDirection = Constants.Direction.None;
 
 	private int currentTestKeyPosition = 0;
-	
+
 	private boolean leftBumper;
 	private boolean rightBumper;
 	private boolean aButton;
@@ -71,7 +71,7 @@ public class Gripper extends Thread implements Component
 		leftIntakeTalon.configPeakCurrentLimit(Constants.INTAKE_40_AMP_TRIGGER, Constants.INTAKE_40_AMP_TIME);
 		leftIntakeTalon.configOpenloopRamp(Constants.INTAKE_RAMP_TIME, Constants.INTAKE_RAMP_RATE_TIMEOUT);
 
-		
+
 		rightIntakeTalon.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder, 0, 0);
 		rightIntakeTalon.setSensorPhase(true);
 		rightIntakeTalon.configForwardSoftLimitEnable(false, 0);
@@ -80,7 +80,7 @@ public class Gripper extends Thread implements Component
 		rightIntakeTalon.configContinuousCurrentLimit(Constants.INTAKE_40_AMP_LIMIT, 10);
 		rightIntakeTalon.configPeakCurrentLimit(Constants.INTAKE_40_AMP_TRIGGER, Constants.INTAKE_40_AMP_TIME);
 		rightIntakeTalon.configOpenloopRamp(Constants.INTAKE_RAMP_TIME, Constants.INTAKE_RAMP_RATE_TIMEOUT);
-		
+
 		//Pivoter settings
 		pivotTalon.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.Analog, 0, 0);
 		//pivotTalon.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.Analog, 0, 0);
@@ -89,7 +89,7 @@ public class Gripper extends Thread implements Component
 		pivotTalon.configReverseSoftLimitThreshold(Constants.FLOOR, 0);
 		pivotTalon.configForwardSoftLimitEnable(true, 0);	//FIXME: change back to true with working sensor
 		pivotTalon.configReverseSoftLimitEnable(true, 0);	//FIXME: change back to true with working sensor
-		
+
 		talonSRXHashMap.put(Constants.LEFT_INTAKE_MOTOR_PORT, leftIntakeTalon);
 		talonSRXHashMap.put(Constants.RIGHT_INTAKE_MOTOR_PORT, rightIntakeTalon);
 		talonSRXHashMap.put(Constants.PIVOTER_MOTOR_PORT, pivotTalon);
@@ -288,12 +288,12 @@ public class Gripper extends Thread implements Component
 	{
 		return rightIntakeTalon.getSelectedSensorPosition(0);
 	}
-	
+
 	public void setAutoLimits()
 	{
 		pivotTalon.configForwardSoftLimitThreshold(Constants.RAISED, 0);
 	}
-	
+
 	public void setTeleopLimits()
 	{
 		pivotTalon.configForwardSoftLimitThreshold(Constants.TELEOP_MAX, 0);
@@ -301,24 +301,22 @@ public class Gripper extends Thread implements Component
 
 	public void run()
 	{
-		while (!this.interrupted())
-		{	
-			updateCurrentRange();
 
-			if (DriverStation.getInstance().isOperatorControl() && DriverStation.getInstance().isEnabled())
-			{
-				teleop();
-			}
-			else if (DriverStation.getInstance().isAutonomous() && DriverStation.getInstance().isEnabled())
-			{
-				autonomous();
-			}
-			else if (DriverStation.getInstance().isTest() && DriverStation.getInstance().isEnabled())
-			{
-				test();
-			}
-			Timer.delay(0.05);
-		} //End of while loop
+		updateCurrentRange();
+
+		if (DriverStation.getInstance().isOperatorControl() && DriverStation.getInstance().isEnabled())
+		{
+			teleop();
+		}
+		else if (DriverStation.getInstance().isAutonomous() && DriverStation.getInstance().isEnabled())
+		{
+			autonomous();
+		}
+		else if (DriverStation.getInstance().isTest() && DriverStation.getInstance().isEnabled())
+		{
+			test();
+		}
+		Timer.delay(0.05);
 	}
 
 	public void teleop()
@@ -337,7 +335,7 @@ public class Gripper extends Thread implements Component
 		//Intake
 		double rightTrigger = xbox.getRawAxis(Xbox.Constants.RIGHT_TRIGGER_AXIS);		//Eject
 		double leftTrigger = xbox.getRawAxis(Xbox.Constants.LEFT_TRIGGER_AXIS);			//Intake
-		
+
 		//Move pivot arm
 		if (!isPivoting())
 		{
@@ -445,7 +443,7 @@ public class Gripper extends Thread implements Component
 	public void autonomous()
 	{
 		if ( (currentValue >= targetRange[0] && currentDirection == Constants.Direction.Up) || 
-			(currentValue < targetRange[1] && currentDirection == Constants.Direction.Down))
+				(currentValue < targetRange[1] && currentDirection == Constants.Direction.Down))
 		{
 			//System.out.println("Pivot Arm in target range");
 			pivotOff();	
@@ -470,7 +468,7 @@ public class Gripper extends Thread implements Component
 			intakeOff();
 		}
 	}
-	
+
 	public void test()
 	{
 		leftBumper = xbox.getRawButtonPressed(Xbox.Constants.LEFT_BUMPER);
@@ -495,7 +493,7 @@ public class Gripper extends Thread implements Component
 		{
 			currentTestKeyPosition = 0;
 		}
-		
+
 		if (aButton)
 		{
 			talonSRXHashMap.get(currentTestKeyPosition).set(ControlMode.PercentOutput, 0.3);
@@ -588,7 +586,7 @@ public class Gripper extends Thread implements Component
 		resetIntakeEncoder();
 		this.isAutoEjecting = isAutoEjecting;
 	}
-	
+
 	public boolean isAutoIntaking()
 	{
 		return isAutoIntaking;
@@ -763,11 +761,11 @@ public class Gripper extends Thread implements Component
 		public static final int PIVOTER_MOTOR_PORT = 6;
 
 		public static final int PID_SLOT_ID = 0;
-		
+
 		public static final int INTAKE_40_AMP_TRIGGER = 60;
 		public static final int INTAKE_40_AMP_LIMIT = 30;
 		public static final int INTAKE_40_AMP_TIME = 4000;
-		
+
 		public static final double INTAKE_RAMP_TIME = 0.125;
 		public static final int INTAKE_RAMP_RATE_TIMEOUT = 10;
 		public static final int THRESHOLD = 5;
