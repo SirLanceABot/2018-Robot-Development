@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.Timer;
 public class Autonomous
 {
 	private Drivetrain drivetrain = Drivetrain.getInstance();
-	private RaspberryPiReceiver raspberryPiReceiver = RaspberryPiReceiver.getInstance();
 
 	private DriverStation driverStation = DriverStation.getInstance();
 	private Elevator elevator = Elevator.getInstance();
@@ -52,7 +51,6 @@ public class Autonomous
 
 	private Autonomous()
 	{
-		raspberryPiReceiver.start();
 		autoSelect4237.start();
 	}
 
