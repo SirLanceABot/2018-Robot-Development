@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 
-public class Drivetrain extends MecanumDrive implements Component, Runnable
+public class Drivetrain extends MecanumDrive implements Component
 {
 	private DriverXbox xbox = DriverXbox.getInstance();
 
@@ -149,7 +149,6 @@ public class Drivetrain extends MecanumDrive implements Component, Runnable
 		return frontRightMasterMotor.getSelectedSensorPosition(0) / 135.0;
 	}
 
-	@Override
 	public void run()
 	{
 		while (!Thread.interrupted())
