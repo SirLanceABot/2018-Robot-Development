@@ -19,7 +19,7 @@ public class RaspberryPiReceiver extends Thread
 {
 	private DatagramSocket rxsocket = new DatagramSocket(Constants.PORT);
 	private DatagramPacket packet = null;
-	private String data = "";
+	private String data = "{}";
 	private Json json = new Json();
 
 	private static RaspberryPiReceiver instance;
