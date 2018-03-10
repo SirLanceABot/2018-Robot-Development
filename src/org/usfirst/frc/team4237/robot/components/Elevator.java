@@ -97,6 +97,8 @@ public class Elevator implements Component
 
 	public void run()
 	{
+		updateCurrentRange();
+		
 		if (DriverStation.getInstance().isOperatorControl() && DriverStation.getInstance().isEnabled())
 		{
 			teleop();
@@ -109,7 +111,6 @@ public class Elevator implements Component
 		{
 			test();
 		}
-		Timer.delay(0.05);
 	}
 
 
@@ -195,24 +196,22 @@ public class Elevator implements Component
 
 	public void autonomous()
 	{
-
-		if ( (currentValue >= targetRange[0] && currentDirection == Constants.Direction.Up) || 
-				(currentValue < targetRange[1] && currentDirection == Constants.Direction.Down))
-		{
-			//System.out.println("Elevator in target range");
-			currentDirection = Constants.Direction.None;
-			stopMoving();
-		}
-		else if (currentValue < targetRange[0] && currentDirection == Constants.Direction.Up)
-		{
-			//System.out.println("Elevator raising");
-			raise();
-		}
-		else if (currentValue > targetRange[1] && currentDirection == Constants.Direction.Down)
-		{
-			lower();
-			//System.out.println("Elevator lowering");
-		}
+		updateCurrentRange();
+//		if (currentValue < targetRange[0] && currentDirection == Constants.Direction.Up)
+//		{
+//			//System.out.println("Elevator raising");
+//			raise();
+//		}
+//		else if (currentValue > targetRange[1] && currentDirection == Constants.Direction.Down)
+//		{
+//			lower();
+//			//System.out.println("Elevator lowering");
+//		}
+//		else
+//		{
+//			currentDirection = Constants.Direction.None;
+//			stopMoving();
+//		}
 	}
 
 	public void test()
@@ -334,7 +333,7 @@ public class Elevator implements Component
 	public void autoSetScaleTargetRange()
 	{
 		currentDirection = Constants.Direction.Up;
-		targetRange = Constants.Range.topScaleRange.range;
+		targetRange = Constants.Range.topScaleRange.range();
 	}
 
 	public void autoSetSwitchTargetRange()
@@ -356,6 +355,38 @@ public class Elevator implements Component
 
 	}
 
+	public boolean autoSwitch()
+	{
+		boolean inSwitchRange = false;
+		if(currentValue < Constants.SWITCH - Constants.THRESHOLD)
+		{
+			raise();
+		}
+		else
+		{
+			inSwitchRange = true;
+			stopMoving();
+		}
+		
+		return inSwitchRange;
+	}
+	
+	public boolean autoTopScale()
+	{
+		boolean inScaleRange = false;
+		if(currentValue < Constants.TOP_SCALE - Constants.THRESHOLD)
+		{
+			raise();
+		}
+		else
+		{
+			inScaleRange = true;
+			stopMoving();
+		}
+		
+		return inScaleRange;
+	}
+	
 	public static class Constants
 	{		
 		private enum InitRange
@@ -404,7 +435,7 @@ public class Elevator implements Component
 				return this.range[1];
 			}
 		}
-
+		
 		public enum Range
 		{
 			floorRange(     								InitRange.floorRange.range(),                 					InitRange.floorRange,        				InitRange.exchangeAndSwitchAndPortalRange),
@@ -471,7 +502,7 @@ public class Elevator implements Component
 
 		public static final double SPEED = 0.5;
 
-		public static final int THRESHOLD = 5;
+		public static final int THRESHOLD = 15;
 		public static final int FLOOR = 135;
 		public static final int SWITCH = 238;
 		public static final int BOTTOM_SCALE = 426;

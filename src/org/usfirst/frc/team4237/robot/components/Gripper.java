@@ -159,7 +159,7 @@ public class Gripper implements Component
 
 	public void autoDrop()
 	{
-		if (rightIntakeTalon.getSelectedSensorPosition(0) >= Constants.AUTO_EJECT_ENCODER_STOP_VALUE)
+		if (leftIntakeTalon.getSelectedSensorPosition(0) >= Constants.AUTO_EJECT_ENCODER_STOP_VALUE)
 		{
 			ejectDrop();
 		}
@@ -316,7 +316,6 @@ public class Gripper implements Component
 		{
 			test();
 		}
-		Timer.delay(0.05);
 	}
 
 	public void teleop()

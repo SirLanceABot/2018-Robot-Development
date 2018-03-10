@@ -21,11 +21,11 @@ public class Autonomous
 	private Elevator elevator = Elevator.getInstance();
 	private Gripper gripper = Gripper.getInstance();
 	private AutoSelect4237 autoSelect4237 = AutoSelect4237.getInstance();
-	private String fieldColors;
+	private String fieldColors = null;
 	private DriverStation.Alliance allianceColor;
 	private int angleSign;
 	private AMSColorSensor.Constants.Color color;
-	private Constants.AutoMode autoMode = Constants.AutoMode.kAutoLine;
+	private Constants.AutoMode autoMode = Constants.AutoMode.kNone;
 	private Constants.AutoStage autoStage = Constants.AutoStage.kDrive1;
 	private LightRing greenCameraLight = new LightRing(Constants.GREEN_CAMERA_PORT);
 	private LightRing whiteCameraLight = new LightRing(Constants.WHITE_CAMERA_PORT);
@@ -37,7 +37,8 @@ public class Autonomous
 	private String planA = null;
 	private String planB = null;
 	private String planC = null;
-
+	private boolean isFieldColorsSet = false;
+	
 	private boolean doneMovingComponent = false;
 	private boolean doneDriving = false;
 	
@@ -66,7 +67,8 @@ public class Autonomous
 		//grab values from fms and autoselect
 		fieldColors = driverStation.getGameSpecificMessage();
 		allianceColor = driverStation.getAlliance();
-
+		
+		
 		System.out.println("GameSpecificMessage: " + fieldColors);
 		System.out.println("Alliance color: " + allianceColor);
 
@@ -100,6 +102,14 @@ public class Autonomous
 			angleSign = -1;
 		}
 
+		drivetrain.resetEncoder();
+		drivetrain.resetNavX();
+
+		turnLightRingsOn();
+	}
+
+	public void setAutoMode()
+	{
 		if(selectedPosition.equalsIgnoreCase("left"))
 		{
 			if(planA.equalsIgnoreCase("left scale") && fieldColors.charAt(1) == 'L')
@@ -233,46 +243,53 @@ public class Autonomous
 		{
 			autoMode = Constants.AutoMode.kNone;
 		}
-
-		System.out.println("AutoMode: " + autoMode);
-		drivetrain.resetEncoder();
-		drivetrain.resetNavX();
-
-		turnLightRingsOn();
 	}
-
+	
 	/**
 	 * Autonomous loop
 	 */
 	public void periodic()
 	{
-		if(autoMode == Constants.AutoMode.kScaleOnOppositeSide)
+		if(!isFieldColorsSet)
 		{
-			scaleOnOppositeSide();
+			fieldColors = driverStation.getGameSpecificMessage();
+			
+			if(fieldColors != null || !fieldColors.equals(""))
+			{
+				isFieldColorsSet = true;
+			}
 		}
-		else if(autoMode == Constants.AutoMode.kScaleOnSameSide)
+		else
 		{
-			scaleOnSameSide();
-		}
-		else if(autoMode == Constants.AutoMode.kSwitchOnSameSide)
-		{
-			switchOnSameSide();
-		}
-		else if(autoMode == Constants.AutoMode.kSwitchLeftFromMiddle)
-		{
-			switchLeftFromMiddle();
-		}
-		else if(autoMode == Constants.AutoMode.kSwitchRightFromMiddle)
-		{
-			switchRightFromMiddle();
-		}
-		else if(autoMode == Constants.AutoMode.kAutoLine)
-		{
-			autoLine();
-		}
-		else if(autoMode == Constants.AutoMode.kNone)
-		{
-			autoStage = Constants.AutoStage.kDone;
+			setAutoMode();
+			if(autoMode == Constants.AutoMode.kScaleOnOppositeSide)
+			{
+				scaleOnOppositeSide();
+			}
+			else if(autoMode == Constants.AutoMode.kScaleOnSameSide)
+			{
+				scaleOnSameSide();
+			}
+			else if(autoMode == Constants.AutoMode.kSwitchOnSameSide)
+			{
+				switchOnSameSide();
+			}
+			else if(autoMode == Constants.AutoMode.kSwitchLeftFromMiddle)
+			{
+				switchLeftFromMiddle();
+			}
+			else if(autoMode == Constants.AutoMode.kSwitchRightFromMiddle)
+			{
+				switchRightFromMiddle();
+			}
+			else if(autoMode == Constants.AutoMode.kAutoLine)
+			{
+				autoLine();
+			}
+			else if(autoMode == Constants.AutoMode.kNone)
+			{
+				autoStage = Constants.AutoStage.kDone;
+			}
 		}
 
 		if(autoStage == Constants.AutoStage.kDone)
@@ -299,9 +316,10 @@ public class Autonomous
 	{
 		if(autoStage == Constants.AutoStage.kDrive1)
 		{
-			if(drivetrain.driveDistance(90, 0.5, 0))
+			if(drivetrain.driveDistance(90, 0.5, 0))// && t.get() <= 5)
 			{
 				autoStage = Constants.AutoStage.kDone;
+				drivetrain.driveCartesian(0, 0, 0);
 				drivetrain.resetEncoder();
 			}
 		}
@@ -561,7 +579,7 @@ public class Autonomous
 		drivetrain.printTestInfo();
 		if(autoStage == Constants.AutoStage.kDrive1)
 		{
-			if(drivetrain.driveDistance(184, 0.4, 0))
+			if(drivetrain.driveDistance(184, 0.7, 0))
 			{
 				autoStage = Constants.AutoStage.kSpin1;
 				System.out.println("Entering: " + autoStage);
@@ -569,7 +587,7 @@ public class Autonomous
 		}
 		else if(autoStage == Constants.AutoStage.kSpin1)
 		{
-			if(drivetrain.spinToBearing(-55 * angleSign, 0.35))
+			if(drivetrain.spinToBearing(-60 * angleSign, 0.35))
 			{
 				autoStage = Constants.AutoStage.kDrive2ToLine1;
 				System.out.println("Entering: " + autoStage);
@@ -580,7 +598,7 @@ public class Autonomous
 			if(!doneDriving && !doneMovingComponent)
 			{
 				gripper.autoSetMiddleTargetRange();
-				doneDriving = drivetrain.driveToColor(color, 0.25, -55 * angleSign);
+				doneDriving = drivetrain.driveToColor(color, 0.2, -60 * angleSign);
 				doneMovingComponent = gripper.inTargetRange();
 			}
 			else if(!doneMovingComponent)
@@ -589,7 +607,7 @@ public class Autonomous
 			}
 			else if(!doneDriving)
 			{
-				doneDriving = drivetrain.driveToColor(color, 0.25, -55 * angleSign);
+				doneDriving = drivetrain.driveToColor(color, 0.2, -60 * angleSign);
 			}
 			else
 			{
@@ -603,7 +621,7 @@ public class Autonomous
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2ToLine2)
 		{
-			if(drivetrain.driveToColor(color, -0.175, -55 * angleSign))
+			if(drivetrain.driveToColor(color, -0.175, -60 * angleSign))
 			{
 				autoStage = Constants.AutoStage.kSpin2;
 				System.out.println("Entering: " + autoStage);
@@ -612,16 +630,17 @@ public class Autonomous
 		}
 		else if(autoStage == Constants.AutoStage.kSpin2)
 		{
-		
 			if(!doneDriving && !doneMovingComponent)
 			{
-				elevator.autoSetScaleTargetRange();
+				//elevator.autoSetScaleTargetRange();
 				doneDriving = drivetrain.spinToBearing(0 * angleSign, 0.35);
-				doneMovingComponent = elevator.inTargetRange();
+				//doneMovingComponent = elevator.inTargetRange();
+				doneMovingComponent = elevator.autoTopScale();
 			}
 			else if(!doneMovingComponent)
 			{
-				doneMovingComponent = elevator.inTargetRange();
+				//doneMovingComponent = elevator.inTargetRange();
+				doneMovingComponent = elevator.autoTopScale();
 			}
 			else if(!doneDriving)
 			{

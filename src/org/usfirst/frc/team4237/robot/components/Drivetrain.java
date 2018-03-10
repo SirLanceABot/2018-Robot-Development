@@ -138,7 +138,7 @@ public class Drivetrain extends MecanumDrive implements Component
 
 		frontRightMasterMotor.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder, 0, 0);
 		frontRightMasterMotor.setSensorPhase(true);
-		
+
 		this.calibrateNavX();
 
 		this.calibrateColorSensor();
@@ -151,50 +151,46 @@ public class Drivetrain extends MecanumDrive implements Component
 
 	public void run()
 	{
-		while (!Thread.interrupted())
+		try
 		{
-			try
-			{
-				//System.out.println("Encoder tic: " + frontRightMasterMotor.getSelectedSensorPosition(0) + "  Distance: " + getEncInches());
+			//System.out.println("Encoder tic: " + frontRightMasterMotor.getSelectedSensorPosition(0) + "  Distance: " + getEncInches());
 
-				if (DriverStation.getInstance().isOperatorControl() && DriverStation.getInstance().isEnabled())
+			if (DriverStation.getInstance().isOperatorControl() && DriverStation.getInstance().isEnabled())
+			{
+				if (Math.abs(xbox.getRawAxis(1)) > 0.2)
 				{
-					if (Math.abs(xbox.getRawAxis(1)) > 0.2)
-					{
-						leftYAxis = -xbox.getRawAxis(Xbox.Constants.LEFT_STICK_Y_AXIS);
-					}
-					else leftYAxis = 0;
-
-					if (Math.abs(xbox.getRawAxis(0)) > 0.2)
-					{
-						leftXAxis = xbox.getRawAxis(Xbox.Constants.LEFT_STICK_X_AXIS);
-					}
-					else leftXAxis = 0;
-
-					if (Math.abs(xbox.getRawAxis(4)) > 0.2)
-					{
-						rightXAxis = xbox.getRawAxis(Xbox.Constants.RIGHT_STICK_X_AXIS);
-					}
-					else rightXAxis = 0;
-
-
-					if(xbox.getRawButton(Xbox.Constants.RIGHT_BUMPER))
-					{
-						this.driveCartesian(leftXAxis, leftYAxis, (this.getNavXYaw()) / 50);
-					}
-					else
-					{
-						this.driveCartesian(leftXAxis, leftYAxis, rightXAxis);
-					}
-
+					leftYAxis = -xbox.getRawAxis(Xbox.Constants.LEFT_STICK_Y_AXIS);
 				}
-				//drivetrain.debugPrintCurrent();
+				else leftYAxis = 0;
+
+				if (Math.abs(xbox.getRawAxis(0)) > 0.2)
+				{
+					leftXAxis = xbox.getRawAxis(Xbox.Constants.LEFT_STICK_X_AXIS);
+				}
+				else leftXAxis = 0;
+
+				if (Math.abs(xbox.getRawAxis(4)) > 0.2)
+				{
+					rightXAxis = xbox.getRawAxis(Xbox.Constants.RIGHT_STICK_X_AXIS);
+				}
+				else rightXAxis = 0;
+
+
+				if(xbox.getRawButton(Xbox.Constants.RIGHT_BUMPER))
+				{
+					this.driveCartesian(leftXAxis, leftYAxis, (this.getNavXYaw()) / 50);
+				}
+				else
+				{
+					this.driveCartesian(leftXAxis, leftYAxis, rightXAxis);
+				}
+
 			}
-			catch(Exception e)
-			{
-				e.printStackTrace();
-			}
-			Timer.delay(0.05);
+			//drivetrain.debugPrintCurrent();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
 		}
 	}
 
@@ -207,9 +203,9 @@ public class Drivetrain extends MecanumDrive implements Component
 		boolean isDoneDriving = false;
 		double x = Math.abs(getEncInches());	
 		double startingSpeed = 0.3;
-		double stoppingSpeed = 0.15;
+		double stoppingSpeed = 0.175;
 		int startingDistance = 36;
-		int stoppingDistance = 60;
+		int stoppingDistance = 36;
 		double rotate = (navX.getYaw() - heading) / 50;
 
 		if (x <= inches)
@@ -383,69 +379,70 @@ public class Drivetrain extends MecanumDrive implements Component
 
 	public void calibrateColorSensor()
 	{
-		
-			Timer.delay(0.25); // wait for thread to start
-			colorSensor.get(crgb); // get initial data to assure there is something for any other robot methods the first time through since robotPeriodic runs after others
 
-			// establish floor color and lighting conditions
-			// loop to get average where the robot is parked at the start
-			crgbUpperThreshold.C = 0;
-			crgbUpperThreshold.R = 0;
-			crgbUpperThreshold.G = 0;
-			crgbUpperThreshold.B = 0;
+		Timer.delay(0.25); // wait for thread to start
+		colorSensor.get(crgb); // get initial data to assure there is something for any other robot methods the first time through since robotPeriodic runs after others
 
-			crgbLowerThreshold.C = 0;
-			crgbLowerThreshold.R = 0;
-			crgbLowerThreshold.G = 0;
-			crgbLowerThreshold.B = 0;
-			int numSamples = 60;
-			for (int i = 1; i <= numSamples; i++)
-			{
-				colorSensor.get(crgb);
-				crgbUpperThreshold.C += crgb.C;
-				crgbUpperThreshold.R += crgb.R;
-				crgbUpperThreshold.G += crgb.G;
-				crgbUpperThreshold.B += crgb.B;
+		// establish floor color and lighting conditions
+		// loop to get average where the robot is parked at the start
+		crgbUpperThreshold.C = 0;
+		crgbUpperThreshold.R = 0;
+		crgbUpperThreshold.G = 0;
+		crgbUpperThreshold.B = 0;
 
-				crgbLowerThreshold.C += crgb.C;
-				crgbLowerThreshold.R += crgb.R;
-				crgbLowerThreshold.G += crgb.G;
-				crgbLowerThreshold.B += crgb.B;
-				Timer.delay(0.018);
-			}
+		crgbLowerThreshold.C = 0;
+		crgbLowerThreshold.R = 0;
+		crgbLowerThreshold.G = 0;
+		crgbLowerThreshold.B = 0;
+		int numSamples = 60;
+		for (int i = 1; i <= numSamples; i++)
+		{
+			colorSensor.get(crgb);
+			crgbUpperThreshold.C += crgb.C;
+			crgbUpperThreshold.R += crgb.R;
+			crgbUpperThreshold.G += crgb.G;
+			crgbUpperThreshold.B += crgb.B;
 
-			// gap between upper and lower thresholds to prevent jitter between the two states
-			UpperThresholdFactor = 3; //  must be exceeded to determine tape found
-			LowerThresholdFactor = 2; // must be below to reset tape found
+			crgbLowerThreshold.C += crgb.C;
+			crgbLowerThreshold.R += crgb.R;
+			crgbLowerThreshold.G += crgb.G;
+			crgbLowerThreshold.B += crgb.B;
+			Timer.delay(0.018);
+		}
 
-			crgbUpperThreshold.C = crgbUpperThreshold.C*UpperThresholdFactor/numSamples; // compute the average and include the tape threshold factor
-			crgbUpperThreshold.R = crgbUpperThreshold.R*UpperThresholdFactor/numSamples;
-			crgbUpperThreshold.G = crgbUpperThreshold.G*UpperThresholdFactor/numSamples;
-			crgbUpperThreshold.B = crgbUpperThreshold.B*UpperThresholdFactor/numSamples;
+		// gap between upper and lower thresholds to prevent jitter between the two states
+		UpperThresholdFactor = 3; //  must be exceeded to determine tape found
+		LowerThresholdFactor = 2; // must be below to reset tape found
 
-			crgbLowerThreshold.C = crgbLowerThreshold.C*LowerThresholdFactor/numSamples; // compute the average and include the tape threshold factor
-			crgbLowerThreshold.R = crgbLowerThreshold.R*LowerThresholdFactor/numSamples;
-			crgbLowerThreshold.G = crgbLowerThreshold.G*LowerThresholdFactor/numSamples;
-			crgbLowerThreshold.B = crgbLowerThreshold.B*LowerThresholdFactor/numSamples;
+		crgbUpperThreshold.C = crgbUpperThreshold.C*UpperThresholdFactor/numSamples; // compute the average and include the tape threshold factor
+		crgbUpperThreshold.R = crgbUpperThreshold.R*UpperThresholdFactor/numSamples;
+		crgbUpperThreshold.G = crgbUpperThreshold.G*UpperThresholdFactor/numSamples;
+		crgbUpperThreshold.B = crgbUpperThreshold.B*UpperThresholdFactor/numSamples;
 
-			crgbUpperThreshold.C = 2000;
-			crgbUpperThreshold.R = 400;
-			crgbUpperThreshold.G = 0;
-			crgbUpperThreshold.B = 300;
+		crgbLowerThreshold.C = crgbLowerThreshold.C*LowerThresholdFactor/numSamples; // compute the average and include the tape threshold factor
+		crgbLowerThreshold.R = crgbLowerThreshold.R*LowerThresholdFactor/numSamples;
+		crgbLowerThreshold.G = crgbLowerThreshold.G*LowerThresholdFactor/numSamples;
+		crgbLowerThreshold.B = crgbLowerThreshold.B*LowerThresholdFactor/numSamples;
 
-			crgbLowerThreshold.C = 0;
-			crgbLowerThreshold.R = 0;
-			crgbLowerThreshold.G = 0;
-			crgbLowerThreshold.B = 0;
+		crgbUpperThreshold.C = 4500;
+		crgbUpperThreshold.R = 1000;
+		crgbUpperThreshold.G = 0;
+		crgbUpperThreshold.B = 800;
 
-			//System.out.println("robotInit " + mAMSColorSensor);
-			//System.out.println("crgbUpperThreshold " + crgbUpperThreshold + "; crgbLowerThreshold " + crgbLowerThreshold);
+		crgbLowerThreshold.C = 0;
+		crgbLowerThreshold.R = 0;
+		crgbLowerThreshold.G = 0;
+		crgbLowerThreshold.B = 0;
+
+		//System.out.println("robotInit " + mAMSColorSensor);
+		//System.out.println("crgbUpperThreshold " + crgbUpperThreshold + "; crgbLowerThreshold " + crgbLowerThreshold);
 	}
 
 
 	public void raiseServo()
 	{
-		servo.set(0.04735);
+		//servo.set(0.04735);
+		servo.set(0.125);
 	}
 
 	public void lowerServo()
