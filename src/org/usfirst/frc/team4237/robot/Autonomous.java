@@ -579,7 +579,7 @@ public class Autonomous
 		drivetrain.printTestInfo();
 		if(autoStage == Constants.AutoStage.kDrive1)
 		{
-			if(drivetrain.driveDistance(184, 0.7, 0))
+			if(drivetrain.driveDistance(174, 0.7, 0))
 			{
 				autoStage = Constants.AutoStage.kSpin1;
 				System.out.println("Entering: " + autoStage);
