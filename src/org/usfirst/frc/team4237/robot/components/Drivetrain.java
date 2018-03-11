@@ -139,7 +139,7 @@ public class Drivetrain extends MecanumDrive implements Component
 		frontRightMasterMotor.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder, 0, 0);
 		frontRightMasterMotor.setSensorPhase(true);
 
-		this.calibrateNavX();
+		//this.calibrateNavX();
 
 		this.calibrateColorSensor();
 	}
@@ -198,14 +198,14 @@ public class Drivetrain extends MecanumDrive implements Component
 	 * Drive the distance passed into the method
 	 * @return
 	 */
-	public boolean driveDistance(int inches, double maxSpeed, int heading)
+	public boolean driveDistance(int inches, double maxSpeed, int heading, int stoppingDistance)
 	{
 		boolean isDoneDriving = false;
 		double x = Math.abs(getEncInches());	
 		double startingSpeed = 0.3;
 		double stoppingSpeed = 0.175;
 		int startingDistance = 36;
-		int stoppingDistance = 36;
+	//	int stoppingDistance = 48;
 		double rotate = (navX.getYaw() - heading) / 50;
 
 		if (x <= inches)

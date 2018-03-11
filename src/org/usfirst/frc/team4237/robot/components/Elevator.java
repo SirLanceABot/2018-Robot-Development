@@ -358,6 +358,7 @@ public class Elevator implements Component
 	public boolean autoSwitch()
 	{
 		boolean inSwitchRange = false;
+		updateCurrentRange();
 		if(currentValue < Constants.SWITCH - Constants.THRESHOLD)
 		{
 			raise();
@@ -374,6 +375,7 @@ public class Elevator implements Component
 	public boolean autoTopScale()
 	{
 		boolean inScaleRange = false;
+		updateCurrentRange();
 		if(currentValue < Constants.TOP_SCALE - Constants.THRESHOLD)
 		{
 			raise();
@@ -504,7 +506,7 @@ public class Elevator implements Component
 
 		public static final int THRESHOLD = 15;
 		public static final int FLOOR = 135;
-		public static final int SWITCH = 238;
+		public static final int SWITCH = 330;
 		public static final int BOTTOM_SCALE = 426;
 		public static final int TOP_SCALE = 605;
 

@@ -214,14 +214,14 @@ public class Gripper implements Component
 		//		leftIntakeTalon.set(ControlMode.PercentOutput, 0.5);
 		//		rightIntakeTalon.set(ControlMode.PercentOutput, 0.5);
 
-		leftIntakeTalon.set(1.0);
-		rightIntakeTalon.set(1.0);
+		leftIntakeTalon.set(0.6);
+		rightIntakeTalon.set(0.6);
 	}
 
 	public void ejectDrop()
 	{
-		leftIntakeTalon.set(0.5);
-		rightIntakeTalon.set(0.5);
+		leftIntakeTalon.set(0.25);
+		rightIntakeTalon.set(0.25);
 	}
 
 

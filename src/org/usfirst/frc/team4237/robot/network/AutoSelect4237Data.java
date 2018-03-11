@@ -7,7 +7,7 @@ public class AutoSelect4237Data
 	private String planB = "Auto Line";
 	private String planC = "Auto Line";
 	
-	public synchronized String getSelectedPosition()
+	public String getSelectedPosition()
 	{
 		return this.selectedPosition;
 	}

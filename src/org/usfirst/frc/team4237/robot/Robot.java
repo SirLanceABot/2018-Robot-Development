@@ -58,7 +58,7 @@ public class Robot extends IterativeRobot
 	{
 		System.out.println("Entering teleop");
 		gripper.setTeleopLimits();
-		//autonomous.turnLightRingsOn();
+		autonomous.turnLightRingsOff();
 		drivetrain.raiseServo();
 	}
 
@@ -92,13 +92,11 @@ public class Robot extends IterativeRobot
 	public void autonomousPeriodic()
 	{
 		//printSensorValues();
-		drivetrain.run();
-		elevator.run();
+		//drivetrain.run();
+		//elevator.run();
 		gripper.run();
 
 		autonomous.periodic();
-			
-		Timer.delay(0.05);
 	}
 
 	public void printSensorValues()
