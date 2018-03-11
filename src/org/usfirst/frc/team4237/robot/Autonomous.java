@@ -585,7 +585,7 @@ public class Autonomous
 		}
 		else if(autoStage == Constants.AutoStage.kSpin1)
 		{
-			if(drivetrain.spinToBearing(-45, 0.3))
+			if(drivetrain.spinToBearing(-45 * angleSign, 0.3))
 			{
 				gripper.setAutoEjecting(true);
 				autoStage = Constants.AutoStage.kDone;
@@ -650,7 +650,7 @@ public class Autonomous
 		}
 		else if(autoStage == Constants.AutoStage.kSpin1)
 		{
-			if(drivetrain.spinToBearing(-45, 0.3))
+			if(drivetrain.spinToBearing(-45 * angleSign, 0.3))
 			{
 				gripper.setAutoEjecting(true);
 				autoStage = Constants.AutoStage.kSpin2;
@@ -662,7 +662,7 @@ public class Autonomous
 		{
 			if(!doneMovingComponent && !doneDriving)
 			{
-				doneDriving = drivetrain.spinToBearing(-170, 0.3);
+				doneDriving = drivetrain.spinToBearing(-170 * angleSign, 0.3);
 				
 			}
 			else if(!doneMovingComponent)
@@ -672,7 +672,7 @@ public class Autonomous
 			}
 			else if(!doneDriving)
 			{
-				doneDriving = drivetrain.spinToBearing(-170, 0.3);
+				doneDriving = drivetrain.spinToBearing(-170 * angleSign, 0.3);
 			}
 			else
 			{
@@ -680,6 +680,9 @@ public class Autonomous
 				System.out.println("Entering: " + autoStage);
 				doneMovingComponent = false;
 				doneDriving = false;
+				t.stop();
+				t.reset();
+				t.start();
 			}
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2Distance1)
@@ -689,7 +692,7 @@ public class Autonomous
 				gripper.setAutoIntaking(true);
 				gripper.autoSetHorizontalTargetRange();
 				doneMovingComponent = gripper.inTargetRange();
-				doneDriving = drivetrain.driveDistance(30, 0.2, -170, 30);
+				doneDriving = drivetrain.driveDistance(30, 0.2, -170 * angleSign, 30);
 			}
 			else if(!doneMovingComponent)
 			{
@@ -697,11 +700,14 @@ public class Autonomous
 			}
 			else if(!doneDriving)
 			{
-				doneDriving = drivetrain.driveDistance(30, 0.2, -170, 30);
+				doneDriving = drivetrain.driveDistance(30, 0.2, -170 * angleSign, 30);
 			}
 			else
 			{
-				gripper.setAutoIntaking(false);
+				if(t.get() >= 3.0)
+				{
+					gripper.setAutoIntaking(false);
+				}
 				autoStage = Constants.AutoStage.kDone;
 				System.out.println("Entering: " + autoStage);
 				doneMovingComponent = false;
