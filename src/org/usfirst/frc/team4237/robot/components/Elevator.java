@@ -355,6 +355,23 @@ public class Elevator implements Component
 
 	}
 
+	public boolean autoFloor()
+	{
+		boolean inFloorRange = false;
+		updateCurrentRange();
+		if(currentValue < Constants.FLOOR + Constants.THRESHOLD)
+		{
+			lower();
+		}
+		else
+		{
+			inFloorRange = true;
+			stopMoving();
+		}
+		
+		return inFloorRange;
+	}
+	
 	public boolean autoSwitch()
 	{
 		boolean inSwitchRange = false;
