@@ -6,6 +6,7 @@ public class AutoSelect4237Data
 	private String planA = "Auto Line";
 	private String planB = "Auto Line";
 	private String planC = "Auto Line";
+	private boolean grabSecondCube = false;
 	
 	public String getSelectedPosition()
 	{
@@ -25,6 +26,11 @@ public class AutoSelect4237Data
 	public String getPlanC()
 	{
 		return this.planC;
+	}
+	
+	public boolean getGrabSecondCube()
+	{
+		return this.grabSecondCube;
 	}
 	
 }

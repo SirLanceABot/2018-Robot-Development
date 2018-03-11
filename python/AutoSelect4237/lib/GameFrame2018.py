@@ -50,6 +50,8 @@ class GameFrame2018(QtGui.QFrame):
         self.planBComboBox = QtGui.QComboBox()
         self.planCComboBox = QtGui.QComboBox()
         
+        self.grabSecondCubeCheckBox = QtGui.QCheckBox("Grab Second Cube")
+        
         for cb in [self.planAComboBox, self.planBComboBox, self.planCComboBox]:
             cb.addItem(self.switchPixmap, "Left Switch")
             cb.addItem(self.switchPixmap, "Right Switch")
@@ -77,6 +79,7 @@ class GameFrame2018(QtGui.QFrame):
         self.layout.addWidget(self.planAComboBox, 1, 0)
         self.layout.addWidget(self.planBComboBox, 1, 1)
         self.layout.addWidget(self.planCComboBox, 1, 2)
+        self.layout.addWidget(self.grabSecondCubeCheckBox, 1, 3)
         
         self.layout.addWidget(self.position1Button, 2, 0)
         self.layout.addWidget(self.position2Button, 2, 1)
@@ -118,4 +121,5 @@ class GameFrame2018(QtGui.QFrame):
         data["planA"] = self.planAComboBox.currentText()
         data["planB"] = self.planBComboBox.currentText()
         data["planC"] = self.planCComboBox.currentText()
+        data["grabSecondCube"] = self.grabSecondCubeCheckBox.isChecked()
         return data
