@@ -135,6 +135,10 @@ public class Elevator implements Component
 				isMoving = true;
 				currentDirection = Constants.Direction.Down;
 			}
+			else if (aButton)
+			{
+				autoFloor();
+			}
 			else if(Math.abs(leftYAxis) > 0.2)	
 			{
 				masterTalonSRX.set(-leftYAxis);
@@ -359,7 +363,7 @@ public class Elevator implements Component
 	{
 		boolean inFloorRange = false;
 		updateCurrentRange();
-		if(currentValue < Constants.FLOOR + Constants.THRESHOLD)
+		if(currentValue > Constants.FLOOR + Constants.THRESHOLD)
 		{
 			lower();
 		}
