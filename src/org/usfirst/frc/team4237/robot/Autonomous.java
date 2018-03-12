@@ -272,7 +272,14 @@ public class Autonomous
 			{
 				if(autoSelect4237.getData().getGrabSecondCube())
 				{
-					scaleOnSameSideOnAngle2Cube();
+					if(autoSelect4237.getData().getPlaceSecondCubeInSwitch())
+					{
+						scaleOnSameSideOnAngle2CubeAndSwitch();
+					}
+					else
+					{
+						scaleOnSameSideOnAngle2Cube();
+					}
 				}
 				else
 				{
