@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Timer;
 
 import org.usfirst.frc.team4237.robot.components.Gripper.Constants;
@@ -141,7 +142,10 @@ public class Elevator extends Thread implements Component
 			}
 			else if (aButton)
 			{
-				autoFloor();
+				if(autoFloor())
+				{
+					xbox.setRumble(GenericHID.RumbleType.kLeftRumble, 1);
+				}
 			}
 			else if(Math.abs(leftYAxis) > 0.2)	
 			{

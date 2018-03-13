@@ -10,6 +10,7 @@ import org.usfirst.frc.team4237.robot.control.OperatorXbox;
 import org.usfirst.frc.team4237.robot.control.Xbox;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
@@ -338,7 +339,6 @@ public class Gripper implements Component
 		//Move pivot arm
 		if (!isPivoting())
 		{
-
 			//Some alternative code to make it work like the elevator
 
 			if (yButton)
@@ -349,10 +349,10 @@ public class Gripper implements Component
 			}
 			else if (aButton)
 			{
-				autoFloor();
-//				targetRange = currentRange.lowerNeighbor().range();
-//				setPivoting(true);
-//				currentDirection = Constants.Direction.Down;
+				if(autoFloor())
+				{
+					xbox.setRumble(GenericHID.RumbleType.kRightRumble, 1);
+				}
 			}
 			else if (Math.abs(rightYAxis) > 0.2)
 			{
@@ -652,22 +652,64 @@ public class Gripper implements Component
 		rightIntakeTalon.setSelectedSensorPosition(0, 0, 0);		// set encoder position
 	}
 	
-//	public boolean autoFloor()
-//	{
-//		boolean inFloorRange = false;
-//		updateCurrentRange();
-//		if(currentValue > Constants.FLOOR + Constants.THRESHOLD)
-//		{
-//			lower();
-//		}
-//		else
-//		{
-//			inFloorRange = true;
-//			stopMoving();
-//		}
-//		
-//		return inFloorRange;
-//	}
+	public boolean autoHorizontal()
+	{
+		boolean inHorizontalRange = false;
+		updateCurrentRange();
+		if(currentValue > Constants.HORIZONTAL + Constants.THRESHOLD)
+		{
+			lower();
+		}
+		else if(currentValue < Constants.HORIZONTAL - Constants.THRESHOLD)
+		{
+			raise();
+		}
+		else
+		{
+			inHorizontalRange = true;
+			pivotOff();
+		}
+		
+		return inHorizontalRange;
+	}
+	
+	public boolean autoMiddle()
+	{
+		boolean inMiddleRange = false;
+		updateCurrentRange();
+		if(currentValue > Constants.MIDDLE + Constants.THRESHOLD)
+		{
+			lower();
+		}
+		else if(currentValue < Constants.MIDDLE - Constants.THRESHOLD)
+		{
+			raise();
+		}
+		else
+		{
+			inMiddleRange = true;
+			pivotOff();
+		}
+		
+		return inMiddleRange;
+	}
+	
+	public boolean autoFloor()
+	{
+		boolean inFloorRange = false;
+		updateCurrentRange();
+		if(currentValue > Constants.FLOOR + Constants.THRESHOLD)
+		{
+			lower();
+		}
+		else
+		{
+			inFloorRange = true;
+			pivotOff();
+		}
+		
+		return inFloorRange;
+	}
 
 	/**
 	 * Constants class for Gripper
