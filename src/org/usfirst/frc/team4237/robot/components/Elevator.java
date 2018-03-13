@@ -68,7 +68,7 @@ public class Elevator implements Component
 		masterTalonSRX.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 20);
 
 		masterTalonSRX.configForwardSoftLimitThreshold(620, 0);
-		masterTalonSRX.configReverseSoftLimitThreshold(135, 0);
+		masterTalonSRX.configReverseSoftLimitThreshold(Constants.FLOOR, 0);
 		masterTalonSRX.configForwardSoftLimitEnable(true, 0);
 		masterTalonSRX.configReverseSoftLimitEnable(true, 0);
 

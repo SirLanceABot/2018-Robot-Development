@@ -547,19 +547,19 @@ public class Autonomous
 	{
 		if(autoStage == Constants.AutoStage.kDrive1)
 		{
-			if(!doneDriving && !doneMovingGripper)
+			if(!doneDriving && !doneMovingGripper && t.get() <= 3.5)
 			{
 				gripper.autoSetMiddleTargetRange();
-				drivetrain.driveDistance(260, 0.8, 0, 36);
+				drivetrain.driveDistance(260, 0.8, 0, 55);
 				doneMovingGripper = gripper.inTargetRange();
 			}
 			else if(!doneMovingGripper)
 			{
 				doneMovingGripper = gripper.inTargetRange();
 			}
-			else if(!doneDriving)
+			else if(!doneDriving && t.get() <= 3.5)
 			{
-				doneDriving = drivetrain.driveDistance(260, 0.8, 0, 36);
+				doneDriving = drivetrain.driveDistance(260, 0.8, 0, 55);
 			}
 			else
 			{
@@ -621,19 +621,19 @@ public class Autonomous
 	{
 		if(autoStage == Constants.AutoStage.kDrive1)
 		{
-			if(!doneDriving && !doneMovingGripper)
+			if(!doneDriving && !doneMovingGripper && t.get() <= 3.5)
 			{
 				gripper.autoSetMiddleTargetRange();
-				drivetrain.driveDistance(260, 0.8, 0, 36);
+				drivetrain.driveDistance(260, 0.8, 0, 55);
 				doneMovingGripper = gripper.inTargetRange();
 			}
 			else if(!doneMovingGripper)
 			{
 				doneMovingGripper = gripper.inTargetRange();
 			}
-			else if(!doneDriving)
+			else if(!doneDriving && t.get() <= 3.5)
 			{
-				doneDriving = drivetrain.driveDistance(260, 0.8, 0, 36);
+				doneDriving = drivetrain.driveDistance(260, 0.8, 0, 55);
 			}
 			else
 			{
@@ -742,19 +742,19 @@ public class Autonomous
 	{
 		if(autoStage == Constants.AutoStage.kDrive1)
 		{
-			if(!doneDriving && !doneMovingGripper)
+			if(!doneDriving && !doneMovingGripper && t.get() <= 3.5)
 			{
 				gripper.autoSetMiddleTargetRange();
-				drivetrain.driveDistance(260, 0.8, 0, 36);
+				drivetrain.driveDistance(260, 0.8, 0, 55);
 				doneMovingGripper = gripper.inTargetRange();
 			}
 			else if(!doneMovingGripper)
 			{
 				doneMovingGripper = gripper.inTargetRange();
 			}
-			else if(!doneDriving)
+			else if(!doneDriving && t.get() <= 3.5)
 			{
-				doneDriving = drivetrain.driveDistance(260, 0.8, 0, 36);
+				doneDriving = drivetrain.driveDistance(260, 0.8, 0, 55);
 			}
 			else
 			{
@@ -998,7 +998,7 @@ public class Autonomous
 	{
 		if(autoStage == Constants.AutoStage.kDrive1)
 		{
-			if(drivetrain.driveDistance(215, 0.8, 0 * angleSign, 55))
+			if(drivetrain.driveDistance(215, 0.8, 0 * angleSign, 55) || t.get() >= 3.5)
 			{
 				autoStage = Constants.AutoStage.kSpin1;
 				System.out.println("Entering: " + autoStage);
