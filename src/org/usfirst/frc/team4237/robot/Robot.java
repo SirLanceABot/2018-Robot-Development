@@ -59,7 +59,7 @@ public class Robot extends IterativeRobot
 		System.out.println("Entering teleop");
 		gripper.setTeleopLimits();
 		autonomous.turnLightRingsOff();
-		drivetrain.raiseServo();
+		drivetrain.rotateServoClockwise(90);
 	}
 
 	@Override
@@ -84,7 +84,7 @@ public class Robot extends IterativeRobot
 		//camera.setExposureManual(0);
 		System.out.println("Entering autonomous");
 		Gripper.getInstance().setAutoLimits();
-		Drivetrain.getInstance().lowerServo();
+		drivetrain.resetServo();
 		autonomous.init();
 	}
 

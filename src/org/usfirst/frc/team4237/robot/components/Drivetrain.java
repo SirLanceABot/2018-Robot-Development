@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
+import edu.wpi.first.wpilibj.PWM.PeriodMultiplier;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 
 public class Drivetrain extends MecanumDrive implements Component
@@ -33,6 +34,7 @@ public class Drivetrain extends MecanumDrive implements Component
 	private double leftXAxis = 0.0;
 	private double leftYAxis = 0.0;
 
+	private double servoPosition = 0.5;
 
 	private static WPI_TalonSRX frontLeftMasterMotor = new WPI_TalonSRX(Constants.FRONT_LEFT_MASTER_MOTOR_PORT);
 	private static WPI_TalonSRX frontLeftFollowerMotor = new WPI_TalonSRX(Constants.FRONT_LEFT_FOLLOWER_MOTOR_PORT);
@@ -141,6 +143,9 @@ public class Drivetrain extends MecanumDrive implements Component
 
 		frontRightMasterMotor.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder, 0, 0);
 		frontRightMasterMotor.setSensorPhase(true);
+		
+		servo.setPeriodMultiplier(PeriodMultiplier.k1X);
+		servo.setBounds(2.4, 0, 0, 0, 0.6);		// Current bounds are 8.5 turns, (2.5, 0, 0, 0, 0.5) for 9 turns
 
 		//this.calibrateNavX();
 
@@ -468,17 +473,24 @@ public class Drivetrain extends MecanumDrive implements Component
 	}
 
 
-	public void raiseServo()
+	public void rotateServoClockwise(int angle)
 	{
-		//servo.set(0.04735);
-		servo.set(0.125);
+		double rotation = angle / 360;
+		servoPosition = servoPosition + ((1.0/8.5) * rotation);
+		servo.set(servoPosition);
 	}
 
-	public void lowerServo()
+	public void rotateServoCounterClockwise(int angle)
 	{
-		servo.set(0.0);
+		double rotation = angle / 360;
+		servoPosition = servoPosition + ((1.0/8.5) * rotation);
+		servo.set(servoPosition);
 	}
 
+	public void resetServo()
+	{
+		servo.set(0.5);
+	}
 
 	@Override
 	public void printTestInfo()
