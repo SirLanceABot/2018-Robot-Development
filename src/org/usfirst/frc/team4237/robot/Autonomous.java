@@ -358,13 +358,12 @@ public class Autonomous
 		{
 			if(!doneDriving && !doneMovingGripper)
 			{
-				gripper.autoSetHorizontalTargetRange();
 				doneDriving = drivetrain.driveDistance(5, 0.3, 0, 48);
-				doneMovingGripper = gripper.inTargetRange();
+				doneMovingGripper = gripper.autoHorizontal();
 			}
 			else if(!doneMovingGripper)
 			{
-				doneMovingGripper = gripper.inTargetRange();
+				doneMovingGripper = gripper.autoHorizontal();
 			}
 			else if(!doneDriving)
 			{
@@ -421,13 +420,12 @@ public class Autonomous
 		{
 			if(!doneDriving && !doneMovingGripper)
 			{
-				gripper.autoSetHorizontalTargetRange();
 				doneDriving = drivetrain.driveDistance(5, 0.3, 0, 48);
-				doneMovingGripper = gripper.inTargetRange();
+				doneMovingGripper = gripper.autoHorizontal();
 			}
 			else if(!doneMovingGripper)
 			{
-				doneMovingGripper = gripper.inTargetRange();
+				doneMovingGripper = gripper.autoHorizontal();
 			}
 			else if(!doneDriving)
 			{
@@ -485,13 +483,12 @@ public class Autonomous
 		{	
 			if(!doneDriving && !doneMovingGripper)
 			{
-				gripper.autoSetHorizontalTargetRange();
 				doneDriving = drivetrain.driveDistance(15, 0.3, 0 * angleSign, 48);
-				doneMovingGripper = gripper.inTargetRange();
+				doneMovingGripper = gripper.autoHorizontal();
 			}
 			else if(!doneMovingGripper)
 			{
-				doneMovingGripper = gripper.inTargetRange();
+				doneMovingGripper = gripper.autoHorizontal();
 			}
 			else if(!doneDriving)
 			{
@@ -551,9 +548,8 @@ public class Autonomous
 		{
 			if(!doneDriving && !doneMovingGripper && !doneMovingElevator)
 			{
-				gripper.autoSetHorizontalTargetRange();
 				doneDriving = drivetrain.driveDistance(150, 0.6, 0, 36);
-				doneMovingGripper = gripper.inTargetRange();
+				doneMovingGripper = gripper.autoHorizontal();
 				doneMovingElevator = elevator.autoSwitch();
 			}
 			else if(doneDriving && doneMovingGripper && doneMovingElevator)
@@ -573,7 +569,7 @@ public class Autonomous
 			
 			if(!doneMovingGripper)
 			{
-				doneMovingGripper = gripper.inTargetRange();
+				doneMovingGripper = gripper.autoHorizontal();
 			}
 			
 			if(!doneMovingElevator)
@@ -608,13 +604,12 @@ public class Autonomous
 		{
 			if(!doneDriving && !doneMovingGripper && t.get() <= 3.5)
 			{
-				gripper.autoSetMiddleTargetRange();
 				drivetrain.driveDistance(260, 0.8, 0, 55);
-				doneMovingGripper = gripper.inTargetRange();
+				doneMovingGripper = gripper.autoMiddle();
 			}
 			else if(!doneMovingGripper)
 			{
-				doneMovingGripper = gripper.inTargetRange();
+				doneMovingGripper = gripper.autoMiddle();
 			}
 			else if(!doneDriving && t.get() <= 3.5)
 			{
@@ -682,13 +677,12 @@ public class Autonomous
 		{
 			if(!doneDriving && !doneMovingGripper && t.get() <= 3.5)
 			{
-				gripper.autoSetMiddleTargetRange();
 				drivetrain.driveDistance(260, 0.8, 0, 55);
-				doneMovingGripper = gripper.inTargetRange();
+				doneMovingGripper = gripper.autoMiddle();
 			}
 			else if(!doneMovingGripper)
 			{
-				doneMovingGripper = gripper.inTargetRange();
+				doneMovingGripper = gripper.autoMiddle();
 			}
 			else if(!doneDriving && t.get() <= 3.5)
 			{
@@ -771,13 +765,12 @@ public class Autonomous
 			if(!doneMovingGripper && !doneDriving)
 			{
 				gripper.setAutoIntaking(true);
-				gripper.autoSetHorizontalTargetRange();
-				doneMovingGripper = gripper.inTargetRange();
+				doneMovingGripper = gripper.autoHorizontal();
 				doneDriving = drivetrain.driveDistance(30, 0.2, -170 * angleSign, 30);
 			}
 			else if(!doneMovingGripper)
 			{
-				doneMovingGripper = gripper.inTargetRange();
+				doneMovingGripper = gripper.autoHorizontal();
 			}
 			else if(!doneDriving)
 			{
@@ -803,13 +796,12 @@ public class Autonomous
 		{
 			if(!doneDriving && !doneMovingGripper && t.get() <= 3.5)
 			{
-				gripper.autoSetMiddleTargetRange();
 				drivetrain.driveDistance(260, 0.8, 0, 55);
-				doneMovingGripper = gripper.inTargetRange();
+				doneMovingGripper = gripper.autoMiddle();
 			}
 			else if(!doneMovingGripper)
 			{
-				doneMovingGripper = gripper.inTargetRange();
+				doneMovingGripper = gripper.autoMiddle();
 			}
 			else if(!doneDriving && t.get() <= 3.5)
 			{
@@ -891,14 +883,13 @@ public class Autonomous
 		{
 			if(!doneMovingGripper && !doneDriving)
 			{
-				gripper.setAutoIntaking(true);
-				gripper.autoSetHorizontalTargetRange();
-				doneMovingGripper = gripper.inTargetRange();
+				gripper.autoHorizontal();
+				doneMovingGripper = gripper.autoHorizontal();
 				doneDriving = drivetrain.driveDistance(30, 0.2, -170 * angleSign, 30);
 			}
 			else if(!doneMovingGripper)
 			{
-				doneMovingGripper = gripper.inTargetRange();
+				doneMovingGripper = gripper.autoHorizontal();
 			}
 			else if(!doneDriving)
 			{
@@ -920,10 +911,9 @@ public class Autonomous
 		{
 			if(!doneDriving && !doneMovingGripper && !doneMovingElevator)
 			{
-				gripper.autoSetHorizontalTargetRange();
 				doneDriving = drivetrain.driveSeconds(0.2, 1.0, -180 * angleSign);
 				doneMovingElevator = elevator.autoSwitch();
-				doneMovingGripper = gripper.inTargetRange();
+				doneMovingGripper = gripper.autoHorizontal();
 			}
 			else if(doneDriving && doneMovingGripper && doneMovingElevator)
 			{
@@ -947,7 +937,7 @@ public class Autonomous
 			
 			if(!doneMovingGripper)
 			{
-				doneMovingGripper = gripper.inTargetRange();
+				doneMovingGripper = gripper.autoHorizontal();
 			}
 		}
 	}
@@ -980,13 +970,12 @@ public class Autonomous
 		{
 			if(!doneDriving && !doneMovingGripper)
 			{
-				gripper.autoSetMiddleTargetRange();
 				doneDriving = drivetrain.driveToColor(color, 0.2, -60 * angleSign);
-				doneMovingGripper = gripper.inTargetRange();
+				doneMovingGripper = gripper.autoMiddle();
 			}
 			else if(!doneMovingGripper)
 			{
-				doneMovingGripper = gripper.inTargetRange();
+				doneMovingGripper = gripper.autoMiddle();
 			}
 			else if(!doneDriving)
 			{
@@ -1082,13 +1071,12 @@ public class Autonomous
 		{
 			if(!doneDriving && !doneMovingGripper)
 			{
-				gripper.autoSetMiddleTargetRange();
 				doneDriving = drivetrain.driveDistance(130, 0.75, -90 * angleSign, 48);
-				doneMovingGripper = gripper.inTargetRange();
+				doneMovingGripper = gripper.autoMiddle();
 			}
 			if(!doneMovingGripper)
 			{
-				doneMovingGripper = gripper.inTargetRange();
+				doneMovingGripper = gripper.autoMiddle();
 			}
 			if(!doneDriving)
 			{
@@ -1231,13 +1219,12 @@ public class Autonomous
 		{
 			if(!doneDriving && !doneMovingGripper)
 			{
-				gripper.autoSetMiddleTargetRange();
 				doneDriving = drivetrain.driveDistance(225, 0.25, -90 * angleSign, 48);
-				doneMovingGripper = gripper.inTargetRange();
+				doneMovingGripper = gripper.autoMiddle();
 			}
 			else if(!doneMovingGripper)
 			{
-				doneMovingGripper = gripper.inTargetRange();
+				doneMovingGripper = gripper.autoMiddle();
 			}
 			else if(!doneDriving)
 			{

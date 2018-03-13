@@ -401,7 +401,7 @@ public class Elevator extends Thread implements Component
 		return inSwitchRange;
 	}
 	
-	public boolean autoMoveTopScale()
+	public boolean autoTopScale()
 	{
 		boolean inScaleRange = false;
 		if (currentValue < Constants.TOP_SCALE)
