@@ -278,6 +278,10 @@ public class Autonomous
 					{
 						scaleOnSameSideOnAngle2CubeAndSwitch();
 					}
+					else if(autoSelect4237.getData().getPlaceSecondCubeInScale())
+					{
+						scaleOnSameSideOnAngle2CubeAndScale();
+					}
 					else
 					{
 						scaleOnSameSideOnAngle2Cube();
@@ -290,7 +294,7 @@ public class Autonomous
 			}
 			else if(autoMode == Constants.AutoMode.kSwitchOnSameSide)
 			{
-				switchOnSameSide();
+				switchOnSameSideOnEnd();
 			}
 			else if(autoMode == Constants.AutoMode.kSwitchLeftFromMiddle)
 			{
@@ -379,13 +383,12 @@ public class Autonomous
 		{
 			if(!doneDriving && !doneMovingElevator)
 			{
-				elevator.autoSetSwitchTargetRange();
 				doneDriving = drivetrain.driveDistance(95, 0.75, -45, 48);
-				doneMovingElevator = elevator.inTargetRange();
+				doneMovingElevator = elevator.autoSwitch();
 			}
 			else if(!doneMovingElevator)
 			{
-				doneMovingElevator = elevator.inTargetRange();
+				doneMovingElevator = elevator.autoSwitch();
 			}
 			else if(!doneDriving)
 			{
@@ -444,13 +447,12 @@ public class Autonomous
 			
 			if(!doneDriving && !doneMovingElevator)
 			{
-				elevator.autoSetSwitchTargetRange();
 				doneDriving = drivetrain.driveDistance(90, 0.75, 35, 48);
-				doneMovingElevator = elevator.inTargetRange();
+				doneMovingElevator = elevator.autoSwitch();
 			}
 			else if(!doneMovingElevator)
 			{
-				doneMovingElevator = elevator.inTargetRange();
+				doneMovingElevator = elevator.autoSwitch();
 			}
 			else if(!doneDriving)
 			{
@@ -543,6 +545,63 @@ public class Autonomous
 		}
 	}
 	
+	public void switchOnSameSideOnEnd()
+	{
+		if(autoStage == Constants.AutoStage.kDrive1)
+		{
+			if(!doneDriving && !doneMovingGripper && !doneMovingElevator)
+			{
+				gripper.autoSetHorizontalTargetRange();
+				doneDriving = drivetrain.driveDistance(150, 0.6, 0, 36);
+				doneMovingGripper = gripper.inTargetRange();
+				doneMovingElevator = elevator.autoSwitch();
+			}
+			else if(doneDriving && doneMovingGripper && doneMovingElevator)
+			{
+				autoStage = Constants.AutoStage.kSpin1;
+				System.out.println("Entering: " + autoStage);
+				drivetrain.resetEncoder();
+				doneDriving = false;
+				doneMovingElevator = false;
+				doneMovingGripper = false;
+			}
+			
+			if(!doneDriving)
+			{
+				doneDriving = drivetrain.driveDistance(150, 0.6, 0, 36);
+			}
+			
+			if(!doneMovingGripper)
+			{
+				doneMovingGripper = gripper.inTargetRange();
+			}
+			
+			if(!doneMovingElevator)
+			{
+				doneMovingElevator = elevator.autoSwitch();
+			}
+		}
+		else if(autoStage == Constants.AutoStage.kSpin1)
+		{
+			if(drivetrain.spinToBearing(-90 * angleSign, 0.35))
+			{
+				autoStage = Constants.AutoStage.kDrive2Distance1;
+				System.out.println("Entering: " + autoStage);
+				drivetrain.resetEncoder();
+			}
+		}
+		else if(autoStage == Constants.AutoStage.kDrive2Distance1)
+		{
+			if(drivetrain.driveSeconds(0.2, 2, -90 * angleSign))
+			{
+				autoStage = Constants.AutoStage.kDone;
+				System.out.println("Entering: " + autoStage);
+				gripper.setAutoEjecting(true);
+				drivetrain.resetEncoder();
+			}
+		}
+	}
+	
 	public void scaleOnSameSideOnAngle1Cube()
 	{
 		if(autoStage == Constants.AutoStage.kDrive1)
@@ -600,7 +659,7 @@ public class Autonomous
 		{
 			if(drivetrain.spinToBearing(-45 * angleSign, 0.3))
 			{
-				gripper.setAutoEjecting(true);
+				gripper.autoEject();
 				autoStage = Constants.AutoStage.kDrive2Distance1;
 				System.out.println("Entering: " + autoStage);
 				drivetrain.resetEncoder();
@@ -674,7 +733,7 @@ public class Autonomous
 		{
 			if(drivetrain.spinToBearing(-45 * angleSign, 0.3))
 			{
-				gripper.setAutoEjecting(true);
+				gripper.autoEject();
 				autoStage = Constants.AutoStage.kSpin2;
 				System.out.println("Entering: " + autoStage);
 				drivetrain.resetEncoder();
@@ -795,7 +854,7 @@ public class Autonomous
 		{
 			if(drivetrain.spinToBearing(-45 * angleSign, 0.3))
 			{
-				gripper.setAutoEjecting(true);
+				gripper.autoEject();
 				autoStage = Constants.AutoStage.kSpin2;
 				System.out.println("Entering: " + autoStage);
 				drivetrain.resetEncoder();
@@ -891,6 +950,11 @@ public class Autonomous
 				doneMovingGripper = gripper.inTargetRange();
 			}
 		}
+	}
+	
+	public void scaleOnSameSideOnAngle2CubeAndScale()
+	{
+		
 	}
 	
 	public void scaleOnSameSide()
