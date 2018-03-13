@@ -7,6 +7,8 @@ public class AutoSelect4237Data
 	private String planB = "Auto Line";
 	private String planC = "Auto Line";
 	private boolean grabSecondCube = false;
+	private boolean placeSecondCubeInSwitch = false;
+	private boolean placeSecondCubeInScale = false;
 	
 	public String getSelectedPosition()
 	{
@@ -31,6 +33,16 @@ public class AutoSelect4237Data
 	public boolean getGrabSecondCube()
 	{
 		return this.grabSecondCube;
+	}
+	
+	public boolean getPlaceSecondCubeInSwitch()
+	{
+		return this.placeSecondCubeInSwitch;
+	}
+	
+	public boolean getPlaceSecondCubeInScale()
+	{
+		return this.placeSecondCubeInScale;
 	}
 	
 }

@@ -68,7 +68,7 @@ public class Elevator extends Thread implements Component
 		masterTalonSRX.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 20);
 
 		masterTalonSRX.configForwardSoftLimitThreshold(620, 0);
-		masterTalonSRX.configReverseSoftLimitThreshold(135, 0);
+		masterTalonSRX.configReverseSoftLimitThreshold(Constants.FLOOR, 0);
 		masterTalonSRX.configForwardSoftLimitEnable(true, 0);
 		masterTalonSRX.configReverseSoftLimitEnable(true, 0);
 
@@ -138,6 +138,10 @@ public class Elevator extends Thread implements Component
 				targetRange = currentRange.lowerNeighbor().range();
 				isMoving = true;
 				currentDirection = Constants.Direction.Down;
+			}
+			else if (aButton)
+			{
+				autoFloor();
 			}
 			else if(Math.abs(leftYAxis) > 0.2)	
 			{
@@ -351,6 +355,47 @@ public class Elevator extends Thread implements Component
 	{
 		targetRange = Constants.Range.floorRange.range;
 	}
+
+	public void printTestInfo()
+	{
+		//System.out.printf("ID: %2d Potentiometer Position: %.2f", talonSRXHashMap.keySet().toArray()[currentTestKeyPosition], getStringPot());
+		System.out.println("[Elevator] String-potentiometer position: " + getStringPot());
+
+	}
+
+	public boolean autoFloor()
+	{
+		boolean inFloorRange = false;
+		updateCurrentRange();
+		if(currentValue > Constants.FLOOR + Constants.THRESHOLD)
+		{
+			lower();
+		}
+		else
+		{
+			inFloorRange = true;
+			stopMoving();
+		}
+		
+		return inFloorRange;
+	}
+	
+	public boolean autoSwitch()
+	{
+		boolean inSwitchRange = false;
+		updateCurrentRange();
+		if(currentValue < Constants.SWITCH - Constants.THRESHOLD)
+		{
+			raise();
+		}
+		else
+		{
+			inSwitchRange = true;
+			stopMoving();
+		}
+		
+		return inSwitchRange;
+	}
 	
 	public boolean autoMoveTopScale()
 	{
@@ -366,13 +411,6 @@ public class Elevator extends Thread implements Component
 			inScaleRange = true;
 		}
 		return inScaleRange;
-	}
-
-	public void printTestInfo()
-	{
-		//System.out.printf("ID: %2d Potentiometer Position: %.2f", talonSRXHashMap.keySet().toArray()[currentTestKeyPosition], getStringPot());
-		System.out.println("[Elevator] String-potentiometer position: " + getStringPot());
-	
 	}
 
 	public static class Constants

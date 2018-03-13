@@ -50,7 +50,23 @@ class GameFrame2018(QtGui.QFrame):
         self.planBComboBox = QtGui.QComboBox()
         self.planCComboBox = QtGui.QComboBox()
         
+        self.checkBoxFrame = QtGui.QFrame()
+        self.checkBoxVBox = QtGui.QVBoxLayout()
+        
         self.grabSecondCubeCheckBox = QtGui.QCheckBox("Grab Second Cube")
+        
+        self.placeSecondCubeInSwitchRadioButton = QtGui.QRadioButton("Place Second Cube in Switch")
+        self.placeSecondCubeInScaleRadioButton = QtGui.QRadioButton("Place Second Cube in Scale")
+        self.placeSecondCubeInSwitchRadioButton.setEnabled(False)
+        self.placeSecondCubeInScaleRadioButton.setEnabled(False)
+        
+        self.grabSecondCubeCheckBox.clicked.connect(lambda: self.synchronizeCheckBoxes())
+        
+        self.checkBoxVBox.addWidget(self.grabSecondCubeCheckBox)
+        self.checkBoxVBox.addWidget(self.placeSecondCubeInSwitchRadioButton)
+        self.checkBoxVBox.addWidget(self.placeSecondCubeInScaleRadioButton)
+        
+        self.checkBoxFrame.setLayout(self.checkBoxVBox)
         
         for cb in [self.planAComboBox, self.planBComboBox, self.planCComboBox]:
             cb.addItem(self.switchPixmap, "Left Switch")
@@ -79,7 +95,7 @@ class GameFrame2018(QtGui.QFrame):
         self.layout.addWidget(self.planAComboBox, 1, 0)
         self.layout.addWidget(self.planBComboBox, 1, 1)
         self.layout.addWidget(self.planCComboBox, 1, 2)
-        self.layout.addWidget(self.grabSecondCubeCheckBox, 1, 3)
+        self.layout.addWidget(self.checkBoxFrame, 1, 3)
         
         self.layout.addWidget(self.position1Button, 2, 0)
         self.layout.addWidget(self.position2Button, 2, 1)
@@ -93,6 +109,14 @@ class GameFrame2018(QtGui.QFrame):
         
         self.setLayout(self.layout)
 
+        
+    def synchronizeCheckBoxes(self):
+        self.placeSecondCubeInSwitchRadioButton.setEnabled(self.grabSecondCubeCheckBox.isChecked())
+        self.placeSecondCubeInScaleRadioButton.setEnabled(self.grabSecondCubeCheckBox.isChecked())
+
+        if not self.grabSecondCubeCheckBox.isChecked():
+            self.placeSecondCubeInSwitchRadioButton.setChecked(False)
+            self.placeSecondCubeInScaleRadioButton.setChecked(False)
         
     def positionRobot(self, position):
         self.selectedPosition = position
@@ -122,4 +146,6 @@ class GameFrame2018(QtGui.QFrame):
         data["planB"] = self.planBComboBox.currentText()
         data["planC"] = self.planCComboBox.currentText()
         data["grabSecondCube"] = self.grabSecondCubeCheckBox.isChecked()
+        data["placeSecondCubeInSwitch"] = self.placeSecondCubeInSwitchRadioButton.isChecked()
+        data["placeSecondCubeInScale"] = self.placeSecondCubeInScaleRadioButton.isChecked()
         return data

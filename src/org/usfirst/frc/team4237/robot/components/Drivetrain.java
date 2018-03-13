@@ -53,6 +53,9 @@ public class Drivetrain extends MecanumDrive implements Component
 	private AHRS navX = new AHRS(I2C.Port.kMXP);
 
 	private Timer startUpTimer = new Timer();
+	private Timer t = new Timer();
+	private boolean resetTimer = true;
+	private boolean isTimerDone = false;
 
 	//color sensor stuff
 	private AMSColorSensor colorSensor = new AMSColorSensor(AMSColorSensor.Constants.PORT, AMSColorSensor.Constants.ADDRESS);
@@ -262,6 +265,32 @@ public class Drivetrain extends MecanumDrive implements Component
 		return isDoneDriving;
 	}
 
+	public boolean driveSeconds(double speed, double time, int heading)
+	{
+		isTimerDone = false;
+		double rotate = (navX.getYaw() - heading) / 50;
+		
+		if(resetTimer)
+		{
+			t.stop();
+			t.reset();
+			t.start();
+			resetTimer = false;
+		}
+		
+		if(t.get() <= time)
+		{
+			driveCartesian(0, speed, -rotate);
+		}
+		else
+		{
+			driveCartesian(0, 0, 0);
+			isTimerDone = true;
+			resetTimer = true;
+		}
+		return isTimerDone;
+	}
+	
 	/**
 	 * Rotate to the bearing passed into the method. 0 degrees is North
 	 * @return

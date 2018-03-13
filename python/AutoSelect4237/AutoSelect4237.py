@@ -2,7 +2,7 @@ from PySide import QtGui, QtCore
 import sys, threading, time, os, json
 from lib import AboutWindow, RobotPosition, GameFrame2016, GameFrame2017, GameFrame2018, RoboRIOTransmitter
 
-VERSION = 3.3                                                                
+VERSION = 3.7
 
 class GUI(QtGui.QMainWindow):                                                
     def __init__(self):

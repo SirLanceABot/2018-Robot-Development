@@ -349,9 +349,10 @@ public class Gripper implements Component
 			}
 			else if (aButton)
 			{
-				targetRange = currentRange.lowerNeighbor().range();
-				setPivoting(true);
-				currentDirection = Constants.Direction.Down;
+				autoFloor();
+//				targetRange = currentRange.lowerNeighbor().range();
+//				setPivoting(true);
+//				currentDirection = Constants.Direction.Down;
 			}
 			else if (Math.abs(rightYAxis) > 0.2)
 			{
@@ -650,6 +651,23 @@ public class Gripper implements Component
 	{
 		rightIntakeTalon.setSelectedSensorPosition(0, 0, 0);		// set encoder position
 	}
+	
+//	public boolean autoFloor()
+//	{
+//		boolean inFloorRange = false;
+//		updateCurrentRange();
+//		if(currentValue > Constants.FLOOR + Constants.THRESHOLD)
+//		{
+//			lower();
+//		}
+//		else
+//		{
+//			inFloorRange = true;
+//			stopMoving();
+//		}
+//		
+//		return inFloorRange;
+//	}
 
 	/**
 	 * Constants class for Gripper
