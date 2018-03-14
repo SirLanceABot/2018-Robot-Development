@@ -442,31 +442,31 @@ public class Gripper implements Component
 	 */
 	public void autonomous()
 	{
-		if ( (currentValue >= targetRange[0] && currentDirection == Constants.Direction.Up) || 
-				(currentValue < targetRange[1] && currentDirection == Constants.Direction.Down))
-		{
-			//System.out.println("Pivot Arm in target range");
-			pivotOff();	
-		}
-		else if (currentValue < targetRange[0] && currentDirection == Constants.Direction.Up)
-		{
-			//System.out.println("Pivot Arm Raising");
-			raise();				
-		}
-		else if (currentValue > targetRange[1] && currentDirection == Constants.Direction.Down)
-		{
-			lower();
-			//System.out.println("Pivot Arm Lowering");
-		}
-
-		if(isAutoEjecting())
-		{
-			autoDrop();
-		}
-		else
-		{
-			intakeOff();
-		}
+//		if ( (currentValue >= targetRange[0] && currentDirection == Constants.Direction.Up) || 
+//				(currentValue < targetRange[1] && currentDirection == Constants.Direction.Down))
+//		{
+//			//System.out.println("Pivot Arm in target range");
+//			pivotOff();	
+//		}
+//		else if (currentValue < targetRange[0] && currentDirection == Constants.Direction.Up)
+//		{
+//			//System.out.println("Pivot Arm Raising");
+//			raise();				
+//		}
+//		else if (currentValue > targetRange[1] && currentDirection == Constants.Direction.Down)
+//		{
+//			lower();
+//			//System.out.println("Pivot Arm Lowering");
+//		}
+//
+//		if(isAutoEjecting())
+//		{
+//			autoDrop();
+//		}
+//		else
+//		{
+//			intakeOff();
+//		}
 	}
 
 	public void test()
