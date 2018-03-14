@@ -214,7 +214,6 @@ public class Gripper implements Component
 
 		//		leftIntakeTalon.set(ControlMode.PercentOutput, 0.5);
 		//		rightIntakeTalon.set(ControlMode.PercentOutput, 0.5);
-
 		leftIntakeTalon.set(1);
 		rightIntakeTalon.set(1);
 	}
@@ -224,7 +223,6 @@ public class Gripper implements Component
 		leftIntakeTalon.set(0.25);
 		rightIntakeTalon.set(0.25);
 	}
-
 
 	/**
 	 * Spins cube clockwise into left arm
