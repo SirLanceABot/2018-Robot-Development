@@ -160,7 +160,7 @@ public class Gripper implements Component
 
 	public void autoDrop()
 	{
-		if (leftIntakeTalon.getSelectedSensorPosition(0) >= Constants.AUTO_EJECT_ENCODER_STOP_VALUE)
+		if (rightIntakeTalon.getSelectedSensorPosition(0) >= Constants.AUTO_EJECT_ENCODER_STOP_VALUE)
 		{
 			ejectDrop();
 		}
@@ -302,9 +302,10 @@ public class Gripper implements Component
 	{
 
 		updateCurrentRange();
-
+		
 		if (DriverStation.getInstance().isOperatorControl() && DriverStation.getInstance().isEnabled())
 		{
+			System.out.println();
 			teleop();
 		}
 		else if (DriverStation.getInstance().isAutonomous() && DriverStation.getInstance().isEnabled())
@@ -334,6 +335,8 @@ public class Gripper implements Component
 		double rightTrigger = xbox.getRawAxis(Xbox.Constants.RIGHT_TRIGGER_AXIS);		//Eject
 		double leftTrigger = xbox.getRawAxis(Xbox.Constants.LEFT_TRIGGER_AXIS);			//Intake
 
+		System.out.println(isPivoting);
+		
 		//Move pivot arm
 		if (!isPivoting())
 		{
@@ -359,6 +362,7 @@ public class Gripper implements Component
 			else
 			{
 				pivotOff();
+				xbox.setRumble(GenericHID.RumbleType.kRightRumble, 0);
 			}
 
 		}

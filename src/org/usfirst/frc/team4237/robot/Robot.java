@@ -49,7 +49,7 @@ public class Robot extends IterativeRobot
 	@Override
 	public void disabledPeriodic()
 	{
-		//printSensorValues();
+		printSensorValues();
 		//autonomous.turnLightRingsOff();
 	}
 
@@ -59,23 +59,18 @@ public class Robot extends IterativeRobot
 		System.out.println("Entering teleop");
 		gripper.setTeleopLimits();
 		autonomous.turnLightRingsOff();
-		drivetrain.rotateServoClockwise(90);
+		drivetrain.omniWheelUp();
 	}
 
 	@Override
 	public void teleopPeriodic()
 	{
-		try
-		{
-			drivetrain.run();
-			elevator.run();
-			gripper.run();
+			drivetrain.teleop();
+			elevator.teleop();
+			gripper.teleop();
 			printSensorValues();
-		}
-		catch (Exception e)
-		{
-			e.printStackTrace();
-		}
+			
+			System.out.println("End of Teleop Periodic");
 	}
 
 	@Override
@@ -84,7 +79,6 @@ public class Robot extends IterativeRobot
 		//camera.setExposureManual(0);
 		System.out.println("Entering autonomous");
 		Gripper.getInstance().setAutoLimits();
-		drivetrain.resetServo();
 		autonomous.init();
 	}
 
@@ -94,7 +88,7 @@ public class Robot extends IterativeRobot
 		//printSensorValues();
 		//drivetrain.run();
 		//elevator.run();
-		gripper.run();
+		//gripper.run();
 
 		autonomous.periodic();
 	}

@@ -97,6 +97,7 @@ public class Elevator implements Component
 
 	public void run()
 	{
+<<<<<<< HEAD
 		updateCurrentRange();
 		
 		if (DriverStation.getInstance().isOperatorControl() && DriverStation.getInstance().isEnabled())
@@ -111,6 +112,22 @@ public class Elevator implements Component
 		{
 			test();
 		}
+=======
+			updateCurrentRange();
+
+			if (DriverStation.getInstance().isOperatorControl() && DriverStation.getInstance().isEnabled())
+			{
+				teleop();
+			}
+			else if (DriverStation.getInstance().isAutonomous() && DriverStation.getInstance().isEnabled())
+			{
+				autonomous();
+			}
+			else if (DriverStation.getInstance().isTest() && DriverStation.getInstance().isEnabled())
+			{
+				test();
+			}
+>>>>>>> Changes from the Thursday the day before Gaylord Comp. Servo works! :)
 	}
 
 
@@ -142,6 +159,7 @@ public class Elevator implements Component
 			else
 			{
 				stopMoving();
+				xbox.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
 			}
 		}
 
@@ -393,7 +411,11 @@ public class Elevator implements Component
 	{
 		boolean inScaleRange = false;
 		updateCurrentRange();
+<<<<<<< HEAD
 		if(currentValue < Constants.TOP_SCALE - Constants.THRESHOLD)
+=======
+		if (currentValue < Constants.TOP_SCALE - Constants.THRESHOLD)
+>>>>>>> Changes from the Thursday the day before Gaylord Comp. Servo works! :)
 		{
 			raise();
 		}

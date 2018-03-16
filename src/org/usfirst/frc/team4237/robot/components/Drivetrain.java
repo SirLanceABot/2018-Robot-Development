@@ -157,12 +157,14 @@ public class Drivetrain extends MecanumDrive implements Component
 		return frontRightMasterMotor.getSelectedSensorPosition(0) / 135.0;
 	}
 
-	public void run()
+	public void teleop()
 	{
 		try
 		{
 			//System.out.println("Encoder tic: " + frontRightMasterMotor.getSelectedSensorPosition(0) + "  Distance: " + getEncInches());
 
+			System.out.println(DriverStation.getInstance().isOperatorControl() + " " + DriverStation.getInstance().isEnabled());
+			
 			if (DriverStation.getInstance().isOperatorControl() && DriverStation.getInstance().isEnabled())
 			{
 				if (Math.abs(xbox.getRawAxis(1)) > 0.2)
@@ -473,23 +475,30 @@ public class Drivetrain extends MecanumDrive implements Component
 	}
 
 
+	public void omniWheelUp()
+	{
+		servoPosition = 0.5 + (1.0 / 8.5) * 0.5;
+		servo.set(servoPosition);
+	}
+	
+	public void omniWheelDown()
+	{
+		servoPosition = 0.5;
+		servo.set(servoPosition);
+	}
+	
 	public void rotateServoClockwise(int angle)
 	{
-		double rotation = angle / 360;
-		servoPosition = servoPosition + ((1.0/8.5) * rotation);
+		double rotation = (double)angle / 360.0;
+		servoPosition += ((1.0/8.5) * rotation);
 		servo.set(servoPosition);
 	}
 
 	public void rotateServoCounterClockwise(int angle)
 	{
-		double rotation = angle / 360;
-		servoPosition = servoPosition + ((1.0/8.5) * rotation);
+		double rotation = (double)angle / 360.0;
+		servoPosition -= ((1.0/8.5) * rotation);
 		servo.set(servoPosition);
-	}
-
-	public void resetServo()
-	{
-		servo.set(0.5);
 	}
 
 	@Override
