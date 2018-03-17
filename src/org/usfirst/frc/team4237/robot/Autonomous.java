@@ -375,6 +375,7 @@ public class Autonomous
 				autoStage = Constants.AutoStage.kDrive2Distance1;
 				System.out.println("Entering: " + autoStage);
 				drivetrain.resetEncoder();
+				Timer.delay(0.5);
 				doneDriving = false;
 				doneMovingGripper = false;
 			}
@@ -443,6 +444,7 @@ public class Autonomous
 				autoStage = Constants.AutoStage.kDrive2Distance1;
 				System.out.println("Entering: " + autoStage);
 				drivetrain.resetEncoder();
+				Timer.delay(0.5);
 				doneDriving = false;
 				doneMovingGripper = false;
 			}
@@ -593,8 +595,6 @@ public class Autonomous
 				doneMovingElevator = false;
 				doneMovingGripper = false;
 			}
-
-
 		}
 		else if(autoStage == Constants.AutoStage.kSpin1)
 		{
@@ -643,9 +643,7 @@ public class Autonomous
 				drivetrain.resetEncoder();
 				doneDriving = false;
 				doneMovingGripper = false;
-				Timer.delay(0.5);
 			}
-
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2ToLine1)
 		{
@@ -1236,7 +1234,6 @@ public class Autonomous
 			{
 				autoStage = Constants.AutoStage.kSpin1;
 				System.out.println("Entering: " + autoStage);
-				drivetrain.resetEncoder();
 			}
 			
 			if(t.get() >= 5)
@@ -1252,6 +1249,7 @@ public class Autonomous
 				autoStage = Constants.AutoStage.kDrive2Distance1;
 				System.out.println("Entering: " + autoStage);
 				drivetrain.resetEncoder();
+				Timer.delay(0.5);
 			}
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2Distance1)
@@ -1344,8 +1342,7 @@ public class Autonomous
 			{
 				autoStage = Constants.AutoStage.kDrive2ToLine2;
 				System.out.println("Entering: " + autoStage);
-				gripper.resetIntakeEncoder();
-				gripper.autoDrop();
+				gripper.ejectShoot();
 				System.out.println("Time: " + t.get());
 				doneDriving = false;
 				t.stop();
@@ -1355,6 +1352,7 @@ public class Autonomous
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2ToLine2)
 		{
+			gripper.ejectShoot();
 			if(drivetrain.driveSeconds(-.2, 1.0, 0))
 			{
 				autoStage = Constants.AutoStage.kDone;
