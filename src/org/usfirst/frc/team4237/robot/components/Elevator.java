@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Timer;
 
 import org.usfirst.frc.team4237.robot.components.Gripper.Constants;
@@ -97,9 +98,7 @@ public class Elevator implements Component
 
 	public void run()
 	{
-<<<<<<< HEAD
 		updateCurrentRange();
-		
 		if (DriverStation.getInstance().isOperatorControl() && DriverStation.getInstance().isEnabled())
 		{
 			teleop();
@@ -112,22 +111,6 @@ public class Elevator implements Component
 		{
 			test();
 		}
-=======
-			updateCurrentRange();
-
-			if (DriverStation.getInstance().isOperatorControl() && DriverStation.getInstance().isEnabled())
-			{
-				teleop();
-			}
-			else if (DriverStation.getInstance().isAutonomous() && DriverStation.getInstance().isEnabled())
-			{
-				autonomous();
-			}
-			else if (DriverStation.getInstance().isTest() && DriverStation.getInstance().isEnabled())
-			{
-				test();
-			}
->>>>>>> Changes from the Thursday the day before Gaylord Comp. Servo works! :)
 	}
 
 
@@ -215,21 +198,21 @@ public class Elevator implements Component
 	public void autonomous()
 	{
 		updateCurrentRange();
-//		if (currentValue < targetRange[0] && currentDirection == Constants.Direction.Up)
-//		{
-//			//System.out.println("Elevator raising");
-//			raise();
-//		}
-//		else if (currentValue > targetRange[1] && currentDirection == Constants.Direction.Down)
-//		{
-//			lower();
-//			//System.out.println("Elevator lowering");
-//		}
-//		else
-//		{
-//			currentDirection = Constants.Direction.None;
-//			stopMoving();
-//		}
+		//		if (currentValue < targetRange[0] && currentDirection == Constants.Direction.Up)
+		//		{
+		//			//System.out.println("Elevator raising");
+		//			raise();
+		//		}
+		//		else if (currentValue > targetRange[1] && currentDirection == Constants.Direction.Down)
+		//		{
+		//			lower();
+		//			//System.out.println("Elevator lowering");
+		//		}
+		//		else
+		//		{
+		//			currentDirection = Constants.Direction.None;
+		//			stopMoving();
+		//		}
 	}
 
 	public void test()
@@ -386,10 +369,10 @@ public class Elevator implements Component
 			inFloorRange = true;
 			stopMoving();
 		}
-		
+
 		return inFloorRange;
 	}
-	
+
 	public boolean autoSwitch()
 	{
 		boolean inSwitchRange = false;
@@ -403,19 +386,15 @@ public class Elevator implements Component
 			inSwitchRange = true;
 			stopMoving();
 		}
-		
+
 		return inSwitchRange;
 	}
-	
+
 	public boolean autoTopScale()
 	{
 		boolean inScaleRange = false;
 		updateCurrentRange();
-<<<<<<< HEAD
 		if(currentValue < Constants.TOP_SCALE - Constants.THRESHOLD)
-=======
-		if (currentValue < Constants.TOP_SCALE - Constants.THRESHOLD)
->>>>>>> Changes from the Thursday the day before Gaylord Comp. Servo works! :)
 		{
 			raise();
 		}
@@ -424,10 +403,10 @@ public class Elevator implements Component
 			inScaleRange = true;
 			stopMoving();
 		}
-		
+
 		return inScaleRange;
 	}
-	
+
 	public static class Constants
 	{		
 		private enum InitRange
@@ -476,7 +455,7 @@ public class Elevator implements Component
 				return this.range[1];
 			}
 		}
-		
+
 		public enum Range
 		{
 			floorRange(     								InitRange.floorRange.range(),                 					InitRange.floorRange,        				InitRange.exchangeAndSwitchAndPortalRange),
