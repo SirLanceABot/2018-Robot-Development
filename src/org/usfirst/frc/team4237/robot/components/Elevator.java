@@ -68,10 +68,10 @@ public class Elevator implements Component
 		masterTalonSRX.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 20);
 		masterTalonSRX.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 20);
 
-		masterTalonSRX.configForwardSoftLimitThreshold(620, 0);
-		masterTalonSRX.configReverseSoftLimitThreshold(135, 0);
-		masterTalonSRX.configForwardSoftLimitEnable(true, 0);
-		masterTalonSRX.configReverseSoftLimitEnable(true, 0);
+		masterTalonSRX.configForwardSoftLimitThreshold(Constants.ABSOLUTE_TOP, 0);
+		masterTalonSRX.configReverseSoftLimitThreshold(Constants.FLOOR, 0);
+		masterTalonSRX.configForwardSoftLimitEnable(false, 0);
+		masterTalonSRX.configReverseSoftLimitEnable(false, 0);
 
 		slaveTalonSRX.follow(masterTalonSRX); // Sets slaveTalonSRX to follow masterTalonSrx
 
@@ -527,6 +527,7 @@ public class Elevator implements Component
 		public static final int SWITCH = 330;
 		public static final int BOTTOM_SCALE = 426;
 		public static final int TOP_SCALE = 605;
+		public static final int ABSOLUTE_TOP = 620;
 
 	}
 }
