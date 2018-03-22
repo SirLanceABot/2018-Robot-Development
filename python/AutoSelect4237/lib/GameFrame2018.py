@@ -55,14 +55,18 @@ class GameFrame2018(QtGui.QFrame):
         
         self.grabSecondCubeCheckBox = QtGui.QCheckBox("Grab Second Cube")
         
+        self.holdSecondCubeRadioButton = QtGui.QRadioButton("Hold second cube")
         self.placeSecondCubeInSwitchRadioButton = QtGui.QRadioButton("Place Second Cube in Switch")
         self.placeSecondCubeInScaleRadioButton = QtGui.QRadioButton("Place Second Cube in Scale")
+        
+        self.holdSecondCubeRadioButton.setEnabled(False)
         self.placeSecondCubeInSwitchRadioButton.setEnabled(False)
         self.placeSecondCubeInScaleRadioButton.setEnabled(False)
         
         self.grabSecondCubeCheckBox.clicked.connect(lambda: self.synchronizeCheckBoxes())
         
         self.checkBoxVBox.addWidget(self.grabSecondCubeCheckBox)
+        self.checkBoxVBox.addWidget(self.holdSecondCubeRadioButton)
         self.checkBoxVBox.addWidget(self.placeSecondCubeInSwitchRadioButton)
         self.checkBoxVBox.addWidget(self.placeSecondCubeInScaleRadioButton)
         
@@ -111,12 +115,15 @@ class GameFrame2018(QtGui.QFrame):
 
         
     def synchronizeCheckBoxes(self):
+        self.holdSecondCubeRadioButton.setEnabled(self.grabSecondCubeCheckBox.isChecked())
         self.placeSecondCubeInSwitchRadioButton.setEnabled(self.grabSecondCubeCheckBox.isChecked())
         self.placeSecondCubeInScaleRadioButton.setEnabled(self.grabSecondCubeCheckBox.isChecked())
 
         if not self.grabSecondCubeCheckBox.isChecked():
+            self.holdSecondCubeRadioButton.setChecked(False)
             self.placeSecondCubeInSwitchRadioButton.setChecked(False)
             self.placeSecondCubeInScaleRadioButton.setChecked(False)
+            
         
     def positionRobot(self, position):
         self.selectedPosition = position
@@ -146,6 +153,7 @@ class GameFrame2018(QtGui.QFrame):
         data["planB"] = self.planBComboBox.currentText()
         data["planC"] = self.planCComboBox.currentText()
         data["grabSecondCube"] = self.grabSecondCubeCheckBox.isChecked()
+        data["holdSecondCube"] = self.holdSecondCubeRadioButton.isChecked()
         data["placeSecondCubeInSwitch"] = self.placeSecondCubeInSwitchRadioButton.isChecked()
         data["placeSecondCubeInScale"] = self.placeSecondCubeInScaleRadioButton.isChecked()
         return data
