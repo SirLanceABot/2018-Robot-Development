@@ -357,43 +357,72 @@ public class Autonomous
 	{
 		if(autoStage == Constants.AutoStage.kDrive1)
 		{
-			if(!doneDriving && !doneMovingGripper)
+			if(!doneDriving)
 			{
-				doneDriving = drivetrain.driveDistance(5, 0.3, 0, 48);
-				doneMovingGripper = gripper.autoHorizontal();
-			}
-			else if(!doneMovingGripper)
-			{
-				doneMovingGripper = gripper.autoHorizontal();
-			}
-			else if(!doneDriving)
-			{
-				doneDriving = drivetrain.driveDistance(5, 0.3, 0, 48);
+				if(!doneMovingGripper)
+				{
+					doneMovingGripper = gripper.autoHorizontal();
+				}
+				
+				if(!doneMovingElevator)
+				{
+					doneMovingElevator = elevator.autoSwitch();
+				}
+				
+				if(!doneDriving)
+				{
+					doneDriving = drivetrain.driveDistance(5, 0.3, 0, 48);
+				}
 			}
 			else
 			{
 				autoStage = Constants.AutoStage.kDrive2Distance1;
 				System.out.println("Entering: " + autoStage);
 				drivetrain.resetEncoder();
-				Timer.delay(0.5);
+				Timer.delay(0.06);
 				doneDriving = false;
-				doneMovingGripper = false;
 			}
+//			if(!doneDriving && !doneMovingGripper)
+//			{
+//				doneDriving = drivetrain.driveDistance(5, 0.3, 0, 48);
+//				doneMovingGripper = gripper.autoHorizontal();
+//			}
+//			else if(!doneMovingGripper)
+//			{
+//				doneMovingGripper = gripper.autoHorizontal();
+//			}
+//			else if(!doneDriving)
+//			{
+//				doneDriving = drivetrain.driveDistance(5, 0.3, 0, 48);
+//			}
+//			else
+//			{
+//				autoStage = Constants.AutoStage.kDrive2Distance1;
+//				System.out.println("Entering: " + autoStage);
+//				drivetrain.resetEncoder();
+//				Timer.delay(0.06);
+//				doneDriving = false;
+//				doneMovingGripper = false;
+//			}
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2Distance1)
 		{
-			if(!doneDriving && !doneMovingElevator)
+			if(!doneDriving || !doneMovingElevator || !doneMovingGripper)
 			{
-				doneDriving = drivetrain.driveDistance(95, 0.75, -45, 48);
-				doneMovingElevator = elevator.autoSwitch();
-			}
-			else if(!doneMovingElevator)
-			{
-				doneMovingElevator = elevator.autoSwitch();
-			}
-			else if(!doneDriving)
-			{
-				doneDriving = drivetrain.driveDistance(95, 0.75, -45, 48);
+				if(!doneMovingGripper)
+				{
+					doneMovingGripper = gripper.autoHorizontal();
+				}
+				
+				if(!doneMovingElevator)
+				{
+					doneMovingElevator = elevator.autoSwitch();
+				}
+				
+				if(!doneDriving)
+				{
+					doneDriving = drivetrain.driveDistance(95, 0.75, -45, 48);
+				}
 			}
 			else
 			{
@@ -402,22 +431,41 @@ public class Autonomous
 				drivetrain.resetEncoder();
 				doneDriving = false;
 				doneMovingElevator = false;
-				t.stop();
-				t.reset();
-				t.start();
+				doneMovingGripper = false;
 			}
+			
+//			if(!doneDriving && !doneMovingElevator)
+//			{
+//				doneDriving = drivetrain.driveDistance(95, 0.75, -45, 48);
+//				doneMovingElevator = elevator.autoSwitch();
+//			}
+//			else if(!doneMovingElevator)
+//			{
+//				doneMovingElevator = elevator.autoSwitch();
+//			}
+//			else if(!doneDriving)
+//			{
+//				doneDriving = drivetrain.driveDistance(95, 0.75, -45, 48);
+//			}
+//			else
+//			{
+//				autoStage = Constants.AutoStage.kDrive2Distance2;
+//				System.out.println("Entering: " + autoStage);
+//				drivetrain.resetEncoder();
+//				doneDriving = false;
+//				doneMovingElevator = false;
+//				t.stop();
+//				t.reset();
+//				t.start();
+//			}
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2Distance2)
 		{
 			if(drivetrain.driveSeconds(0.3, 1, 0))
 			{
-				if(t.get() >= 1)
-				{
-					autoStage = Constants.AutoStage.kDone;
-					System.out.println("Entering: " + autoStage);
-				}
 				gripper.ejectDrop();
-				System.out.println("Time: " + t.get());
+				autoStage = Constants.AutoStage.kDone;
+				System.out.println("Entering: " + autoStage);
 			}
 		}
 	}
@@ -426,44 +474,72 @@ public class Autonomous
 	{
 		if(autoStage == Constants.AutoStage.kDrive1)
 		{
-			if(!doneDriving && !doneMovingGripper)
+			if(!doneDriving)
 			{
-				doneDriving = drivetrain.driveDistance(5, 0.3, 0, 48);
-				doneMovingGripper = gripper.autoHorizontal();
-			}
-			else if(!doneMovingGripper)
-			{
-				doneMovingGripper = gripper.autoHorizontal();
-			}
-			else if(!doneDriving)
-			{
-				doneDriving = drivetrain.driveDistance(5, 0.3, 0, 48);
+				if(!doneMovingGripper)
+				{
+					doneMovingGripper = gripper.autoHorizontal();
+				}
+				
+				if(!doneMovingElevator)
+				{
+					doneMovingElevator = elevator.autoSwitch();
+				}
+				
+				if(!doneDriving)
+				{
+					doneDriving = drivetrain.driveDistance(5, 0.3, 0, 48);
+				}
 			}
 			else
 			{
 				autoStage = Constants.AutoStage.kDrive2Distance1;
 				System.out.println("Entering: " + autoStage);
 				drivetrain.resetEncoder();
-				Timer.delay(0.5);
+				Timer.delay(0.06);
 				doneDriving = false;
-				doneMovingGripper = false;
 			}
+//			if(!doneDriving && !doneMovingGripper)
+//			{
+//				doneDriving = drivetrain.driveDistance(5, 0.3, 0, 48);
+//				doneMovingGripper = gripper.autoHorizontal();
+//			}
+//			else if(!doneMovingGripper)
+//			{
+//				doneMovingGripper = gripper.autoHorizontal();
+//			}
+//			else if(!doneDriving)
+//			{
+//				doneDriving = drivetrain.driveDistance(5, 0.3, 0, 48);
+//			}
+//			else
+//			{
+//				autoStage = Constants.AutoStage.kDrive2Distance1;
+//				System.out.println("Entering: " + autoStage);
+//				drivetrain.resetEncoder();
+//				Timer.delay(0.06);
+//				doneDriving = false;
+//				doneMovingGripper = false;
+//			}
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2Distance1)
 		{
-
-			if(!doneDriving && !doneMovingElevator)
+			if(!doneDriving || !doneMovingElevator || !doneMovingGripper)
 			{
-				doneDriving = drivetrain.driveDistance(90, 0.75, 35, 48);
-				doneMovingElevator = elevator.autoSwitch();
-			}
-			else if(!doneMovingElevator)
-			{
-				doneMovingElevator = elevator.autoSwitch();
-			}
-			else if(!doneDriving)
-			{
-				doneDriving = drivetrain.driveDistance(90, 0.75, 35, 48);
+				if(!doneMovingGripper)
+				{
+					doneMovingGripper = gripper.autoHorizontal();
+				}
+				
+				if(!doneMovingElevator)
+				{
+					doneMovingElevator = elevator.autoSwitch();
+				}
+				
+				if(!doneDriving)
+				{
+					doneDriving = drivetrain.driveDistance(90, 0.75, 35, 48);
+				}
 			}
 			else
 			{
@@ -472,24 +548,41 @@ public class Autonomous
 				drivetrain.resetEncoder();
 				doneDriving = false;
 				doneMovingElevator = false;
-				t.stop();
-				t.reset();
-				t.start();
+				doneMovingGripper = false;
 			}
+			
+//			if(!doneDriving && !doneMovingElevator)
+//			{
+//				doneDriving = drivetrain.driveDistance(90, 0.75, 35, 48);
+//				doneMovingElevator = elevator.autoSwitch();
+//			}
+//			else if(!doneMovingElevator)
+//			{
+//				doneMovingElevator = elevator.autoSwitch();
+//			}
+//			else if(!doneDriving)
+//			{
+//				doneDriving = drivetrain.driveDistance(90, 0.75, 35, 48);
+//			}
+//			else
+//			{
+//				autoStage = Constants.AutoStage.kDrive2Distance2;
+//				System.out.println("Entering: " + autoStage);
+//				drivetrain.resetEncoder();
+//				doneDriving = false;
+//				doneMovingElevator = false;
+//				t.stop();
+//				t.reset();
+//				t.start();
+//			}
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2Distance2)
 		{
 			if(drivetrain.driveSeconds(0.3, 1, 0))
 			{
-				if(t.get() >= 1.5)
-				{
-					autoStage = Constants.AutoStage.kDone;
-					System.out.println("Entering: " + autoStage);
-					gripper.intakeOff();
-				}
-				gripper.resetIntakeEncoder();
 				gripper.ejectDrop();
-				System.out.println("Time: " + t.get());
+				autoStage = Constants.AutoStage.kDone;
+				System.out.println("Entering: " + autoStage);
 			}
 		}
 	}
@@ -563,13 +656,13 @@ public class Autonomous
 	{
 		if(autoStage == Constants.AutoStage.kDrive1)
 		{
-			if(!doneDriving && !doneMovingGripper && !doneMovingElevator)
-			{
-				doneDriving = drivetrain.driveDistance(130, 0.6, 0, 36);
-				doneMovingGripper = gripper.autoHorizontal();
-				doneMovingElevator = elevator.autoSwitch();
-			}
-			else if(!doneDriving || !doneMovingGripper || !doneMovingElevator)
+			//			if(!doneDriving && !doneMovingGripper && !doneMovingElevator)
+			//			{
+			//				doneDriving = drivetrain.driveDistance(130, 0.6, 0, 36);
+			//				doneMovingGripper = gripper.autoHorizontal();
+			//				doneMovingElevator = elevator.autoSwitch();
+			//			}
+			if(!doneDriving || !doneMovingGripper || !doneMovingElevator)
 			{
 				if(!doneDriving)
 				{
@@ -608,7 +701,7 @@ public class Autonomous
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2Distance1)
 		{
-			if(drivetrain.driveSeconds(0.2, 2, -90 * angleSign))
+			if(drivetrain.driveSeconds(0.2, 1.25, -90 * angleSign))
 			{
 				autoStage = Constants.AutoStage.kDone;
 				System.out.println("Entering: " + autoStage);
@@ -622,19 +715,25 @@ public class Autonomous
 	public void scaleOnSameSideOnAngle1Cube()
 	{
 		if(autoStage == Constants.AutoStage.kDrive1)
-		{
-			if(!doneDriving && !doneMovingGripper && t.get() <= 3.5)
+		{	
+			if(!doneMovingGripper || !doneDriving)
 			{
-				drivetrain.driveDistance(220, 0.8, 0, 55);
-				doneMovingGripper = gripper.autoMiddle();
-			}
-			else if(!doneMovingGripper)
-			{
-				doneMovingGripper = gripper.autoMiddle();
-			}
-			else if(!doneDriving && t.get() <= 3.5)
-			{
-				doneDriving = drivetrain.driveDistance(220, 0.8, 0, 55);
+				if(!doneMovingGripper)
+				{
+					doneMovingGripper = gripper.autoMiddle();
+				}
+
+				if(!doneDriving)
+				{
+					doneDriving = drivetrain.driveDistance(220, 0.8, 0, 55);
+				}
+				
+				if(t.get() >= 3.5)
+				{
+					drivetrain.driveCartesian(0, 0, 0);
+					gripper.pivotOff();
+					autoStage = Constants.AutoStage.kDone;
+				}
 			}
 			else
 			{
@@ -644,21 +743,49 @@ public class Autonomous
 				doneDriving = false;
 				doneMovingGripper = false;
 			}
+						
+			//			if(!doneDriving && !doneMovingGripper && t.get() <= 3.5)
+			//			{
+			//				drivetrain.driveDistance(220, 0.8, 0, 55);
+			//				doneMovingGripper = gripper.autoMiddle();
+			//			}
+			//			else if(!doneMovingGripper)
+			//			{
+			//				doneMovingGripper = gripper.autoMiddle();
+			//			}
+			//			else if(!doneDriving && t.get() <= 3.5)
+			//			{
+			//				doneDriving = drivetrain.driveDistance(220, 0.8, 0, 55);
+			//			}
+			//			else
+			//			{
+			//				autoStage = Constants.AutoStage.kDrive2ToLine1;
+			//				System.out.println("Entering: " + autoStage);
+			//				drivetrain.resetEncoder();
+			//				doneDriving = false;
+			//				doneMovingGripper = false;
+			//			}
+			//			
+			//			if(t.get() >= 3.5)
+			//			{
+			//				drivetrain.driveCartesian(0, 0, 0);
+			//				gripper.pivotOff();
+			//				autoStage = Constants.AutoStage.kDone;
+			//			}
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2ToLine1)
 		{
-			if(!doneMovingElevator && !doneDriving)
+			if(!doneMovingElevator || !doneDriving)
 			{
-				doneMovingElevator = elevator.autoTopScale();
-				doneDriving = drivetrain.driveToColor(AMSColorSensor.Constants.Color.kWhite, 0.25, 0);
-			}
-			else if(!doneMovingElevator)
-			{
-				doneMovingElevator = elevator.autoTopScale();
-			}
-			else if(!doneDriving)
-			{
-				doneDriving = drivetrain.driveToColor(AMSColorSensor.Constants.Color.kWhite, 0.25, 0);
+				if(!doneMovingElevator)
+				{
+					doneMovingElevator = elevator.autoTopScale();
+				}
+				
+				if(!doneDriving)
+				{
+					doneDriving = drivetrain.driveToColor(AMSColorSensor.Constants.Color.kWhite, 0.25, 0);
+				}
 			}
 			else
 			{
@@ -668,6 +795,28 @@ public class Autonomous
 				doneDriving = false;
 				drivetrain.resetEncoder();
 			}
+			
+//			if(!doneMovingElevator && !doneDriving)
+//			{
+//				doneMovingElevator = elevator.autoTopScale();
+//				doneDriving = drivetrain.driveToColor(AMSColorSensor.Constants.Color.kWhite, 0.25, 0);
+//			}
+//			else if(!doneMovingElevator)
+//			{
+//				doneMovingElevator = elevator.autoTopScale();
+//			}
+//			else if(!doneDriving)
+//			{
+//				doneDriving = drivetrain.driveToColor(AMSColorSensor.Constants.Color.kWhite, 0.25, 0);
+//			}
+//			else
+//			{
+//				autoStage = Constants.AutoStage.kSpin1;
+//				System.out.println("Entering: " + autoStage);
+//				doneMovingElevator = false;
+//				doneDriving = false;
+//				drivetrain.resetEncoder();
+//			}
 		}
 		else if(autoStage == Constants.AutoStage.kSpin1)
 		{
@@ -676,36 +825,42 @@ public class Autonomous
 				gripper.autoEject();
 				autoStage = Constants.AutoStage.kDrive2Distance1;
 				System.out.println("Entering: " + autoStage);
-				drivetrain.resetEncoder();
 			}
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2Distance1)
 		{
 			if(drivetrain.driveSeconds(-0.2, 1.0, -45 * angleSign))
 			{
+				gripper.intakeOff();
 				autoStage = Constants.AutoStage.kDone;
 				System.out.println("Entering: " + autoStage);
-				drivetrain.resetEncoder();
 			}
 		}
+		//TODO move elevator back down if enough time
 	}
 
 	public void scaleOnSameSideOnAngle2Cube()
 	{
 		if(autoStage == Constants.AutoStage.kDrive1)
-		{
-			if(!doneDriving && !doneMovingGripper && t.get() <= 3.5)
+		{	
+			if(!doneMovingGripper || !doneDriving)
 			{
-				drivetrain.driveDistance(260, 0.8, 0, 55);
-				doneMovingGripper = gripper.autoMiddle();
-			}
-			else if(!doneMovingGripper)
-			{
-				doneMovingGripper = gripper.autoMiddle();
-			}
-			else if(!doneDriving && t.get() <= 3.5)
-			{
-				doneDriving = drivetrain.driveDistance(220, 0.8, 0, 55);
+				if(!doneMovingGripper)
+				{
+					doneMovingGripper = gripper.autoMiddle();
+				}
+
+				if(!doneDriving)
+				{
+					doneDriving = drivetrain.driveDistance(220, 0.8, 0, 55);
+				}
+				
+				if(t.get() >= 3.5)
+				{
+					drivetrain.driveCartesian(0, 0, 0);
+					gripper.pivotOff();
+					autoStage = Constants.AutoStage.kDone;
+				}
 			}
 			else
 			{
@@ -714,9 +869,30 @@ public class Autonomous
 				drivetrain.resetEncoder();
 				doneDriving = false;
 				doneMovingGripper = false;
-				Timer.delay(0.5);
 			}
-
+				
+			//			if(!doneDriving && !doneMovingGripper && t.get() <= 3.5)
+			//			{
+			//				drivetrain.driveDistance(220, 0.8, 0, 55);
+			//				doneMovingGripper = gripper.autoMiddle();
+			//			}
+			//			else if(!doneMovingGripper)
+			//			{
+			//				doneMovingGripper = gripper.autoMiddle();
+			//			}
+			//			else if(!doneDriving && t.get() <= 3.5)
+			//			{
+			//				doneDriving = drivetrain.driveDistance(220, 0.8, 0, 55);
+			//			}
+			//			else
+			//			{
+			//				autoStage = Constants.AutoStage.kDrive2ToLine1;
+			//				System.out.println("Entering: " + autoStage);
+			//				drivetrain.resetEncoder();
+			//				Timer.delay(0.06);
+			//				doneDriving = false;
+			//				doneMovingGripper = false;
+			//			}
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2ToLine1)
 		{
@@ -820,18 +996,24 @@ public class Autonomous
 	{
 		if(autoStage == Constants.AutoStage.kDrive1)
 		{
-			if(!doneDriving && !doneMovingGripper && t.get() <= 3.5)
+			if(!doneMovingGripper || !doneDriving)
 			{
-				drivetrain.driveDistance(260, 0.8, 0, 55);
-				doneMovingGripper = gripper.autoMiddle();
-			}
-			else if(!doneMovingGripper)
-			{
-				doneMovingGripper = gripper.autoMiddle();
-			}
-			else if(!doneDriving && t.get() <= 3.5)
-			{
-				doneDriving = drivetrain.driveDistance(260, 0.8, 0, 55);
+				if(!doneMovingGripper)
+				{
+					doneMovingGripper = gripper.autoMiddle();
+				}
+
+				if(!doneDriving)
+				{
+					doneDriving = drivetrain.driveDistance(220, 0.8, 0, 55);
+				}
+				
+				if(t.get() >= 3.5)
+				{
+					drivetrain.driveCartesian(0, 0, 0);
+					gripper.pivotOff();
+					autoStage = Constants.AutoStage.kDone;
+				}
 			}
 			else
 			{
@@ -840,9 +1022,30 @@ public class Autonomous
 				drivetrain.resetEncoder();
 				doneDriving = false;
 				doneMovingGripper = false;
-				Timer.delay(0.5);
 			}
-
+				
+			//			if(!doneDriving && !doneMovingGripper && t.get() <= 3.5)
+			//			{
+			//				drivetrain.driveDistance(220, 0.8, 0, 55);
+			//				doneMovingGripper = gripper.autoMiddle();
+			//			}
+			//			else if(!doneMovingGripper)
+			//			{
+			//				doneMovingGripper = gripper.autoMiddle();
+			//			}
+			//			else if(!doneDriving && t.get() <= 3.5)
+			//			{
+			//				doneDriving = drivetrain.driveDistance(220, 0.8, 0, 55);
+			//			}
+			//			else
+			//			{
+			//				autoStage = Constants.AutoStage.kDrive2ToLine1;
+			//				System.out.println("Entering: " + autoStage);
+			//				drivetrain.resetEncoder();
+			//				Timer.delay(0.06);
+			//				doneDriving = false;
+			//				doneMovingGripper = false;
+			//			}
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2ToLine1)
 		{
@@ -972,18 +1175,24 @@ public class Autonomous
 	{
 		if(autoStage == Constants.AutoStage.kDrive1)
 		{
-			if(!doneDriving && !doneMovingGripper && t.get() <= 3.5)
+			if(!doneMovingGripper || !doneDriving)
 			{
-				drivetrain.driveDistance(260, 0.8, 0, 55);
-				doneMovingGripper = gripper.autoMiddle();
-			}
-			else if(!doneMovingGripper)
-			{
-				doneMovingGripper = gripper.autoMiddle();
-			}
-			else if(!doneDriving && t.get() <= 3.5)
-			{
-				doneDriving = drivetrain.driveDistance(260, 0.8, 0, 55);
+				if(!doneMovingGripper)
+				{
+					doneMovingGripper = gripper.autoMiddle();
+				}
+
+				if(!doneDriving)
+				{
+					doneDriving = drivetrain.driveDistance(220, 0.8, 0, 55);
+				}
+				
+				if(t.get() >= 3.5)
+				{
+					drivetrain.driveCartesian(0, 0, 0);
+					gripper.pivotOff();
+					autoStage = Constants.AutoStage.kDone;
+				}
 			}
 			else
 			{
@@ -992,8 +1201,30 @@ public class Autonomous
 				drivetrain.resetEncoder();
 				doneDriving = false;
 				doneMovingGripper = false;
-				Timer.delay(0.5);
 			}
+				
+			//			if(!doneDriving && !doneMovingGripper && t.get() <= 3.5)
+			//			{
+			//				drivetrain.driveDistance(220, 0.8, 0, 55);
+			//				doneMovingGripper = gripper.autoMiddle();
+			//			}
+			//			else if(!doneMovingGripper)
+			//			{
+			//				doneMovingGripper = gripper.autoMiddle();
+			//			}
+			//			else if(!doneDriving && t.get() <= 3.5)
+			//			{
+			//				doneDriving = drivetrain.driveDistance(220, 0.8, 0, 55);
+			//			}
+			//			else
+			//			{
+			//				autoStage = Constants.AutoStage.kDrive2ToLine1;
+			//				System.out.println("Entering: " + autoStage);
+			//				drivetrain.resetEncoder();
+			//				Timer.delay(0.06);
+			//				doneDriving = false;
+			//				doneMovingGripper = false;
+			//			}
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2ToLine1)
 		{
@@ -1165,9 +1396,9 @@ public class Autonomous
 				autoStage = Constants.AutoStage.kDrive2ToLine2;
 				System.out.println("Entering: " + autoStage);
 				drivetrain.resetEncoder();
+				Timer.delay(0.06);
 				doneDriving = false;
 				doneMovingGripper = false;
-				Timer.delay(0.5);
 			}
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2ToLine2)
@@ -1235,8 +1466,8 @@ public class Autonomous
 				autoStage = Constants.AutoStage.kSpin1;
 				System.out.println("Entering: " + autoStage);
 			}
-			
-			if(t.get() >= 5)
+
+			if(t.get() >= 3.5)
 			{
 				autoStage = Constants.AutoStage.kDone;
 				drivetrain.driveCartesian(0, 0, 0);
@@ -1249,57 +1480,100 @@ public class Autonomous
 				autoStage = Constants.AutoStage.kDrive2Distance1;
 				System.out.println("Entering: " + autoStage);
 				drivetrain.resetEncoder();
-				Timer.delay(0.5);
+				Timer.delay(0.06);
 			}
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2Distance1)
 		{
-			if(!doneDriving && !doneMovingGripper)
+			if(!doneDriving || !doneMovingGripper)
 			{
-				doneDriving = drivetrain.driveDistance(130, 0.6, -90 * angleSign, 48);
-				doneMovingGripper = gripper.autoMiddle();
-			}
-			else if(!doneMovingGripper)
-			{
-				doneMovingGripper = gripper.autoMiddle();
-			}
-			else if(!doneDriving)
-			{
-				doneDriving = drivetrain.driveDistance(130, 0.6, -90 * angleSign, 48);
+				if(!doneMovingGripper)
+				{
+					doneMovingGripper = gripper.autoMiddle();
+				}
+				
+				if(!doneDriving)
+				{
+					doneDriving = drivetrain.driveDistance(130, 0.6, -90 * angleSign, 48);
+				}
 			}
 			else
 			{
 				autoStage = Constants.AutoStage.kDrive2Distance2;
 				System.out.println("Entering: " + autoStage);
 				drivetrain.resetEncoder();
-				Timer.delay(0.5);
+				Timer.delay(0.06);
 				doneMovingGripper = false;
 				doneDriving = false;
 			}
+			
+//			if(!doneDriving && !doneMovingGripper)
+//			{
+//				doneDriving = drivetrain.driveDistance(130, 0.6, -90 * angleSign, 48);
+//				doneMovingGripper = gripper.autoMiddle();
+//			}
+//			else if(!doneMovingGripper)
+//			{
+//				doneMovingGripper = gripper.autoMiddle();
+//			}
+//			else if(!doneDriving)
+//			{
+//				doneDriving = drivetrain.driveDistance(130, 0.6, -90 * angleSign, 48);
+//			}
+//			else
+//			{
+//				autoStage = Constants.AutoStage.kDrive2Distance2;
+//				System.out.println("Entering: " + autoStage);
+//				drivetrain.resetEncoder();
+//				Timer.delay(0.06);
+//				doneMovingGripper = false;
+//				doneDriving = false;
+//			}
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2Distance2)
 		{
-			if(!doneMovingElevator && !doneDriving)
+			if(!doneMovingElevator || !doneDriving)
 			{
-				doneDriving = drivetrain.driveDistance(71, 0.5, -90 * angleSign, 24);
-				doneMovingElevator = elevator.autoTopScale();
-			}
-			else if(!doneDriving)
-			{
-				doneDriving = drivetrain.driveDistance(71, 0.5, -90 * angleSign, 24);
-			}
-			else if(!doneMovingElevator)
-			{
-				doneMovingElevator = elevator.autoTopScale();
+				if(!doneDriving)
+				{
+					doneDriving = drivetrain.driveDistance(71, 0.5, -90 * angleSign, 24);
+				}
+				
+				if(!doneMovingElevator)
+				{
+					doneMovingElevator = elevator.autoTopScale();
+				}
 			}
 			else
 			{
 				autoStage = Constants.AutoStage.kSpin2;
 				System.out.println("Entering: " + autoStage);
 				drivetrain.resetEncoder();
-				doneMovingGripper = false;
+				doneMovingElevator = false;
 				doneDriving = false;
 			}
+			
+//			if(!doneMovingElevator && !doneDriving)
+//			{
+//				doneDriving = drivetrain.driveDistance(71, 0.5, -90 * angleSign, 24);
+//				doneMovingElevator = elevator.autoTopScale();
+//			}
+//			else if(!doneDriving)
+//			{
+//				doneDriving = drivetrain.driveDistance(71, 0.5, -90 * angleSign, 24);
+//			}
+//			else if(!doneMovingElevator)
+//			{
+//				doneMovingElevator = elevator.autoTopScale();
+//			}
+//			else
+//			{
+//				autoStage = Constants.AutoStage.kSpin2;
+//				System.out.println("Entering: " + autoStage);
+//				drivetrain.resetEncoder();
+//				doneMovingGripper = false;
+//				doneDriving = false;
+//			}
 		}
 		else if(autoStage == Constants.AutoStage.kSpin2)
 		{
@@ -1308,33 +1582,8 @@ public class Autonomous
 				autoStage = Constants.AutoStage.kDrive3ToLine;
 				System.out.println("Entering: " + autoStage);
 				drivetrain.resetEncoder();
-				doneMovingElevator = false;
 				doneDriving = false;
-				t.stop();
-				t.reset();
-				t.start();
 			}
-			//			if(!doneDriving && !doneMovingElevator)
-			//			{
-			//				doneDriving = drivetrain.spinToBearing(0 * angleSign, 0.35);
-			//				doneMovingElevator = elevator.autoTopScale();
-			//			}
-			//			else if(!doneDriving)
-			//			{
-			//				doneDriving = drivetrain.spinToBearing(0 * angleSign, 0.35);
-			//			}
-			//			else if(!doneMovingElevator)
-			//			{
-			//				doneMovingElevator = elevator.autoTopScale();
-			//			}
-			//			else
-			//			{
-			//				autoStage = Constants.AutoStage.kDrive3ToLine;
-			//				System.out.println("Entering: " + autoStage);
-			//				drivetrain.resetEncoder();
-			//				doneMovingElevator = false;
-			//				doneDriving = false;
-			//			}
 		}
 		else if(autoStage == Constants.AutoStage.kDrive3ToLine)
 		{
@@ -1343,18 +1592,14 @@ public class Autonomous
 				autoStage = Constants.AutoStage.kDrive2ToLine2;
 				System.out.println("Entering: " + autoStage);
 				gripper.ejectShoot();
-				System.out.println("Time: " + t.get());
 				doneDriving = false;
-				t.stop();
-				t.reset();
-				t.start();
 			}
 		}
 		else if(autoStage == Constants.AutoStage.kDrive2ToLine2)
 		{
-			gripper.ejectShoot();
 			if(drivetrain.driveSeconds(-.2, 1.0, 0))
 			{
+				gripper.intakeOff();
 				autoStage = Constants.AutoStage.kDone;
 			}
 		}
