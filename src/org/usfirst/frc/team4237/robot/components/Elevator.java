@@ -46,6 +46,8 @@ public class Elevator implements Component
 	private boolean leftBumper;
 	private boolean rightBumper;
 	private boolean aButton;
+	
+	private double leftYAxis;
 
 	private static Elevator instance = new Elevator();
 
@@ -94,6 +96,16 @@ public class Elevator implements Component
 	{
 		masterTalonSRX.set(-1.0);
 	}
+	
+	public void overrideRaise()
+	{
+		masterTalonSRX.set(0.5);
+	}
+	
+	public void overrideLower()
+	{
+		masterTalonSRX.set(-0.5);
+	}
 
 
 	public void run()
@@ -113,13 +125,12 @@ public class Elevator implements Component
 		}
 	}
 
-
 	public void teleop()
 	{
 		rightBumper = xbox.getRawButton(Xbox.Constants.RIGHT_BUMPER);
 		leftBumper = xbox.getRawButton(Xbox.Constants.LEFT_BUMPER);
 
-		double leftYAxis = xbox.getRawAxis(Xbox.Constants.LEFT_STICK_Y_AXIS);
+		leftYAxis = xbox.getRawAxis(Xbox.Constants.LEFT_STICK_Y_AXIS);
 
 		if (!isMoving())
 		{
@@ -191,6 +202,12 @@ public class Elevator implements Component
 			{
 				lower();
 				//System.out.println("Elevator lowering");
+			}
+			
+			//Override in case potentiometer breaks
+			if (xbox.getRawButton(Xbox.Constants.LEFT_STICK_BUTTON) && Math.abs(leftYAxis) > 0.2)
+			{
+				masterTalonSRX.set(-leftYAxis * Constants.OVERRIDE_SPEED_SCALE);
 			}
 		}
 	}
@@ -528,6 +545,8 @@ public class Elevator implements Component
 		public static final int BOTTOM_SCALE = 426;
 		public static final int TOP_SCALE = 605;
 		public static final int ABSOLUTE_TOP = 620;
+		
+		public static final double OVERRIDE_SPEED_SCALE = 0.7;
 
 	}
 }
