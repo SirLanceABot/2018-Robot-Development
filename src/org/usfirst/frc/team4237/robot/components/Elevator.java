@@ -17,7 +17,7 @@ import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 /**
- * 
+ * Class to control the robot's elevator component
  * @author Ben Puzycki, Darryl Wong, Mark Washington
  *
  */
@@ -40,11 +40,14 @@ public class Elevator implements Component
 
 	private Constants.InitRange autoTargetRange = Constants.InitRange.error;
 
+	private boolean limitsEnabled = true;
+	
 	private int currentTestKeyPosition = 0;
 
 	//Joystick buttons
 	private boolean leftBumper;
 	private boolean rightBumper;
+	private boolean leftStickButton;
 	private boolean aButton;
 	
 	private double leftYAxis;
@@ -72,8 +75,8 @@ public class Elevator implements Component
 
 		masterTalonSRX.configForwardSoftLimitThreshold(Constants.ABSOLUTE_TOP, 0);
 		masterTalonSRX.configReverseSoftLimitThreshold(Constants.FLOOR, 0);
-		masterTalonSRX.configForwardSoftLimitEnable(false, 0);
-		masterTalonSRX.configReverseSoftLimitEnable(false, 0);
+		masterTalonSRX.configForwardSoftLimitEnable(limitsEnabled, 0);
+		masterTalonSRX.configReverseSoftLimitEnable(limitsEnabled, 0);
 
 		slaveTalonSRX.follow(masterTalonSRX); // Sets slaveTalonSRX to follow masterTalonSrx
 
@@ -129,7 +132,8 @@ public class Elevator implements Component
 	{
 		rightBumper = xbox.getRawButton(Xbox.Constants.RIGHT_BUMPER);
 		leftBumper = xbox.getRawButton(Xbox.Constants.LEFT_BUMPER);
-
+		leftStickButton = xbox.getRawButton(Xbox.Constants.LEFT_STICK_BUTTON);
+		
 		leftYAxis = xbox.getRawAxis(Xbox.Constants.LEFT_STICK_Y_AXIS);
 
 		if (!isMoving())
@@ -205,9 +209,24 @@ public class Elevator implements Component
 			}
 			
 			//Override in case potentiometer breaks
-			if (xbox.getRawButton(Xbox.Constants.LEFT_STICK_BUTTON) && Math.abs(leftYAxis) > 0.2)
+			if (leftStickButton && leftYAxis > 0.2)
 			{
+				if (limitsEnabled)
+				{
+					limitsEnabled = false;
+
+					masterTalonSRX.configForwardSoftLimitEnable(limitsEnabled, 0);
+					masterTalonSRX.configReverseSoftLimitEnable(limitsEnabled, 0);
+					
+				}
 				masterTalonSRX.set(-leftYAxis * Constants.OVERRIDE_SPEED_SCALE);
+			}
+			else if (!limitsEnabled)
+			{
+				limitsEnabled = true;
+				
+				masterTalonSRX.configForwardSoftLimitEnable(limitsEnabled, 0);
+				masterTalonSRX.configReverseSoftLimitEnable(limitsEnabled, 0);
 			}
 		}
 	}
