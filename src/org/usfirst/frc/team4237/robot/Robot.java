@@ -24,9 +24,13 @@ public class Robot extends IterativeRobot
 	private Gripper gripper = Gripper.getInstance();
 	private Elevator elevator = Elevator.getInstance();
 
+	private double previousNanoTime;
+	private double currentNanoTime;
+	
 	public Robot()
 	{
-
+		previousNanoTime = System.nanoTime();
+		currentNanoTime = System.nanoTime();
 	}
 
 	@Override
@@ -100,5 +104,15 @@ public class Robot extends IterativeRobot
 						"\tPivot pot: " + Gripper.getInstance().getPivotPot() + 
 						"\tIntake encoder left: " + Gripper.getInstance().getLeftIntakeEncoder() + 
 						"\tIntake encoder right: " + Gripper.getInstance().getRightIntakeEncoder() + '\n');
+	}
+	
+	public double getDeltaTime()
+	{
+		currentNanoTime = System.nanoTime();
+		
+		double dt = currentNanoTime - previousNanoTime;
+		previousNanoTime = currentNanoTime;
+		
+		return dt;
 	}
 }
