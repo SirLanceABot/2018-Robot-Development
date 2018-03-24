@@ -25,6 +25,8 @@ public class Gripper implements Component
 	private WPI_TalonSRX rightIntakeTalon = new WPI_TalonSRX(Constants.RIGHT_INTAKE_MOTOR_PORT);
 	private WPI_TalonSRX pivotTalon = new WPI_TalonSRX(Constants.PIVOTER_MOTOR_PORT);
 
+	private Timer pulsateTimer = new Timer();
+
 	private HashMap<Integer, WPI_TalonSRX> talonSRXHashMap = new HashMap<Integer, WPI_TalonSRX>();
 
 	private boolean isAutoEjecting = false;
@@ -53,6 +55,8 @@ public class Gripper implements Component
 	boolean isAutoPivotMiddleDone = false;
 	boolean isAutoPivotFloorDone = false;
 	//End quarantine
+	
+	private boolean isPulsateTimerReset = false;
 
 	private static Gripper instance = new Gripper();
 	public static Gripper getInstance()
@@ -277,6 +281,12 @@ public class Gripper implements Component
 		setPivoting(false);
 		pivotTalon.set(0.0);
 	}
+	
+	public void pulsateIntake()
+	{
+		leftIntakeTalon.set(-0.3);
+		rightIntakeTalon.set(-0.3);
+	}
 
 	public int getLeftIntakeEncoder()
 	{
@@ -340,15 +350,19 @@ public class Gripper implements Component
 		//Move pivot arm
 		if (!isPivoting())
 		{
+			//FIXME: The y button is used for both the pivot stages and the intake pulsing. Need to look at the logic to get rid of the y button for the pivot stages
+			
 			//Some alternative code to make it work like the elevator
-
+			
+			/*
 			if (yButton)
 			{
 				targetRange = currentRange.higherNeighbor().range();
 				setPivoting(true);
 				currentDirection = Constants.Direction.Up;
 			}
-			else if (aButton)
+			*/
+			if (aButton)
 			{
 				if(autoFloor())
 				{
@@ -375,6 +389,8 @@ public class Gripper implements Component
 				if (yButton)
 				{
 					targetRange = currentRange.higherNeighbor.range();
+					
+					
 				}
 				else if (aButton)
 				{
@@ -433,9 +449,34 @@ public class Gripper implements Component
 		{
 			ejectDrop();
 		}
+		else if (yButton)
+		{
+			if(!isPulsateTimerReset)
+			{
+				pulsateTimer.stop();
+				pulsateTimer.reset();
+				pulsateTimer.start();
+				
+				isPulsateTimerReset = true;
+			}
+			if(pulsateTimer.get() < 0.1 )
+			{
+				pulsateIntake();
+			}
+			else
+			{
+				intakeOff();
+				
+				if(pulsateTimer.get() > 0.35)
+				{
+					isPulsateTimerReset = false;
+				}
+			}
+		}
 		else
 		{
 			intakeOff();
+			isPulsateTimerReset = false;
 		}
 	}
 
