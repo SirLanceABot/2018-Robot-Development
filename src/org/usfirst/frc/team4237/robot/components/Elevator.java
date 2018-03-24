@@ -41,7 +41,7 @@ public class Elevator implements Component
 	private Constants.InitRange autoTargetRange = Constants.InitRange.error;
 
 	private boolean limitsEnabled = true;
-	
+
 	private int currentTestKeyPosition = 0;
 
 	//Joystick buttons
@@ -49,7 +49,7 @@ public class Elevator implements Component
 	private boolean rightBumper;
 	private boolean leftStickButton;
 	private boolean aButton;
-	
+
 	private double leftYAxis;
 
 	private static Elevator instance = new Elevator();
@@ -99,12 +99,12 @@ public class Elevator implements Component
 	{
 		masterTalonSRX.set(-1.0);
 	}
-	
+
 	public void overrideRaise()
 	{
 		masterTalonSRX.set(0.5);
 	}
-	
+
 	public void overrideLower()
 	{
 		masterTalonSRX.set(-0.5);
@@ -133,7 +133,7 @@ public class Elevator implements Component
 		rightBumper = xbox.getRawButton(Xbox.Constants.RIGHT_BUMPER);
 		leftBumper = xbox.getRawButton(Xbox.Constants.LEFT_BUMPER);
 		leftStickButton = xbox.getRawButton(Xbox.Constants.LEFT_STICK_BUTTON);
-		
+
 		leftYAxis = xbox.getRawAxis(Xbox.Constants.LEFT_STICK_Y_AXIS);
 
 		if (!isMoving())
@@ -152,7 +152,27 @@ public class Elevator implements Component
 			}
 			else if(Math.abs(leftYAxis) > 0.2)	
 			{
-				masterTalonSRX.set(-leftYAxis);
+				if (leftStickButton) //If left stick button is pressed
+				{
+					if (limitsEnabled) //and if the talon limits are enabled
+					{
+						limitsEnabled = false; //Set limits to disabled
+
+						masterTalonSRX.configForwardSoftLimitEnable(limitsEnabled, 0); //Actually disable limits
+						masterTalonSRX.configReverseSoftLimitEnable(limitsEnabled, 0);
+					}
+					masterTalonSRX.set(-leftYAxis * Constants.OVERRIDE_SPEED_SCALE); //Set elevator motor to value of joystick * scaling constant
+				}
+				else if (!leftStickButton && !limitsEnabled) //otherwise, if the left stick button is not pressed and the limits are not enabled
+				{
+					limitsEnabled = true; //Set limits to enabled
+					masterTalonSRX.configForwardSoftLimitEnable(limitsEnabled, 0); //Actually enable limits
+					masterTalonSRX.configReverseSoftLimitEnable(limitsEnabled, 0); 
+				}
+				else //if left stick button is not pressed AND limits are not enabled
+				{
+					masterTalonSRX.set(-leftYAxis); //Set elevator motor to value of joystick
+				}
 			}
 			else
 			{
@@ -206,27 +226,6 @@ public class Elevator implements Component
 			{
 				lower();
 				//System.out.println("Elevator lowering");
-			}
-			
-			//Override in case potentiometer breaks
-			if (leftStickButton && leftYAxis > 0.2)
-			{
-				if (limitsEnabled)
-				{
-					limitsEnabled = false;
-
-					masterTalonSRX.configForwardSoftLimitEnable(limitsEnabled, 0);
-					masterTalonSRX.configReverseSoftLimitEnable(limitsEnabled, 0);
-					
-				}
-				masterTalonSRX.set(-leftYAxis * Constants.OVERRIDE_SPEED_SCALE);
-			}
-			else if (!limitsEnabled)
-			{
-				limitsEnabled = true;
-				
-				masterTalonSRX.configForwardSoftLimitEnable(limitsEnabled, 0);
-				masterTalonSRX.configReverseSoftLimitEnable(limitsEnabled, 0);
 			}
 		}
 	}
@@ -564,7 +563,7 @@ public class Elevator implements Component
 		public static final int BOTTOM_SCALE = 426;
 		public static final int TOP_SCALE = 605;
 		public static final int ABSOLUTE_TOP = 620;
-		
+
 		public static final double OVERRIDE_SPEED_SCALE = 0.7;
 
 	}
