@@ -36,6 +36,8 @@ public class Robot extends IterativeRobot
 	@Override
 	public void robotInit()
 	{
+		drivetrain.resetNavX();
+		
 		drivetrain.calibrateNavX();
 		drivetrain.calibrateColorSensor();
 

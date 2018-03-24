@@ -374,6 +374,7 @@ public class Drivetrain extends MecanumDrive implements Component
 	public void resetEncoder()
 	{
 		frontRightMasterMotor.setSelectedSensorPosition(0, 0, 0);
+		Timer.delay(0.06);
 	}
 
 	public void printColors()
@@ -396,7 +397,6 @@ public class Drivetrain extends MecanumDrive implements Component
 		return servo.get();
 	}
 
-
 	public void calibrateNavX()
 	{	
 		System.out.println("Calibrating NavX...");
@@ -408,7 +408,7 @@ public class Drivetrain extends MecanumDrive implements Component
 		}
 		if (startUpTimer.get() >= 5.0)
 		{
-			System.out.println("[Drivetrain] Error while calibrating NavX!");
+			System.out.println("ERROR! [Drivetrain] Error while calibrating NavX!");
 		}
 		System.out.println("Calibration done.");
 	}

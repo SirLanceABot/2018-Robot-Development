@@ -76,7 +76,6 @@ public class Gripper implements Component
 		leftIntakeTalon.configPeakCurrentLimit(Constants.INTAKE_40_AMP_TRIGGER, Constants.INTAKE_40_AMP_TIME);
 		leftIntakeTalon.configOpenloopRamp(Constants.INTAKE_RAMP_TIME, Constants.INTAKE_RAMP_RATE_TIMEOUT);
 
-
 		rightIntakeTalon.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder, 0, 0);
 		rightIntakeTalon.setSensorPhase(true);
 		rightIntakeTalon.configForwardSoftLimitEnable(false, 0);
@@ -312,7 +311,7 @@ public class Gripper implements Component
 	{
 
 		updateCurrentRange();
-		
+
 		if (DriverStation.getInstance().isOperatorControl() && DriverStation.getInstance().isEnabled())
 		{
 			System.out.println();
@@ -346,7 +345,7 @@ public class Gripper implements Component
 		double leftTrigger = xbox.getRawAxis(Xbox.Constants.LEFT_TRIGGER_AXIS);			//Intake
 
 		System.out.println(isPivoting);
-		
+
 		//Move pivot arm
 		if (!isPivoting())
 		{
@@ -439,11 +438,14 @@ public class Gripper implements Component
 		}
 		else if (Math.abs(leftTrigger) > 0.3)
 		{
-			intake();
-		}
-		else if (Math.abs(leftTrigger) > 0.3 && bButton)
-		{
-			intakeRotateCubeLeft();
+			if (bButton)
+			{
+				intakeRotateCubeLeft();
+			}
+			else
+			{
+				intake();
+			}
 		}
 		else if (xButton)
 		{
@@ -485,31 +487,31 @@ public class Gripper implements Component
 	 */
 	public void autonomous()
 	{
-//		if ( (currentValue >= targetRange[0] && currentDirection == Constants.Direction.Up) || 
-//				(currentValue < targetRange[1] && currentDirection == Constants.Direction.Down))
-//		{
-//			//System.out.println("Pivot Arm in target range");
-//			pivotOff();	
-//		}
-//		else if (currentValue < targetRange[0] && currentDirection == Constants.Direction.Up)
-//		{
-//			//System.out.println("Pivot Arm Raising");
-//			raise();				
-//		}
-//		else if (currentValue > targetRange[1] && currentDirection == Constants.Direction.Down)
-//		{
-//			lower();
-//			//System.out.println("Pivot Arm Lowering");
-//		}
-//
-//		if(isAutoEjecting())
-//		{
-//			autoDrop();
-//		}
-//		else
-//		{
-//			intakeOff();
-//		}
+		//		if ( (currentValue >= targetRange[0] && currentDirection == Constants.Direction.Up) || 
+		//				(currentValue < targetRange[1] && currentDirection == Constants.Direction.Down))
+		//		{
+		//			//System.out.println("Pivot Arm in target range");
+		//			pivotOff();	
+		//		}
+		//		else if (currentValue < targetRange[0] && currentDirection == Constants.Direction.Up)
+		//		{
+		//			//System.out.println("Pivot Arm Raising");
+		//			raise();				
+		//		}
+		//		else if (currentValue > targetRange[1] && currentDirection == Constants.Direction.Down)
+		//		{
+		//			lower();
+		//			//System.out.println("Pivot Arm Lowering");
+		//		}
+		//
+		//		if(isAutoEjecting())
+		//		{
+		//			autoDrop();
+		//		}
+		//		else
+		//		{
+		//			intakeOff();
+		//		}
 	}
 
 	public void test()
@@ -694,7 +696,7 @@ public class Gripper implements Component
 	{
 		rightIntakeTalon.setSelectedSensorPosition(0, 0, 0);		// set encoder position
 	}
-	
+
 	public boolean autoHorizontal()
 	{
 		boolean inHorizontalRange = false;
@@ -712,10 +714,10 @@ public class Gripper implements Component
 			inHorizontalRange = true;
 			pivotOff();
 		}
-		
+
 		return inHorizontalRange;
 	}
-	
+
 	public boolean autoMiddle()
 	{
 		boolean inMiddleRange = false;
@@ -733,10 +735,10 @@ public class Gripper implements Component
 			inMiddleRange = true;
 			pivotOff();
 		}
-		
+
 		return inMiddleRange;
 	}
-	
+
 	public boolean autoFloor()
 	{
 		boolean inFloorRange = false;
@@ -750,7 +752,7 @@ public class Gripper implements Component
 			inFloorRange = true;
 			pivotOff();
 		}
-		
+
 		return inFloorRange;
 	}
 
