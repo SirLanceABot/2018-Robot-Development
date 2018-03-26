@@ -10,6 +10,7 @@ public class AutoSelect4237Data
 	private boolean holdSecondCube = false;
 	private boolean placeSecondCubeInSwitch = false;
 	private boolean placeSecondCubeInScale = false;
+	private boolean holdCubeForOppositeScale = false;
 	
 	public String getSelectedPosition()
 	{
@@ -51,4 +52,8 @@ public class AutoSelect4237Data
 		return this.placeSecondCubeInScale;
 	}
 	
+	public boolean getHoldCubeForOppositeScale()
+	{
+		return this.holdCubeForOppositeScale;
+	}
 }

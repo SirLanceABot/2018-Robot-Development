@@ -53,6 +53,8 @@ class GameFrame2018(QtGui.QFrame):
         self.checkBoxFrame = QtGui.QFrame()
         self.checkBoxVBox = QtGui.QVBoxLayout()
         
+        self.holdCubeForOppositeScaleCheckBox = QtGui.QCheckBox("Hold Cube for Opposite Scale")
+        
         self.grabSecondCubeCheckBox = QtGui.QCheckBox("Grab Second Cube")
         
         self.holdSecondCubeRadioButton = QtGui.QRadioButton("Hold second cube")
@@ -65,6 +67,7 @@ class GameFrame2018(QtGui.QFrame):
         
         self.grabSecondCubeCheckBox.clicked.connect(lambda: self.synchronizeCheckBoxes())
         
+        self.checkBoxVBox.addWidget(self.holdCubeForOppositeScaleCheckBox)
         self.checkBoxVBox.addWidget(self.grabSecondCubeCheckBox)
         self.checkBoxVBox.addWidget(self.holdSecondCubeRadioButton)
         self.checkBoxVBox.addWidget(self.placeSecondCubeInSwitchRadioButton)
@@ -156,4 +159,5 @@ class GameFrame2018(QtGui.QFrame):
         data["holdSecondCube"] = self.holdSecondCubeRadioButton.isChecked()
         data["placeSecondCubeInSwitch"] = self.placeSecondCubeInSwitchRadioButton.isChecked()
         data["placeSecondCubeInScale"] = self.placeSecondCubeInScaleRadioButton.isChecked()
+        data["holdCubeForOppositeScale"] = self.holdCubeForOppositeScaleCheckBox.isChecked()
         return data
