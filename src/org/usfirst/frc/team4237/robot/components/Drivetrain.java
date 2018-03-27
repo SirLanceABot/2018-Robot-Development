@@ -211,18 +211,23 @@ public class Drivetrain extends MecanumDrive implements Component
 	public boolean driveDistance(int inches, double maxSpeed, int heading, int stoppingDistance)
 	{
 		boolean isDoneDriving = false;
-		double x = Math.abs(getEncInches());	
+		double x = Math.abs(getEncInches());
 		double startingSpeed = 0.3;
 		double stoppingSpeed = 0.175;
-		int startingDistance = 36;
-	//	int stoppingDistance = 48;
+		int startingDistance = 12;
+		int direction = 1;
 		double rotate = (navX.getYaw() - heading) / 50;
 
+		if(maxSpeed < 0)
+		{
+			direction = -1;
+		}
+		
 		if (x <= inches)
 		{
 			if(x <= startingDistance)
 			{
-				driveCartesian(0, ((maxSpeed - startingSpeed) / startingDistance) * x + startingSpeed, -rotate);
+				driveCartesian(0, ((maxSpeed - (startingSpeed * direction)) / startingDistance) * x + (startingSpeed * direction), -rotate);
 			}
 			else if(x >= startingDistance && x <= inches - stoppingDistance)
 			{
@@ -230,7 +235,7 @@ public class Drivetrain extends MecanumDrive implements Component
 			}
 			else
 			{
-				driveCartesian(0, stoppingSpeed, -rotate);
+				driveCartesian(0, stoppingSpeed * direction, -rotate);
 			}
 		}
 		else
