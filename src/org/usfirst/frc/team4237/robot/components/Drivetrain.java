@@ -266,7 +266,7 @@ public class Drivetrain extends MecanumDrive implements Component
 
 		if(x < inches)
 		{
-			driveCartesian(strafeSpeed, -forwardSpeed, rotate);
+			driveCartesian(strafeSpeed, forwardSpeed, rotate);
 		}
 		else
 		{

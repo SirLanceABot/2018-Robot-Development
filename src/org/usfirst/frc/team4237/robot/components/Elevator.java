@@ -5,6 +5,7 @@ import java.util.HashMap;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Timer;
 
 import org.usfirst.frc.team4237.robot.components.Gripper.Constants;
@@ -27,6 +28,9 @@ public class Elevator implements Component
 
 	private WPI_TalonSRX masterTalonSRX = new WPI_TalonSRX(Constants.MASTER_MOTOR_PORT); 
 	private WPI_TalonSRX slaveTalonSRX = new WPI_TalonSRX(Constants.SLAVE_MOTOR_PORT);
+	
+	private Servo climberReleaseServo = new Servo(Constants.CLIMBER_RELEASE_SERVO_PORT);
+	private Timer climberReleaseTimer = new Timer();
 
 	private HashMap<Integer, WPI_TalonSRX> talonSRXHashMap = new HashMap<Integer, WPI_TalonSRX>();
 
@@ -49,6 +53,8 @@ public class Elevator implements Component
 	private boolean rightBumper;
 	private boolean leftStickButton;
 	private boolean aButton;
+	private boolean startButtonHeld;
+	private boolean startButtonPressed;
 
 	private boolean isFloorTarget = false;
 
@@ -84,6 +90,8 @@ public class Elevator implements Component
 
 		talonSRXHashMap.put(Constants.MASTER_MOTOR_PORT, masterTalonSRX);
 		talonSRXHashMap.put(Constants.SLAVE_MOTOR_PORT, slaveTalonSRX);
+		
+		climberReleaseServo.setBounds(2.4, 0.005, 1.5, 0.005, 0.6);
 	}
 
 	/**
@@ -139,6 +147,9 @@ public class Elevator implements Component
 		aButton = xbox.getRawButton(Xbox.Constants.A_BUTTON);
 
 		leftYAxis = xbox.getRawAxis(Xbox.Constants.LEFT_STICK_Y_AXIS);
+		
+		startButtonHeld = xbox.getRawButton(Xbox.Constants.START_BUTTON);
+		startButtonPressed = xbox.getRawButtonPressed(Xbox.Constants.START_BUTTON);
 		
 		updateCurrentRange();
 
@@ -200,6 +211,20 @@ public class Elevator implements Component
 		{
 			stopMoving();
 			//				xbox.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
+		}
+		
+		if(startButtonHeld)
+		{
+			if(startButtonPressed)
+			{
+				climberReleaseTimer.stop();
+				climberReleaseTimer.reset();
+				climberReleaseTimer.start();
+			}
+			else if(climberReleaseTimer.get() > 1.0)
+			{
+				climberReleased();
+			}
 		}
 		//		}
 
@@ -463,6 +488,16 @@ public class Elevator implements Component
 
 		return inScaleRange;
 	}
+	
+	public void climberLatched()
+	{
+		climberReleaseServo.set(Constants.SERVO_LATCHED_POSITION);
+	}
+	
+	public void climberReleased()
+	{
+		climberReleaseServo.set(Constants.SERVO_RELEASED_POSITION);
+	}
 
 	public static class Constants
 	{		
@@ -574,6 +609,7 @@ public class Elevator implements Component
 		public static final int SLAVE_MOTOR_PORT = 11;
 		public static final int STRING_POT_PORT = 3;
 		public static final int OTHER_STRING_POT_PORT = 7;
+		public static final int CLIMBER_RELEASE_SERVO_PORT = 1;
 
 		public static final double STRING_POT_SCALE = 1.0;
 
@@ -585,6 +621,9 @@ public class Elevator implements Component
 		public static final int BOTTOM_SCALE = 426;
 		public static final int TOP_SCALE = 605;
 		public static final int ABSOLUTE_TOP = 620;
+		
+		public static final double SERVO_LATCHED_POSITION = 0.27;
+		public static final double SERVO_RELEASED_POSITION = 0.736;
 
 		public static final double OVERRIDE_SPEED_SCALE = 0.7;
 
