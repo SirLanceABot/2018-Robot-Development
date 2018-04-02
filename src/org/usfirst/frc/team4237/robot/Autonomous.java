@@ -1764,6 +1764,9 @@ public class Autonomous
 			kSpin2,             //Used for collecting second cube
 
 			kDrive3ToLine     //Used for scale on opposite side without color sensor
+			
+			
+			//FIXME: Michael would like an auto mode for end of scale
 		}
 
 		public static final int GREEN_CAMERA_PORT = 10;
