@@ -55,7 +55,9 @@ public class Gripper implements Component
 	boolean isAutoPivotMiddleDone = false;
 	boolean isAutoPivotFloorDone = false;
 	//End quarantine
-	
+
+	private boolean isFloorTarget = false; 	//Use with a button auto floor 
+
 	private boolean isPulsateTimerReset = false;
 
 	private static Gripper instance = new Gripper();
@@ -280,7 +282,7 @@ public class Gripper implements Component
 		setPivoting(false);
 		pivotTalon.set(0.0);
 	}
-	
+
 	public void pulsateIntake()
 	{
 		leftIntakeTalon.set(-0.3);
@@ -307,25 +309,25 @@ public class Gripper implements Component
 		pivotTalon.configForwardSoftLimitThreshold(Constants.TELEOP_MAX, 0);
 	}
 
-	public void run()
-	{
-
-		updateCurrentRange();
-
-		if (DriverStation.getInstance().isOperatorControl() && DriverStation.getInstance().isEnabled())
-		{
-			System.out.println();
-			teleop();
-		}
-		else if (DriverStation.getInstance().isAutonomous() && DriverStation.getInstance().isEnabled())
-		{
-			autonomous();
-		}
-		else if (DriverStation.getInstance().isTest() && DriverStation.getInstance().isEnabled())
-		{
-			test();
-		}
-	}
+	//	public void run()
+	//	{
+	//
+	//		updateCurrentRange();
+	//
+	//		if (DriverStation.getInstance().isOperatorControl() && DriverStation.getInstance().isEnabled())
+	//		{
+	//			System.out.println();
+	//			teleop();
+	//		}
+	//		else if (DriverStation.getInstance().isAutonomous() && DriverStation.getInstance().isEnabled())
+	//		{
+	//			autonomous();
+	//		}
+	//		else if (DriverStation.getInstance().isTest() && DriverStation.getInstance().isEnabled())
+	//		{
+	//			test();
+	//		}
+	//	}
 
 	public void teleop()
 	{
@@ -334,8 +336,8 @@ public class Gripper implements Component
 		boolean bButton = xbox.getRawButton(Xbox.Constants.B_BUTTON);		//Spin Cube right
 		boolean yButton = xbox.getRawButton(Xbox.Constants.Y_BUTTON);		//Pivot up one level
 		boolean xButton = xbox.getRawButton(Xbox.Constants.X_BUTTON);		//Spin Cube left
-		boolean startButton = xbox.getRawButton(Xbox.Constants.START_BUTTON);
-		boolean backButton = xbox.getRawButton(Xbox.Constants.BACK_BUTTON);
+//		boolean startButton = xbox.getRawButton(Xbox.Constants.START_BUTTON);
+//		boolean backButton = xbox.getRawButton(Xbox.Constants.BACK_BUTTON);
 
 		double rightYAxis = xbox.getRawAxis(Xbox.Constants.RIGHT_STICK_Y_AXIS);					//Free moving pivot
 
@@ -344,92 +346,100 @@ public class Gripper implements Component
 		double rightTrigger = xbox.getRawAxis(Xbox.Constants.RIGHT_TRIGGER_AXIS);		//Eject
 		double leftTrigger = xbox.getRawAxis(Xbox.Constants.LEFT_TRIGGER_AXIS);			//Intake
 
-		System.out.println(isPivoting);
+
+		updateCurrentRange();
 
 		//Move pivot arm
-		if (!isPivoting())
-		{
-			//FIXME: The y button is used for both the pivot stages and the intake pulsing. Need to look at the logic to get rid of the y button for the pivot stages
-			
-			//Some alternative code to make it work like the elevator
-			
-			/*
+		//		if (!isPivoting())
+		//		{
+		
+		//Some alternative code to make it work like the elevator
+
+		/*
 			if (yButton)
 			{
 				targetRange = currentRange.higherNeighbor().range();
 				setPivoting(true);
 				currentDirection = Constants.Direction.Up;
 			}
-			*/
-			if (aButton)
+		 */
+		if (Math.abs(rightYAxis) > 0.2)
+		{
+			pivot(-rightYAxis);
+			isFloorTarget = false;
+		}
+		else if (aButton || isFloorTarget)
+		{
+			isFloorTarget = true;
+			if(currentValue > Constants.FLOOR + Constants.THRESHOLD)
 			{
-				if(autoFloor())
-				{
-					xbox.setRumble(GenericHID.RumbleType.kRightRumble, 1);
-				}
-			}
-			else if (Math.abs(rightYAxis) > 0.2)
-			{
-				pivot(-rightYAxis);
+				lower();
 			}
 			else
 			{
 				pivotOff();
-				xbox.setRumble(GenericHID.RumbleType.kRightRumble, 0);
+				isFloorTarget = false;
 			}
-
 		}
-		else if(isPivoting())
+		else
 		{
-
-			System.out.println("Is Pivoting");
-			if (currentDirection == Constants.Direction.Up)
-			{
-				if (yButton)
-				{
-					targetRange = currentRange.higherNeighbor.range();
-					
-					
-				}
-				else if (aButton)
-				{
-					currentDirection = Constants.Direction.None;
-					pivotOff();
-				}
-			}
-			else if (currentDirection == Constants.Direction.Down) 
-			{
-				if (aButton)
-				{
-					targetRange = currentRange.lowerNeighbor.range();
-				}
-				else if (yButton)
-				{
-					currentDirection = Constants.Direction.None;
-					pivotOff();
-				}
-			}
-
-
-			if ( (currentValue >= targetRange[0] && currentDirection == Constants.Direction.Up) || 
-					(currentValue < targetRange[1] && currentDirection == Constants.Direction.Down))
-			{
-				System.out.println("In target range");
-				setPivoting(false);
-				currentDirection = Constants.Direction.None;
-				pivotOff();
-			}
-			else if (currentDirection == Constants.Direction.Up)
-			{
-				System.out.println("Raising");
-				raise();
-			}
-			else if (currentDirection == Constants.Direction.Down)
-			{
-				lower();
-				System.out.println("Lowering");
-			}
+			pivotOff();
 		}
+
+
+
+		//		}
+		//		else if(isPivoting())
+		//		{
+		//
+		//			System.out.println("Is Pivoting");
+		//			if (currentDirection == Constants.Direction.Up)
+		//			{
+		//				if (yButton)
+		//				{
+		//					targetRange = currentRange.higherNeighbor.range();
+		//					
+		//					
+		//				}
+		//				else if (aButton)
+		//				{
+		//					currentDirection = Constants.Direction.None;
+		//					pivotOff();
+		//				}
+		//			}
+		//			else if (currentDirection == Constants.Direction.Down) 
+		//			{
+		//				if (aButton)
+		//				{
+		//					targetRange = currentRange.lowerNeighbor.range();
+		//				}
+		//				else if (yButton)
+		//				{
+		//					currentDirection = Constants.Direction.None;
+		//					pivotOff();
+		//				}
+		//			}
+		//
+		//
+		//			if ( (currentValue >= targetRange[0] && currentDirection == Constants.Direction.Up) || 
+		//					(currentValue < targetRange[1] && currentDirection == Constants.Direction.Down))
+		//			{
+		//				System.out.println("In target range");
+		//				setPivoting(false);
+		//				currentDirection = Constants.Direction.None;
+		//				pivotOff();
+		//			}
+		//			else if (currentDirection == Constants.Direction.Up)
+		//			{
+		//				System.out.println("Raising");
+		//				raise();
+		//			}
+		//			else if (currentDirection == Constants.Direction.Down)
+		//			{
+		//				lower();
+		//				System.out.println("Lowering");
+		//			}
+		//		}
 
 		//Intake
 		if (Math.abs(rightTrigger) > 0.3)
@@ -458,7 +468,7 @@ public class Gripper implements Component
 				pulsateTimer.stop();
 				pulsateTimer.reset();
 				pulsateTimer.start();
-				
+
 				isPulsateTimerReset = true;
 			}
 			if(pulsateTimer.get() < 0.1 )
@@ -468,7 +478,7 @@ public class Gripper implements Component
 			else
 			{
 				intakeOff();
-				
+
 				if(pulsateTimer.get() > 0.35)
 				{
 					isPulsateTimerReset = false;

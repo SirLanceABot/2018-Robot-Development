@@ -5,6 +5,7 @@ import java.util.HashMap;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.Timer;
 
 import org.usfirst.frc.team4237.robot.components.Gripper.Constants;
@@ -27,6 +28,9 @@ public class Elevator implements Component
 
 	private WPI_TalonSRX masterTalonSRX = new WPI_TalonSRX(Constants.MASTER_MOTOR_PORT); 
 	private WPI_TalonSRX slaveTalonSRX = new WPI_TalonSRX(Constants.SLAVE_MOTOR_PORT);
+	
+	private Servo climberReleaseServo = new Servo(Constants.CLIMBER_RELEASE_SERVO_PORT);
+	private Timer climberReleaseTimer = new Timer();
 
 	private HashMap<Integer, WPI_TalonSRX> talonSRXHashMap = new HashMap<Integer, WPI_TalonSRX>();
 
@@ -49,6 +53,10 @@ public class Elevator implements Component
 	private boolean rightBumper;
 	private boolean leftStickButton;
 	private boolean aButton;
+	private boolean startButtonHeld;
+	private boolean startButtonPressed;
+
+	private boolean isFloorTarget = false;
 
 	private double leftYAxis;
 
@@ -82,6 +90,8 @@ public class Elevator implements Component
 
 		talonSRXHashMap.put(Constants.MASTER_MOTOR_PORT, masterTalonSRX);
 		talonSRXHashMap.put(Constants.SLAVE_MOTOR_PORT, slaveTalonSRX);
+		
+		climberReleaseServo.setBounds(2.4, 0.005, 1.5, 0.005, 0.6);
 	}
 
 	/**
@@ -111,123 +121,160 @@ public class Elevator implements Component
 	}
 
 
-	public void run()
-	{
-		updateCurrentRange();
-		if (DriverStation.getInstance().isOperatorControl() && DriverStation.getInstance().isEnabled())
-		{
-			teleop();
-		}
-		else if (DriverStation.getInstance().isAutonomous() && DriverStation.getInstance().isEnabled())
-		{
-			autonomous();
-		}
-		else if (DriverStation.getInstance().isTest() && DriverStation.getInstance().isEnabled())
-		{
-			test();
-		}
-	}
+//	public void run()
+//	{
+//		updateCurrentRange();
+//		if (DriverStation.getInstance().isOperatorControl() && DriverStation.getInstance().isEnabled())
+//		{
+//			teleop();
+//		}
+//		else if (DriverStation.getInstance().isAutonomous() && DriverStation.getInstance().isEnabled())
+//		{
+//			autonomous();
+//		}
+//		else if (DriverStation.getInstance().isTest() && DriverStation.getInstance().isEnabled())
+//		{
+//			test();
+//		}
+//	}
 
 	public void teleop()
 	{
-		rightBumper = xbox.getRawButton(Xbox.Constants.RIGHT_BUMPER);
-		leftBumper = xbox.getRawButton(Xbox.Constants.LEFT_BUMPER);
+//		rightBumper = xbox.getRawButton(Xbox.Constants.RIGHT_BUMPER);
+//		leftBumper = xbox.getRawButton(Xbox.Constants.LEFT_BUMPER);
 		leftStickButton = xbox.getRawButton(Xbox.Constants.LEFT_STICK_BUTTON);
 
+		aButton = xbox.getRawButton(Xbox.Constants.A_BUTTON);
+
 		leftYAxis = xbox.getRawAxis(Xbox.Constants.LEFT_STICK_Y_AXIS);
+		
+		startButtonHeld = xbox.getRawButton(Xbox.Constants.START_BUTTON);
+		startButtonPressed = xbox.getRawButtonPressed(Xbox.Constants.START_BUTTON);
+		
+		updateCurrentRange();
 
-		if (!isMoving())
+		//		if (!isMoving())
+		//		{
+		//			if (rightBumper)
+		//			{
+		//				targetRange = currentRange.higherNeighbor().range();
+		//				isMoving = true;
+		//				currentDirection = Constants.Direction.Up;
+		//			}
+		//			else if (leftBumper)
+		//			{
+		//				targetRange = currentRange.lowerNeighbor().range();
+		//				isMoving = true;
+		//				currentDirection = Constants.Direction.Down;
+		//			}
+		//			else 
+		if(Math.abs(leftYAxis) > 0.2)	
 		{
-			if (rightBumper)
+			if (leftStickButton) //If left stick button is pressed
 			{
-				targetRange = currentRange.higherNeighbor().range();
-				isMoving = true;
-				currentDirection = Constants.Direction.Up;
-			}
-			else if (leftBumper)
-			{
-				targetRange = currentRange.lowerNeighbor().range();
-				isMoving = true;
-				currentDirection = Constants.Direction.Down;
-			}
-			else if(Math.abs(leftYAxis) > 0.2)	
-			{
-				if (leftStickButton) //If left stick button is pressed
+				if (limitsEnabled) //and if the talon limits are enabled
 				{
-					if (limitsEnabled) //and if the talon limits are enabled
-					{
-						limitsEnabled = false; //Set limits to disabled
+					limitsEnabled = false; //Set limits to disabled
 
-						masterTalonSRX.configForwardSoftLimitEnable(limitsEnabled, 0); //Actually disable limits
-						masterTalonSRX.configReverseSoftLimitEnable(limitsEnabled, 0);
-					}
-					masterTalonSRX.set(-leftYAxis * Constants.OVERRIDE_SPEED_SCALE); //Set elevator motor to value of joystick * scaling constant
+					masterTalonSRX.configForwardSoftLimitEnable(limitsEnabled, 0); //Actually disable limits
+					masterTalonSRX.configReverseSoftLimitEnable(limitsEnabled, 0);
 				}
-				else if (!leftStickButton && !limitsEnabled) //otherwise, if the left stick button is not pressed and the limits are not enabled
-				{
-					limitsEnabled = true; //Set limits to enabled
-					masterTalonSRX.configForwardSoftLimitEnable(limitsEnabled, 0); //Actually enable limits
-					masterTalonSRX.configReverseSoftLimitEnable(limitsEnabled, 0); 
-				}
-				else //if left stick button is not pressed AND limits are not enabled
-				{
-					masterTalonSRX.set(-leftYAxis); //Set elevator motor to value of joystick
-				}
+				masterTalonSRX.set(-leftYAxis * Constants.OVERRIDE_SPEED_SCALE); //Set elevator motor to value of joystick * scaling constant
+			}
+			else if (!leftStickButton && !limitsEnabled) //otherwise, if the left stick button is not pressed and the limits are not enabled
+			{
+				limitsEnabled = true; //Set limits to enabled
+				masterTalonSRX.configForwardSoftLimitEnable(limitsEnabled, 0); //Actually enable limits
+				masterTalonSRX.configReverseSoftLimitEnable(limitsEnabled, 0); 
+			}
+			else //if left stick button is not pressed AND limits are not enabled
+			{
+				masterTalonSRX.set(-leftYAxis); //Set elevator motor to value of joystick
+			}
+
+			isFloorTarget = false;
+		}
+		else if(aButton || isFloorTarget)
+		{
+			isFloorTarget = true;
+			if(currentValue > Constants.FLOOR + Constants.THRESHOLD)
+			{
+				lower();
 			}
 			else
 			{
+				isFloorTarget = false;
 				stopMoving();
-				xbox.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
 			}
 		}
-
-		else if(isMoving())
+		else
 		{
-			System.out.println("Is Moving");
-			if (currentDirection == Constants.Direction.Up)
+			stopMoving();
+			//				xbox.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
+		}
+		
+		if(startButtonHeld)
+		{
+			if(startButtonPressed)
 			{
-				if (rightBumper)
-				{
-					targetRange = currentRange.higherNeighbor.range();
-				}
-				else if (leftBumper)
-				{
-					currentDirection = Constants.Direction.None;
-					stopMoving();
-				}
+				climberReleaseTimer.stop();
+				climberReleaseTimer.reset();
+				climberReleaseTimer.start();
 			}
-			else if (currentDirection == Constants.Direction.Down) 
+			else if(climberReleaseTimer.get() > 1.0)
 			{
-				if (leftBumper)
-				{
-					targetRange = currentRange.lowerNeighbor.range();
-				}
-				else if (rightBumper)
-				{
-					currentDirection = Constants.Direction.None;
-					stopMoving();
-				}
-			}
-
-			if  ( (currentValue >= targetRange[0] && currentDirection == Constants.Direction.Up) || 
-					(currentValue < targetRange[1] && currentDirection == Constants.Direction.Down))
-			{
-				//System.out.println("Elevator in target range");
-				isMoving = false;
-				currentDirection = Constants.Direction.None;
-				stopMoving();
-			}
-			else if (currentDirection == Constants.Direction.Up)
-			{
-				//System.out.println("Elevator raising");
-				raise();
-			}
-			else if (currentDirection == Constants.Direction.Down)
-			{
-				lower();
-				//System.out.println("Elevator lowering");
+				climberReleased();
 			}
 		}
+		//		}
+
+		//		else if(isMoving())
+		//		{
+		//			System.out.println("Is Moving");
+		//			if (currentDirection == Constants.Direction.Up)
+		//			{
+		//				if (rightBumper)
+		//				{
+		//					targetRange = currentRange.higherNeighbor.range();
+		//				}
+		//				else if (leftBumper)
+		//				{
+		//					currentDirection = Constants.Direction.None;
+		//					stopMoving();
+		//				}
+		//			}
+		//			else if (currentDirection == Constants.Direction.Down) 
+		//			{
+		//				if (leftBumper)
+		//				{
+		//					targetRange = currentRange.lowerNeighbor.range();
+		//				}
+		//				else if (rightBumper)
+		//				{
+		//					currentDirection = Constants.Direction.None;
+		//					stopMoving();
+		//				}
+		//			}
+		//
+		//			if  ( (currentValue >= targetRange[0] && currentDirection == Constants.Direction.Up) || 
+		//					(currentValue < targetRange[1] && currentDirection == Constants.Direction.Down))
+		//			{
+		//				//System.out.println("Elevator in target range");
+		//				isMoving = false;
+		//				currentDirection = Constants.Direction.None;
+		//				stopMoving();
+		//			}
+		//			else if (currentDirection == Constants.Direction.Up)
+		//			{
+		//				//System.out.println("Elevator raising");
+		//				raise();
+		//			}
+		//			else if (currentDirection == Constants.Direction.Down)
+		//			{
+		//				lower();
+		//				//System.out.println("Elevator lowering");
+		//			}
+		//		}
 	}
 
 	public void autonomous()
@@ -395,7 +442,7 @@ public class Elevator implements Component
 	{
 		boolean inFloorRange = false;
 		updateCurrentRange();
-		if(currentValue < Constants.FLOOR + Constants.THRESHOLD)
+		if(currentValue > Constants.FLOOR + Constants.THRESHOLD)
 		{
 			lower();
 		}
@@ -440,6 +487,16 @@ public class Elevator implements Component
 		}
 
 		return inScaleRange;
+	}
+	
+	public void climberLatched()
+	{
+		climberReleaseServo.set(Constants.SERVO_LATCHED_POSITION);
+	}
+	
+	public void climberReleased()
+	{
+		climberReleaseServo.set(Constants.SERVO_RELEASED_POSITION);
 	}
 
 	public static class Constants
@@ -552,6 +609,7 @@ public class Elevator implements Component
 		public static final int SLAVE_MOTOR_PORT = 11;
 		public static final int STRING_POT_PORT = 3;
 		public static final int OTHER_STRING_POT_PORT = 7;
+		public static final int CLIMBER_RELEASE_SERVO_PORT = 1;
 
 		public static final double STRING_POT_SCALE = 1.0;
 
@@ -563,6 +621,9 @@ public class Elevator implements Component
 		public static final int BOTTOM_SCALE = 426;
 		public static final int TOP_SCALE = 605;
 		public static final int ABSOLUTE_TOP = 620;
+		
+		public static final double SERVO_LATCHED_POSITION = 0.27;
+		public static final double SERVO_RELEASED_POSITION = 0.736;
 
 		public static final double OVERRIDE_SPEED_SCALE = 0.7;
 
