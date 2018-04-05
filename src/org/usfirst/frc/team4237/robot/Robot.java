@@ -83,7 +83,7 @@ public class Robot extends IterativeRobot
 		//camera.setExposureManual(0);
 		System.out.println("Entering autonomous");
 		gripper.setAutoLimits();
-		elevator.climberLatched();
+		elevator.retractClimber();
 		autonomous.init();
 	}
 

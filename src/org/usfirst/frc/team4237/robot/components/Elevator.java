@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 
 import org.usfirst.frc.team4237.robot.components.Gripper.Constants;
@@ -28,9 +29,10 @@ public class Elevator implements Component
 
 	private WPI_TalonSRX masterTalonSRX = new WPI_TalonSRX(Constants.MASTER_MOTOR_PORT); 
 	private WPI_TalonSRX slaveTalonSRX = new WPI_TalonSRX(Constants.SLAVE_MOTOR_PORT);
-	
-	private Servo climberReleaseServo = new Servo(Constants.CLIMBER_RELEASE_SERVO_PORT);
-	private Timer climberReleaseTimer = new Timer();
+
+	private Solenoid climberDeploySolenoid = new Solenoid(Constants.CLIMBER_DEPLOY_SOLENOID_PORT);
+	private Timer climberDeployTimer = new Timer();
+	private Timer climberShutoffTimer = new Timer();
 
 	private HashMap<Integer, WPI_TalonSRX> talonSRXHashMap = new HashMap<Integer, WPI_TalonSRX>();
 
@@ -53,8 +55,9 @@ public class Elevator implements Component
 	private boolean rightBumper;
 	private boolean leftStickButton;
 	private boolean aButton;
-	private boolean startButtonHeld;
-	private boolean startButtonPressed;
+
+	private boolean startButton;
+	private boolean startButtonJustPressed;
 
 	private boolean isFloorTarget = false;
 
@@ -67,7 +70,6 @@ public class Elevator implements Component
 		return instance;
 	}
 
-
 	/**
 	 * Constructor for Elevator, called only
 	 * once by getInstance(). It initializes
@@ -77,7 +79,7 @@ public class Elevator implements Component
 	private Elevator()
 	{
 		masterTalonSRX.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.Analog, 0, 0);
-		//		masterTalonSRX.configSetParameter(ParamEnum.eFeedbackNotContinuous, 1, 0x00, 0x00, 0);
+		//masterTalonSRX.configSetParameter(ParamEnum.eFeedbackNotContinuous, 1, 0x00, 0x00, 0);
 		masterTalonSRX.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 20);
 		masterTalonSRX.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 20);
 
@@ -90,8 +92,14 @@ public class Elevator implements Component
 
 		talonSRXHashMap.put(Constants.MASTER_MOTOR_PORT, masterTalonSRX);
 		talonSRXHashMap.put(Constants.SLAVE_MOTOR_PORT, slaveTalonSRX);
+
+		climberDeployTimer.stop();
+		climberDeployTimer.reset();
+		climberDeployTimer.start();
 		
-		climberReleaseServo.setBounds(2.4, 0.005, 1.5, 0.005, 0.6);
+		climberShutoffTimer.stop();
+		climberShutoffTimer.reset();
+		
 	}
 
 	/**
@@ -121,36 +129,36 @@ public class Elevator implements Component
 	}
 
 
-//	public void run()
-//	{
-//		updateCurrentRange();
-//		if (DriverStation.getInstance().isOperatorControl() && DriverStation.getInstance().isEnabled())
-//		{
-//			teleop();
-//		}
-//		else if (DriverStation.getInstance().isAutonomous() && DriverStation.getInstance().isEnabled())
-//		{
-//			autonomous();
-//		}
-//		else if (DriverStation.getInstance().isTest() && DriverStation.getInstance().isEnabled())
-//		{
-//			test();
-//		}
-//	}
+	//	public void run()
+	//	{
+	//		updateCurrentRange();
+	//		if (DriverStation.getInstance().isOperatorControl() && DriverStation.getInstance().isEnabled())
+	//		{
+	//			teleop();
+	//		}
+	//		else if (DriverStation.getInstance().isAutonomous() && DriverStation.getInstance().isEnabled())
+	//		{
+	//			autonomous();
+	//		}
+	//		else if (DriverStation.getInstance().isTest() && DriverStation.getInstance().isEnabled())
+	//		{
+	//			test();
+	//		}
+	//	}
 
 	public void teleop()
 	{
-//		rightBumper = xbox.getRawButton(Xbox.Constants.RIGHT_BUMPER);
-//		leftBumper = xbox.getRawButton(Xbox.Constants.LEFT_BUMPER);
+		//		rightBumper = xbox.getRawButton(Xbox.Constants.RIGHT_BUMPER);
+		//		leftBumper = xbox.getRawButton(Xbox.Constants.LEFT_BUMPER);
 		leftStickButton = xbox.getRawButton(Xbox.Constants.LEFT_STICK_BUTTON);
 
 		aButton = xbox.getRawButton(Xbox.Constants.A_BUTTON);
 
 		leftYAxis = xbox.getRawAxis(Xbox.Constants.LEFT_STICK_Y_AXIS);
-		
-		startButtonHeld = xbox.getRawButton(Xbox.Constants.START_BUTTON);
-		startButtonPressed = xbox.getRawButtonPressed(Xbox.Constants.START_BUTTON);
-		
+
+		startButton = xbox.getRawButton(Xbox.Constants.START_BUTTON);
+		startButtonJustPressed = xbox.getRawButtonPressed(Xbox.Constants.START_BUTTON);
+
 		updateCurrentRange();
 
 		//		if (!isMoving())
@@ -210,24 +218,31 @@ public class Elevator implements Component
 		else
 		{
 			stopMoving();
-			//				xbox.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
+			//xbox.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
 		}
 		
-		if(startButtonHeld)
+		if (startButton && !startButtonJustPressed)
 		{
-			if(startButtonPressed)
+			System.out.println("Holding start button for climber");
+			if (climberShutoffTimer.get() > 30.0)
 			{
-				climberReleaseTimer.stop();
-				climberReleaseTimer.reset();
-				climberReleaseTimer.start();
+				retractClimber();
 			}
-			else if(climberReleaseTimer.get() > 1.0)
+			else if (climberDeployTimer.get() > 1.0)
 			{
-				climberReleased();
+				System.out.println("Deploying climber");
+				deployClimber();
+				climberShutoffTimer.start();
 			}
 		}
-		//		}
+		else
+		{
+			climberDeployTimer.reset();
+		}
 
+		
+		//		}
+		//
 		//		else if(isMoving())
 		//		{
 		//			System.out.println("Is Moving");
@@ -488,15 +503,15 @@ public class Elevator implements Component
 
 		return inScaleRange;
 	}
-	
-	public void climberLatched()
+
+	public void deployClimber()
 	{
-		climberReleaseServo.set(Constants.SERVO_LATCHED_POSITION);
+		climberDeploySolenoid.set(false);
 	}
-	
-	public void climberReleased()
+
+	public void retractClimber()
 	{
-		climberReleaseServo.set(Constants.SERVO_RELEASED_POSITION);
+		climberDeploySolenoid.set(true);
 	}
 
 	public static class Constants
@@ -609,7 +624,8 @@ public class Elevator implements Component
 		public static final int SLAVE_MOTOR_PORT = 11;
 		public static final int STRING_POT_PORT = 3;
 		public static final int OTHER_STRING_POT_PORT = 7;
-		public static final int CLIMBER_RELEASE_SERVO_PORT = 1;
+
+		public static final int CLIMBER_DEPLOY_SOLENOID_PORT = 7;
 
 		public static final double STRING_POT_SCALE = 1.0;
 
@@ -621,9 +637,6 @@ public class Elevator implements Component
 		public static final int BOTTOM_SCALE = 426;
 		public static final int TOP_SCALE = 605;
 		public static final int ABSOLUTE_TOP = 620;
-		
-		public static final double SERVO_LATCHED_POSITION = 0.27;
-		public static final double SERVO_RELEASED_POSITION = 0.736;
 
 		public static final double OVERRIDE_SPEED_SCALE = 0.7;
 
