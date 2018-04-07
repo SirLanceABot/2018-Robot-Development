@@ -26,7 +26,7 @@ public class Robot extends IterativeRobot
 
 	private double previousNanoTime;
 	private double currentNanoTime;
-	
+
 	public Robot()
 	{
 		previousNanoTime = System.nanoTime();
@@ -37,7 +37,7 @@ public class Robot extends IterativeRobot
 	public void robotInit()
 	{
 		drivetrain.resetNavX();
-		
+
 		drivetrain.calibrateNavX();
 		drivetrain.calibrateColorSensor();
 
@@ -71,10 +71,10 @@ public class Robot extends IterativeRobot
 	@Override
 	public void teleopPeriodic()
 	{
-			drivetrain.teleop();
-			elevator.teleop();
-			gripper.teleop();
-			printSensorValues();
+		drivetrain.teleop();
+		elevator.teleop();
+		gripper.teleop();
+		printSensorValues();
 	}
 
 	@Override
@@ -108,14 +108,14 @@ public class Robot extends IterativeRobot
 						"\tIntake encoder left: " + Gripper.getInstance().getLeftIntakeEncoder() + 
 						"\tIntake encoder right: " + Gripper.getInstance().getRightIntakeEncoder() + '\n');
 	}
-	
+
 	public double getDeltaTime()
 	{
 		currentNanoTime = System.nanoTime();
-		
+
 		double dt = currentNanoTime - previousNanoTime;
 		previousNanoTime = currentNanoTime;
-		
+
 		return dt;
 	}
 }
