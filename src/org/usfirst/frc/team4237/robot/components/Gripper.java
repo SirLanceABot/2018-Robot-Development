@@ -1,6 +1,7 @@
 package org.usfirst.frc.team4237.robot.components;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import java.util.HashMap;
@@ -88,8 +89,8 @@ public class Gripper implements Component
 		rightIntakeTalon.configOpenloopRamp(Constants.INTAKE_RAMP_TIME, Constants.INTAKE_RAMP_RATE_TIMEOUT);
 
 		//Pivoter settings
+		pivotTalon.setNeutralMode(NeutralMode.Brake);
 		pivotTalon.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.Analog, 0, 0);
-		//pivotTalon.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.Analog, 0, 0);
 		pivotTalon.setSensorPhase(false);
 		pivotTalon.configForwardSoftLimitThreshold(Constants.RAISED, 0);
 		pivotTalon.configReverseSoftLimitThreshold(Constants.FLOOR, 0);
@@ -756,6 +757,10 @@ public class Gripper implements Component
 		if(currentValue > Constants.FLOOR + Constants.THRESHOLD)
 		{
 			lower();
+		}
+		else if(currentValue < Constants.FLOOR - Constants.THRESHOLD)
+		{
+			raise();
 		}
 		else
 		{

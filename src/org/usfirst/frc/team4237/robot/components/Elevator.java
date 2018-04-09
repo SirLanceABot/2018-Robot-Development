@@ -16,6 +16,7 @@ import org.usfirst.frc.team4237.robot.control.Xbox;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 /**
@@ -78,6 +79,8 @@ public class Elevator implements Component
 	 */
 	private Elevator()
 	{
+		masterTalonSRX.setNeutralMode(NeutralMode.Brake);
+		slaveTalonSRX.setNeutralMode(NeutralMode.Brake);
 		masterTalonSRX.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.Analog, 0, 0);
 		//masterTalonSRX.configSetParameter(ParamEnum.eFeedbackNotContinuous, 1, 0x00, 0x00, 0);
 		masterTalonSRX.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 20);
@@ -99,7 +102,6 @@ public class Elevator implements Component
 		
 		climberShutoffTimer.stop();
 		climberShutoffTimer.reset();
-		
 	}
 
 	/**
@@ -461,6 +463,10 @@ public class Elevator implements Component
 		{
 			lower();
 		}
+		else if(currentValue < Constants.FLOOR - Constants.THRESHOLD)
+		{
+			raise();
+		}
 		else
 		{
 			inFloorRange = true;
@@ -478,6 +484,10 @@ public class Elevator implements Component
 		{
 			raise();
 		}
+		else if(currentValue > Constants.SWITCH + Constants.THRESHOLD)
+		{
+			lower();
+		}
 		else
 		{
 			inSwitchRange = true;
@@ -494,6 +504,10 @@ public class Elevator implements Component
 		if(currentValue < Constants.TOP_SCALE - Constants.THRESHOLD)
 		{
 			raise();
+		}
+		else if(currentValue > Constants.TOP_SCALE + Constants.THRESHOLD)
+		{
+			lower();
 		}
 		else
 		{
