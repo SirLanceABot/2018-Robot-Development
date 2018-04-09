@@ -715,7 +715,7 @@ public class Autonomous
 				autoStage = Constants.AutoStage.kDone;
 				System.out.println("Entering: " + autoStage);
 				gripper.resetIntakeEncoder();
-				gripper.autoDrop();
+				gripper.ejectDrop();
 				drivetrain.resetEncoder();
 			}
 		}
@@ -841,7 +841,7 @@ public class Autonomous
 			}
 			else
 			{
-				gripper.autoEject();
+				gripper.ejectShoot();
 				autoStage = Constants.AutoStage.kDrive2Distance1;
 				System.out.println("Entering: " + autoStage);
 				doneDriving = false;
@@ -1253,7 +1253,7 @@ public class Autonomous
 			}
 			else
 			{
-				gripper.autoDrop();
+				gripper.ejectDrop();
 				autoStage = Constants.AutoStage.kDone;
 				System.out.println("Entering: " + autoStage);
 				doneMovingGripper = false;
