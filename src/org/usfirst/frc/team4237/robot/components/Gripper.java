@@ -151,8 +151,9 @@ public class Gripper implements Component
 	 * Eject function for autonomous
 	 * @return State of eject, whether it's done or not
 	 */
-	public void autoEject()
+	public boolean autoEject()
 	{
+		boolean done = false;
 		if (rightIntakeTalon.getSelectedSensorPosition(0) >= Constants.AUTO_EJECT_ENCODER_STOP_VALUE)
 		{
 			ejectShoot();
@@ -161,11 +162,15 @@ public class Gripper implements Component
 		{
 			intakeOff();
 			setAutoEjecting(false);
+			done = true;
 		}
+		
+		return done;
 	}
 
-	public void autoDrop()
+	public boolean autoDrop()
 	{
+		boolean done = false;
 		if (rightIntakeTalon.getSelectedSensorPosition(0) >= Constants.AUTO_EJECT_ENCODER_STOP_VALUE)
 		{
 			ejectDrop();
@@ -174,8 +179,12 @@ public class Gripper implements Component
 		{
 			intakeOff();
 			setAutoEjecting(false);
+			done = true;
 		}
+		
+		return done;
 	}
+
 
 	/**
 	 * Turn off intake
@@ -871,8 +880,8 @@ public class Gripper implements Component
 			}
 		}
 
-		public static final int AUTO_EJECT_ENCODER_STOP_VALUE = -5000;
-		public static final int AUTO_INTAKE_ENCODER_STOP_VALUE = 5000;
+		public static final int AUTO_EJECT_ENCODER_STOP_VALUE = -2000;
+		public static final int AUTO_INTAKE_ENCODER_STOP_VALUE = 2000;
 
 		public static final int POTENTIOMETER_FLOOR_POSITION = 210;
 		public static final int POTENTIOMETER_MIDDLE_POSITION = 190;
