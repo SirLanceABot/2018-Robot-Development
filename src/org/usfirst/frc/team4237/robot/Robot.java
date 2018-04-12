@@ -62,6 +62,7 @@ public class Robot extends IterativeRobot
 	@Override
 	public void teleopInit()
 	{
+		printSensorValues();
 		System.out.println("Entering teleop");
 		gripper.setTeleopLimits();
 		autonomous.turnLightRingsOff();

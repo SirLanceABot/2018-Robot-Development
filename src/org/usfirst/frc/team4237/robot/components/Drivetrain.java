@@ -256,14 +256,19 @@ public class Drivetrain extends MecanumDrive implements Component
 		boolean isDoneDriving = false;
 		double x = Math.abs(getEncInches());
 		double rotate = (navX.getYaw() - heading) / 50;
-		double strafeSpeed = Math.sin(angle) * speed;
-		double forwardSpeed = Math.cos(angle) * speed;
+		double strafeSpeed = Math.sin(Math.abs(angle)) * speed;
+		double forwardSpeed = Math.cos(Math.abs(angle)) * speed;
 
 		if(angle < 0)
 		{
 			strafeSpeed *= -1;
 		}
 
+		if(speed < 0)
+		{
+			forwardSpeed *= -1;
+		}
+		
 		if(x < inches)
 		{
 			driveCartesian(strafeSpeed, forwardSpeed, rotate);
