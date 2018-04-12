@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.Timer;
 
 import org.usfirst.frc.team4237.robot.components.Gripper.Constants;
+import org.usfirst.frc.team4237.robot.control.DriverXbox;
 import org.usfirst.frc.team4237.robot.control.OperatorXbox;
 import org.usfirst.frc.team4237.robot.control.Xbox;
 
@@ -26,8 +27,9 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
  */
 public class Elevator implements Component
 {
-	private OperatorXbox xbox = OperatorXbox.getInstance();
-
+	private OperatorXbox operatorXbox = OperatorXbox.getInstance();
+	private DriverXbox driverXbox = DriverXbox.getInstance();
+	
 	private WPI_TalonSRX masterTalonSRX = new WPI_TalonSRX(Constants.MASTER_MOTOR_PORT); 
 	private WPI_TalonSRX slaveTalonSRX = new WPI_TalonSRX(Constants.SLAVE_MOTOR_PORT);
 
@@ -152,14 +154,14 @@ public class Elevator implements Component
 	{
 		//		rightBumper = xbox.getRawButton(Xbox.Constants.RIGHT_BUMPER);
 		//		leftBumper = xbox.getRawButton(Xbox.Constants.LEFT_BUMPER);
-		leftStickButton = xbox.getRawButton(Xbox.Constants.LEFT_STICK_BUTTON);
+		leftStickButton = operatorXbox.getRawButton(Xbox.Constants.LEFT_STICK_BUTTON);
 
-		aButton = xbox.getRawButton(Xbox.Constants.A_BUTTON);
+		aButton = operatorXbox.getRawButton(Xbox.Constants.A_BUTTON);
 
-		leftYAxis = xbox.getRawAxis(Xbox.Constants.LEFT_STICK_Y_AXIS);
+		leftYAxis = operatorXbox.getRawAxis(Xbox.Constants.LEFT_STICK_Y_AXIS);
 
-		startButton = xbox.getRawButton(Xbox.Constants.START_BUTTON);
-		startButtonJustPressed = xbox.getRawButtonPressed(Xbox.Constants.START_BUTTON);
+		startButton = driverXbox.getRawButton(Xbox.Constants.START_BUTTON);
+		startButtonJustPressed = driverXbox.getRawButtonPressed(Xbox.Constants.START_BUTTON);
 
 		updateCurrentRange();
 
@@ -226,15 +228,10 @@ public class Elevator implements Component
 		if (startButton && !startButtonJustPressed)
 		{
 			System.out.println("Holding start button for climber");
-			if (climberShutoffTimer.get() > 30.0)
-			{
-				retractClimber();
-			}
-			else if (climberDeployTimer.get() > 1.0)
+			if (climberDeployTimer.get() > 1.0)
 			{
 				System.out.println("Deploying climber");
 				deployClimber();
-				climberShutoffTimer.start();
 			}
 		}
 		else
@@ -316,9 +313,9 @@ public class Elevator implements Component
 
 	public void test()
 	{
-		leftBumper = xbox.getRawButtonPressed(Xbox.Constants.LEFT_BUMPER);
-		rightBumper = xbox.getRawButtonPressed(Xbox.Constants.RIGHT_BUMPER);
-		aButton = xbox.getRawButton(Xbox.Constants.A_BUTTON);
+		leftBumper = operatorXbox.getRawButtonPressed(Xbox.Constants.LEFT_BUMPER);
+		rightBumper = operatorXbox.getRawButtonPressed(Xbox.Constants.RIGHT_BUMPER);
+		aButton = operatorXbox.getRawButton(Xbox.Constants.A_BUTTON);
 
 		if (leftBumper) 
 		{
@@ -639,18 +636,18 @@ public class Elevator implements Component
 		public static final int STRING_POT_PORT = 3;
 		public static final int OTHER_STRING_POT_PORT = 7;
 
-		public static final int CLIMBER_DEPLOY_SOLENOID_PORT = 7;
+		public static final int CLIMBER_DEPLOY_SOLENOID_PORT = 0;
 
 		public static final double STRING_POT_SCALE = 1.0;
 
 		public static final double SPEED = 0.5;
 
 		public static final int THRESHOLD = 15;
-		public static final int FLOOR = 135;
-		public static final int SWITCH = 330;
+		public static final int FLOOR = 145;
+		public static final int SWITCH = 360;
 		public static final int BOTTOM_SCALE = 426;
-		public static final int TOP_SCALE = 605;
-		public static final int ABSOLUTE_TOP = 620;
+		public static final int TOP_SCALE = 780;
+		public static final int ABSOLUTE_TOP = 780;
 
 		public static final double OVERRIDE_SPEED_SCALE = 0.7;
 

@@ -248,6 +248,40 @@ public class Drivetrain extends MecanumDrive implements Component
 	}
 
 	/**
+	 * Strafe perpendicular to robot. 0 degrees is North
+	 * @return
+	 */
+	public boolean strafeSeconds(double time, double strafeSpeed, double heading)
+	{
+		boolean isTimerDone = false;
+		double rotate = (navX.getYaw() - heading) / 50;
+		
+		if(resetTimer)
+		{
+			t.stop();
+			t.reset();
+			t.start();
+		}
+		
+		if(strafeSpeed > 0 && t.get() < time)
+		{
+			driveCartesian(strafeSpeed, 0, rotate);
+		}
+		else if(strafeSpeed < 0 && t.get() < time)
+		{
+			driveCartesian(-strafeSpeed, 0, rotate);
+		}
+		else
+		{
+			driveCartesian(0, 0, 0);
+			isTimerDone = true;
+			resetTimer = true;
+		}
+		
+		return isTimerDone;
+	}
+	
+	/**
 	 * Strafe at a specific angle. 0 degrees is North
 	 * @return
 	 */
