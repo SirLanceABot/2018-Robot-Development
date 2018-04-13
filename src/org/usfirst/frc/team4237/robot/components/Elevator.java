@@ -33,9 +33,8 @@ public class Elevator implements Component
 	private WPI_TalonSRX masterTalonSRX = new WPI_TalonSRX(Constants.MASTER_MOTOR_PORT); 
 	private WPI_TalonSRX slaveTalonSRX = new WPI_TalonSRX(Constants.SLAVE_MOTOR_PORT);
 
-	private Solenoid climberDeploySolenoid = new Solenoid(Constants.CLIMBER_DEPLOY_SOLENOID_PORT);
-	private Timer climberDeployTimer = new Timer();
-	private Timer climberShutoffTimer = new Timer();
+//	private Solenoid climberDeploySolenoid = new Solenoid(Constants.CLIMBER_DEPLOY_SOLENOID_PORT);
+//	private Timer climberDeployTimer = new Timer();
 
 	private HashMap<Integer, WPI_TalonSRX> talonSRXHashMap = new HashMap<Integer, WPI_TalonSRX>();
 
@@ -59,8 +58,8 @@ public class Elevator implements Component
 	private boolean leftStickButton;
 	private boolean aButton;
 
-	private boolean startButton;
-	private boolean startButtonJustPressed;
+//	private boolean startButton;
+//	private boolean startButtonJustPressed;
 
 	private boolean isFloorTarget = false;
 
@@ -98,12 +97,9 @@ public class Elevator implements Component
 		talonSRXHashMap.put(Constants.MASTER_MOTOR_PORT, masterTalonSRX);
 		talonSRXHashMap.put(Constants.SLAVE_MOTOR_PORT, slaveTalonSRX);
 
-		climberDeployTimer.stop();
-		climberDeployTimer.reset();
-		climberDeployTimer.start();
-		
-		climberShutoffTimer.stop();
-		climberShutoffTimer.reset();
+//		climberDeployTimer.stop();
+//		climberDeployTimer.reset();
+//		climberDeployTimer.start();
 	}
 
 	/**
@@ -160,8 +156,8 @@ public class Elevator implements Component
 
 		leftYAxis = operatorXbox.getRawAxis(Xbox.Constants.LEFT_STICK_Y_AXIS);
 
-		startButton = driverXbox.getRawButton(Xbox.Constants.START_BUTTON);
-		startButtonJustPressed = driverXbox.getRawButtonPressed(Xbox.Constants.START_BUTTON);
+//		startButton = driverXbox.getRawButton(Xbox.Constants.START_BUTTON);
+//		startButtonJustPressed = driverXbox.getRawButtonPressed(Xbox.Constants.START_BUTTON);
 
 		updateCurrentRange();
 
@@ -225,19 +221,21 @@ public class Elevator implements Component
 			//xbox.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
 		}
 		
-		if (startButton && !startButtonJustPressed)
-		{
-			System.out.println("Holding start button for climber");
-			if (climberDeployTimer.get() > 1.0)
-			{
-				System.out.println("Deploying climber");
-				deployClimber();
-			}
-		}
-		else
-		{
-			climberDeployTimer.reset();
-		}
+//		if (startButton && !startButtonJustPressed)
+//		{
+//			System.out.println("Holding start button for climber");
+//			
+//			if (climberDeployTimer.get() > 1.0)
+//			{
+//				System.out.println("Deploying climber");
+//				deployClimber();
+//			}
+//		}
+//		else
+//		{
+//			retractClimber();
+//			climberDeployTimer.reset();
+//		}
 
 		
 		//		}
@@ -515,15 +513,15 @@ public class Elevator implements Component
 		return inScaleRange;
 	}
 
-	public void deployClimber()
-	{
-		climberDeploySolenoid.set(false);
-	}
-
-	public void retractClimber()
-	{
-		climberDeploySolenoid.set(true);
-	}
+//	public void deployClimber()
+//	{
+//		climberDeploySolenoid.set(true);
+//	}
+//
+//	public void retractClimber()
+//	{
+//		climberDeploySolenoid.set(false);
+//	}
 
 	public static class Constants
 	{		

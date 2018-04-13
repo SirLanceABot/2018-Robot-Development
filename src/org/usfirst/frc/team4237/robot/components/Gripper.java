@@ -203,6 +203,16 @@ public class Gripper implements Component
 	}
 
 	/**
+	 * Intake with different speed, to rotate cube automatically for autonomous
+	 */
+	public void intakeDifferentSpeed()
+	{
+		leftIntakeTalon.set(-0.40);
+		rightIntakeTalon.set(-0.55);
+	}
+	
+	
+	/**
 	 * Intake for use during tele-op
 	 */
 	public void intake()
@@ -253,8 +263,8 @@ public class Gripper implements Component
 	 */
 	public void intakeRotateCubeRight()
 	{
-		leftIntakeTalon.set(0.70);
-		rightIntakeTalon.set(0.0);
+		leftIntakeTalon.set(0.0);
+		rightIntakeTalon.set(-0.70);
 	}
 
 	/**
@@ -460,7 +470,7 @@ public class Gripper implements Component
 		{
 			if (bButton)
 			{
-				intakeRotateCubeLeft();
+				intakeRotateCubeRight();
 			}
 			else
 			{
@@ -903,7 +913,7 @@ public class Gripper implements Component
 		public static final int FLOOR = 269;
 		public static final int HORIZONTAL = 333;
 		public static final int MIDDLE  = 425;
-		public static final int TELEOP_MAX = 485;
-		public static final int RAISED = 503;
+		public static final int TELEOP_MAX = 465;
+		public static final int RAISED = 465;
 	}
 }
