@@ -1982,7 +1982,15 @@ public class Autonomous
 
 			kSpin2,             //Used for collecting second cube
 
-			kDrive3ToLine     //Used for scale on opposite side without color sensor
+			kDrive3ToLine,     //Used for scale on opposite side without color sensor
+			
+			kDrive10,		//Used if we need more stages
+			
+			kDrive11,		//Used if we need more stages
+			
+			kDrive12,		//Used if we need more stages
+			
+			kDrive13		//Used if we need more stages
 
 
 			//FIXME: Michael would like an auto mode for end of scale
