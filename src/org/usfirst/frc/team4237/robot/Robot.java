@@ -88,7 +88,7 @@ public class Robot extends IterativeRobot
 	@Override
 	public void autonomousPeriodic()
 	{
-		printSensorValues();
+		//printSensorValues();
 		//drivetrain.run();
 		//elevator.run();
 		//gripper.run();
