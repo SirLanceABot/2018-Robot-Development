@@ -207,8 +207,8 @@ public class Gripper implements Component
 	 */
 	public void intakeDifferentSpeed()
 	{
-		leftIntakeTalon.set(-0.40);
-		rightIntakeTalon.set(-0.55);
+		leftIntakeTalon.set(-0.45);
+		rightIntakeTalon.set(-0.7);
 	}
 	
 	

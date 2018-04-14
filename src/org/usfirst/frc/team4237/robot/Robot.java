@@ -55,7 +55,7 @@ public class Robot extends IterativeRobot
 	@Override
 	public void disabledPeriodic()
 	{
-		//autonomous.turnLightRingsOff();
+		//printSensorValues();
 	}
 
 	@Override

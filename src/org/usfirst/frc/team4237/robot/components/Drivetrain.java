@@ -443,6 +443,7 @@ public class Drivetrain extends MecanumDrive implements Component
 
 	public void calibrateNavX()
 	{	
+		boolean goodCalibration = true;
 		System.out.println("Calibrating NavX...");
 
 		startUpTimer.start();
@@ -453,8 +454,9 @@ public class Drivetrain extends MecanumDrive implements Component
 		if (startUpTimer.get() >= 5.0)
 		{
 			System.out.println("ERROR! [Drivetrain] Error while calibrating NavX!");
+			goodCalibration = false;
 		}
-		System.out.println("Calibration done.");
+		System.out.println("Calibration done... "  + "Did NavX calibrate? " + goodCalibration);
 	}
 
 	public void calibrateColorSensor()
