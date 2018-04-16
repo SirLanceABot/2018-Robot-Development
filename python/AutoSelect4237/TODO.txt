@@ -1,2 +1,0 @@
-1. Add test mode drop down box
-2. Send value from test mode box to robot

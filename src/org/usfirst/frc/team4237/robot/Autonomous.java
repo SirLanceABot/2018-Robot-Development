@@ -354,8 +354,8 @@ public class Autonomous
 
 	public void turnLightRingsOn()
 	{
-		whiteCameraLight.set(true);
-		greenCameraLight.set(true);
+		//whiteCameraLight.set(true);
+		//greenCameraLight.set(true);
 		whiteFloorLight.set(true);
 	}
 
