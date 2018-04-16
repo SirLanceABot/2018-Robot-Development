@@ -80,8 +80,6 @@ public class Elevator implements Component
 	 */
 	private Elevator()
 	{
-		masterTalonSRX.setNeutralMode(NeutralMode.Brake);
-		slaveTalonSRX.setNeutralMode(NeutralMode.Brake);
 		masterTalonSRX.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.Analog, 0, 0);
 		//masterTalonSRX.configSetParameter(ParamEnum.eFeedbackNotContinuous, 1, 0x00, 0x00, 0);
 		masterTalonSRX.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen, 20);
