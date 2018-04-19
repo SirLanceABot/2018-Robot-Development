@@ -2276,7 +2276,6 @@ public class Autonomous
 			kDrive13,		//Used if we need more stages
 
 			kDrive14		//Used if we need more stages
-			//FIXME: Michael would like an auto mode for end of scale
 		}
 
 		enum AutonStage {
