@@ -2273,8 +2273,9 @@ public class Autonomous
 			
 			kDrive12,		//Used if we need more stages
 			
-			kDrive13		//Used if we need more stages
+			kDrive13,		//Used if we need more stages
 
+			kDrive14		//Used if we need more stages
 			//FIXME: Michael would like an auto mode for end of scale
 		}
 

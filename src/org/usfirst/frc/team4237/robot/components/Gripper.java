@@ -89,6 +89,7 @@ public class Gripper implements Component
 		rightIntakeTalon.configOpenloopRamp(Constants.INTAKE_RAMP_TIME, Constants.INTAKE_RAMP_RATE_TIMEOUT);
 
 		//Pivoter settings
+		pivotTalon.setNeutralMode(NeutralMode.Brake);
 		pivotTalon.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.Analog, 0, 0);
 		pivotTalon.setSensorPhase(false);
 		pivotTalon.configForwardSoftLimitThreshold(Constants.RAISED, 0);
