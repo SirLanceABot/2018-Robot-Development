@@ -912,7 +912,7 @@ public class Gripper implements Component
 		public static final int THRESHOLD = 5;
 		public static final int FLOOR = 269;
 		public static final int HORIZONTAL = 333;
-		public static final int MIDDLE  = 425;
+		public static final int MIDDLE  = 435;
 		public static final int TELEOP_MAX = 465;
 		public static final int RAISED = 465;
 	}
