@@ -24,6 +24,9 @@ public class Drivetrain extends MecanumDrive implements Component
 {
 	private DriverXbox xbox = DriverXbox.getInstance();
 
+	private double previousNavXValue = 999.999;
+	private boolean abortAutonomous = false;
+
 	private boolean aButton = false;
 	private boolean bButton = false;
 	private boolean xButton = false;
@@ -56,6 +59,8 @@ public class Drivetrain extends MecanumDrive implements Component
 
 	private Timer startUpTimer = new Timer();
 	private Timer t = new Timer();
+	private Timer timer = new Timer();
+	private boolean restartSpinTimer = true;
 	private boolean resetTimer = true;
 	private boolean isTimerDone = false;
 
@@ -143,7 +148,7 @@ public class Drivetrain extends MecanumDrive implements Component
 
 		frontRightMasterMotor.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder, 0, 0);
 		frontRightMasterMotor.setSensorPhase(true);
-		
+
 		servo.setPeriodMultiplier(PeriodMultiplier.k1X);
 		servo.setBounds(2.4, 0, 0, 0, 0.6);		// Current bounds are 8.5 turns, (2.5, 0, 0, 0, 0.5) for 9 turns
 
@@ -163,8 +168,8 @@ public class Drivetrain extends MecanumDrive implements Component
 		{
 			//System.out.println("Encoder tic: " + frontRightMasterMotor.getSelectedSensorPosition(0) + "  Distance: " + getEncInches());
 
-			System.out.println(DriverStation.getInstance().isOperatorControl() + " " + DriverStation.getInstance().isEnabled());
-			
+			//System.out.println(DriverStation.getInstance().isOperatorControl() + " " + DriverStation.getInstance().isEnabled());
+
 			if (DriverStation.getInstance().isOperatorControl() && DriverStation.getInstance().isEnabled())
 			{
 				if (Math.abs(xbox.getRawAxis(1)) > 0.2)
@@ -175,7 +180,7 @@ public class Drivetrain extends MecanumDrive implements Component
 
 				if (Math.abs(xbox.getRawAxis(0)) > 0.2)
 				{
-					leftXAxis = xbox.getRawAxis(Xbox.Constants.LEFT_STICK_X_AXIS);
+					leftXAxis = xbox.getRawAxis(Xbox.Constants.LEFT_STICK_X_AXIS) * 0.8;
 				}
 				else leftXAxis = 0;
 
@@ -222,7 +227,7 @@ public class Drivetrain extends MecanumDrive implements Component
 		{
 			direction = -1;
 		}
-		
+
 		if (x <= inches)
 		{
 			if(x <= startingDistance)
@@ -255,14 +260,14 @@ public class Drivetrain extends MecanumDrive implements Component
 	{
 		boolean isTimerDone = false;
 		double rotate = (navX.getYaw() - heading) / 50;
-		
+
 		if(resetTimer)
 		{
 			t.stop();
 			t.reset();
 			t.start();
 		}
-		
+
 		if(strafeSpeed > 0 && t.get() < time)
 		{
 			driveCartesian(strafeSpeed, 0, rotate);
@@ -277,10 +282,10 @@ public class Drivetrain extends MecanumDrive implements Component
 			isTimerDone = true;
 			resetTimer = true;
 		}
-		
+
 		return isTimerDone;
 	}
-	
+
 	/**
 	 * Strafe at a specific angle. 0 degrees is North
 	 * @return
@@ -302,7 +307,7 @@ public class Drivetrain extends MecanumDrive implements Component
 		{
 			forwardSpeed *= -1;
 		}
-		
+
 		if(x < inches)
 		{
 			driveCartesian(strafeSpeed, forwardSpeed, rotate);
@@ -320,7 +325,7 @@ public class Drivetrain extends MecanumDrive implements Component
 	{
 		isTimerDone = false;
 		double rotate = (navX.getYaw() - heading) / 50;
-		
+
 		if(resetTimer)
 		{
 			t.stop();
@@ -328,7 +333,7 @@ public class Drivetrain extends MecanumDrive implements Component
 			t.start();
 			resetTimer = false;
 		}
-		
+
 		if(t.get() <= time)
 		{
 			driveCartesian(0, speed, -rotate);
@@ -341,6 +346,18 @@ public class Drivetrain extends MecanumDrive implements Component
 		}
 		return isTimerDone;
 	}
+
+	public boolean abortAutonomous()
+	{
+		return abortAutonomous;
+	}
+	
+	public void restartTimer()
+	{
+		timer.stop();
+		timer.reset();
+		timer.start();
+	}
 	
 	/**
 	 * Rotate to the bearing passed into the method. 0 degrees is North
@@ -349,23 +366,68 @@ public class Drivetrain extends MecanumDrive implements Component
 	public boolean spinToBearing(int bearing, double speed)
 	{
 		boolean isDoneSpinning = false;
-		double heading = navX.getYaw();
-		int threshold = 20;
-		if(bearing - heading > 0)
+		boolean spin = true;
+		
+		if(navX.isConnected())
 		{
-			speed *= -1;
-		}
+			double heading = navX.getYaw();
+			
+			if(restartSpinTimer)
+			{
+				restartTimer();
+				restartSpinTimer = false;
+			}
+			
+			if(timer.get() >= 0.2)
+			{
+				if(previousNavXValue == heading)
+				{
+					spin = false;
+				}
+				else
+				{
+					restartTimer();
+					previousNavXValue = heading;
+				}
+			}
+			else
+			{
+				spin = true;
+			}
 
-		if(Math.abs(bearing - heading) >= threshold)
-		{
-			driveCartesian(0, 0, -speed);
+			if(spin)
+			{
+
+				int threshold = 20;
+				if(bearing - heading > 0)
+				{
+					speed *= -1;
+				}
+
+				if(Math.abs(bearing - heading) >= threshold)
+				{
+					driveCartesian(0, 0, -speed);
+				}
+				else
+				{
+					driveCartesian(0, 0, 0);
+					isDoneSpinning = true;
+				}
+			}
+			else
+			{
+				abortAutonomous = true;
+				System.out.println("\nNAVX REPEATED VALUES.\n");
+				driveCartesian(0, 0, 0);
+			}
 		}
 		else
 		{
+			abortAutonomous = true;
+			System.out.println("\nNAVX DISCONNECTED.\n");
 			driveCartesian(0, 0, 0);
-			isDoneSpinning = true;
 		}
-		//System.out.println("heading: " + heading);
+
 		return isDoneSpinning;
 	}
 
@@ -380,7 +442,7 @@ public class Drivetrain extends MecanumDrive implements Component
 		if(color == AMSColorSensor.Constants.Color.kRed)
 		{
 			foundTape = crgb.R > crgbUpperThreshold.R;
-			System.out.println("RED COLOR FOUND: " + foundTape);
+		System.out.println("RED COLOR FOUND: " + foundTape);
 		}
 		else if(color == AMSColorSensor.Constants.Color.kBlue)
 		{
@@ -390,7 +452,7 @@ public class Drivetrain extends MecanumDrive implements Component
 		else if(color == AMSColorSensor.Constants.Color.kWhite)
 		{
 			foundTape = crgb.C > crgbUpperThreshold.C;
-			System.out.println("WHITE COLOR FOUND: " + foundTape);
+		System.out.println("WHITE COLOR FOUND: " + foundTape);
 		}
 		if(!foundTape)
 		{
@@ -506,7 +568,7 @@ public class Drivetrain extends MecanumDrive implements Component
 		crgbLowerThreshold.G = crgbLowerThreshold.G*LowerThresholdFactor/numSamples;
 		crgbLowerThreshold.B = crgbLowerThreshold.B*LowerThresholdFactor/numSamples;
 
-		crgbUpperThreshold.C = 4500;
+		crgbUpperThreshold.C = 3000;
 		crgbUpperThreshold.R = 1000;
 		crgbUpperThreshold.G = 0;
 		crgbUpperThreshold.B = 800;
@@ -526,13 +588,13 @@ public class Drivetrain extends MecanumDrive implements Component
 		servoPosition = 0.5 + (1.0 / 8.5) * 0.5;
 		servo.set(servoPosition);
 	}
-	
+
 	public void omniWheelDown()
 	{
 		servoPosition = 0.5;
 		servo.set(servoPosition);
 	}
-	
+
 	public void rotateServoClockwise(int angle)
 	{
 		double rotation = (double)angle / 360.0;

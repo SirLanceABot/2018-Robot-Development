@@ -910,7 +910,7 @@ public class Gripper implements Component
 		public static final double INTAKE_RAMP_TIME = 0.125;
 		public static final int INTAKE_RAMP_RATE_TIMEOUT = 10;
 		public static final int THRESHOLD = 5;
-		public static final int FLOOR = 269;
+		public static final int FLOOR = 280;	//was 269
 		public static final int HORIZONTAL = 333;
 		public static final int MIDDLE  = 435;
 		public static final int TELEOP_MAX = 465;

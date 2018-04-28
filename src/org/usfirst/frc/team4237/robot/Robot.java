@@ -73,6 +73,7 @@ public class Robot extends IterativeRobot
 		drivetrain.teleop();
 		elevator.teleop();
 		gripper.teleop();
+		printSensorValues();
 	}
 
 	@Override
@@ -88,7 +89,7 @@ public class Robot extends IterativeRobot
 	@Override
 	public void autonomousPeriodic()
 	{
-		//printSensorValues();
+		printSensorValues();
 		//drivetrain.run();
 		//elevator.run();
 		//gripper.run();
