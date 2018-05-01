@@ -8,11 +8,11 @@ This package contains the class files for each primary component used on the rob
 Each component's class inherits the Component interface to ensure that each class includes a method for printing information for testing.
 
 It includes:
-* Climber
 * Drivetrain
 * Elevator
 * Gripper
 * Light Ring
+* Climber (unused)
 
 ### org.usfirst.team4237.robot.control
 
@@ -40,4 +40,20 @@ with computer vision on a raspberry pi for the purpose of aligning the robot to 
 This year it was unused in favor of faster preprogrammed autonomous routines.
 
 ### org.usfirst.team4237.robot
-This package contains the main classes used for looping the robot.
+This package contains the main classes used to control the robot in both of its main modes, teleoperated and autonomous.
+
+## Autonomous
+The Autonomous class controls the robot during the first 15 seconds of each match.
+
+### init()
+The __init()__ method initializes all necessary variables
+and attempts to receive data from AutoSelect4237.
+
+### setAutoMode()
+The __setAutoMode()__ method decides which autonomous routine the robot should run depending
+on the selected position, the field colors, and the current alliance color.
+
+### periodic()
+The __periodic()__ method loops continously during the 15 second autonomous period. At the start,
+it checks to see if the robot has received data from the field containing the colors of each field element.
+If it has not, it will repeatedly check until it receives data.
