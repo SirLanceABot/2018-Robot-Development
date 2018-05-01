@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.Timer;
 
 /**
  * Class for autonomous robot functions
- * @author Julien Thrum, Mark Washington
+ * @author 99% Julien Thrum, 1% Mark Washington
  *
  */
 public class Autonomous
@@ -76,7 +76,10 @@ public class Autonomous
 	}
 
 	/**
-	 * Autonomous initialization method
+	 * Autonomous initialization method.
+	 * Sets the selected position and other settings received from AutoSelect4237.
+	 * Gets the alliance color from the FMS and stores it to a variable.
+	 * Sets a variable to positive or negative based on which side the robot starts from.
 	 */
 	public void init()
 	{
@@ -124,9 +127,9 @@ public class Autonomous
 	}
 
 	/**
-	 * Method where the robot figures out which autonomous mode to run
-	 * It takes data from the FMs and AutoSelect4237 to find the 
-	 * correct mode to run.
+	 * Method to select which autonomous sequence to run
+	 * The sequence to run is decided based on a three plan system.
+	 * Plan A is the primary sequence to run. If it cannot be run, then it moves on to Plan B, and then as a last resort, Plan C.
 	 */
 	public void setAutoMode()
 	{
