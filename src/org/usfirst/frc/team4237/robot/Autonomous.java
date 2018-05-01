@@ -1,15 +1,12 @@
 package org.usfirst.frc.team4237.robot;
 
 import org.usfirst.frc.team4237.robot.components.Drivetrain;
-import org.usfirst.frc.team4237.robot.util.LightRing;
+import org.usfirst.frc.team4237.robot.components.LightRing;
 import org.usfirst.frc.team4237.robot.sensors.AMSColorSensor;
 import org.usfirst.frc.team4237.robot.network.AutoSelect4237;
 import org.usfirst.frc.team4237.robot.components.Elevator;
 import org.usfirst.frc.team4237.robot.components.Gripper;
-import org.usfirst.frc.team4237.robot.network.RaspberryPiReceiver;
 
-import edu.wpi.cscore.UsbCamera;
-import edu.wpi.first.wpilibj.CameraServer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 

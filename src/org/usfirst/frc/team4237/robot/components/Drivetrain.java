@@ -1,12 +1,9 @@
 package org.usfirst.frc.team4237.robot.components;
 
-import org.usfirst.frc.team4237.robot.Autonomous;
 import org.usfirst.frc.team4237.robot.control.DriverXbox;
 import org.usfirst.frc.team4237.robot.control.Xbox;
-import org.usfirst.frc.team4237.robot.control.Xbox.Constants;
 import org.usfirst.frc.team4237.robot.sensors.AMSColorSensor;
 import org.usfirst.frc.team4237.robot.util.Colors;
-import org.usfirst.frc.team4237.robot.util.LightRing;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.kauailabs.navx.frc.AHRS;
