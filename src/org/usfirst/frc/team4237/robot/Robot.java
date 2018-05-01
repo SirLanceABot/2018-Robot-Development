@@ -16,6 +16,10 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.IterativeRobot;
 import edu.wpi.first.wpilibj.Timer;
 
+/**
+ * Main robot class
+ * Controls main loops for autonomous and teleop mode
+ */
 public class Robot extends IterativeRobot
 {
 	private Autonomous autonomous = Autonomous.getInstance();
@@ -27,12 +31,18 @@ public class Robot extends IterativeRobot
 	private double previousNanoTime;
 	private double currentNanoTime;
 
+    /**
+     * Constructor for robot class
+     */
 	public Robot()
 	{
 		previousNanoTime = System.nanoTime();
 		currentNanoTime = System.nanoTime();
 	}
 
+    /**
+     * Method to initialize components on robot
+     */
 	@Override
 	public void robotInit()
 	{
@@ -46,18 +56,27 @@ public class Robot extends IterativeRobot
 		//Vision.getInstance();
 	}
 
+    /**
+     * Method that runs once when robot is first disabled
+     */
 	@Override
 	public void disabledInit()
 	{
 		System.out.println("Robot is disabled");
 	}
 
+    /**
+     * Method that runs periodically when robot is disabled
+     */
 	@Override
 	public void disabledPeriodic()
 	{
 		//printSensorValues();
 	}
 
+    /**
+     * Method that runs once when robot first enters teleoperated mode
+     */
 	@Override
 	public void teleopInit()
 	{
@@ -67,6 +86,11 @@ public class Robot extends IterativeRobot
 		drivetrain.omniWheelUp();
 	}
 
+    /**
+     * Method that runs periodically when robot is in teleoperated mode.
+     * This method calls all the methods required for driving the robot,
+     * as well as printing sensor values.
+     */
 	@Override
 	public void teleopPeriodic()
 	{
@@ -76,6 +100,9 @@ public class Robot extends IterativeRobot
 		printSensorValues();
 	}
 
+    /**
+     * Method that runs once when robot first enters autonomous mode.
+     */
 	@Override
 	public void autonomousInit()
 	{
@@ -86,6 +113,10 @@ public class Robot extends IterativeRobot
 		autonomous.init();
 	}
 
+    /**
+     * Method that runs periodically when robot is in autonomous mode.
+     * This method calls all the methods required for controlling the robot in autonomous mode.
+     */
 	@Override
 	public void autonomousPeriodic()
 	{
@@ -97,6 +128,16 @@ public class Robot extends IterativeRobot
 		autonomous.periodic();
 	}
 
+    /**
+     * Method to print all commonly used sensor values.
+	 * -Drivetrain encoder value
+	 * -NavX yaw value
+	 * -Alpha value from color sensor
+	 * -Elevator potentiometer value
+	 * -Pivot potentiometer value
+	 * -Left intake encoder value
+	 * -Right intake encoder value
+     */
 	public void printSensorValues()
 	{
 		System.out.print("Encoder: " + Drivetrain.getInstance().getEncInches() + 
@@ -108,6 +149,10 @@ public class Robot extends IterativeRobot
 						"\tIntake encoder right: " + Gripper.getInstance().getRightIntakeEncoder() + '\n');
 	}
 
+    /**
+     * Returns the time between the previous and last call to this method
+     * @return The time between the previous and last call to this method
+     */
 	public double getDeltaTime()
 	{
 		currentNanoTime = System.nanoTime();
