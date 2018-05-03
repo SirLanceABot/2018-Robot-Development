@@ -42,18 +42,38 @@ This year it was unused in favor of faster preprogrammed autonomous routines.
 ### org.usfirst.team4237.robot
 This package contains the main classes used to control the robot in both of its main modes, teleoperated and autonomous.
 
+# Code Highlights
+
 ## Autonomous
 The Autonomous class controls the robot during the first 15 seconds of each match.
 
-### init()
-The __init()__ method initializes all necessary variables
+* init()
+The _init()_ method initializes all necessary variables
 and attempts to receive data from AutoSelect4237.
 
-### setAutoMode()
-The __setAutoMode()__ method decides which autonomous routine the robot should run depending
+* setAutoMode()
+The _setAutoMode()_ method decides which autonomous routine the robot should run depending
 on the selected position, the field colors, and the current alliance color.
 
-### periodic()
-The __periodic()__ method loops continously during the 15 second autonomous period. At the start,
+* periodic()
+The _periodic()_ method loops continuously during the 15 second autonomous period. At the start,
 it checks to see if the robot has received data from the field containing the colors of each field element.
 If it has not, it will repeatedly check until it receives data.
+
+## AutoSelect4237
+
+AutoSelect4237 is Team 4237's custom autonomous mode selector programmed in Python.
+
+### On the driver station
+
+Mode selection is done through an intuitive UI made using the PySide library based off of PyQT.
+The dashboard interacts with the robot through UDP, sending data encoded in a JSON string.
+Since the dashboard uses UDP as opposed to NetworkTables, it provides for more reliability,
+as well as making the code immune to future changes to NetworkTables.
+
+### On the robot
+
+Using the _AutoSelect4237_ class, the robot is able to continuously listen for data being sent.
+This class inherits _Thread_, allowing it to run in the background uninterrupted by other code.
+Data received from the dashboard is decoded by the _AutoSelect4237_ class into an instance of _AutoSelect4237Data_.
+which allows for easy access to variables received.
