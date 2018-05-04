@@ -46,19 +46,16 @@ This package contains the main classes used to control the robot in both of its 
 
 ## Autonomous
 The Autonomous class controls the robot during the first 15 seconds of each match.
+In order to decide the optimal routine for autonomous, the robot is sent a Plan A, a Plan B, and a Plan C.
+The robot then uses this data, as well as the conditions of the field to decide the best autonomous mode to run.
 
-* init()
-The _init()_ method initializes all necessary variables
-and attempts to receive data from AutoSelect4237.
+For example: The robot is starting on the right side of the field on the red alliance, and the autonomous plan is as follows
+ * Plan A: Drop cube on right side of scale.
+ * Plan B: Drop cube on right side of switch.
+ * Plan C: Cross auto-line.
 
-* setAutoMode()
-The _setAutoMode()_ method decides which autonomous routine the robot should run depending
-on the selected position, the field colors, and the current alliance color.
-
-* periodic()
-The _periodic()_ method loops continuously during the 15 second autonomous period. At the start,
-it checks to see if the robot has received data from the field containing the colors of each field element.
-If it has not, it will repeatedly check until it receives data.
+In this case, if the robot sees that the scale is blue on the right, it will check to see if Plan B is viable.
+If it is, it will follow through on the plan. If it isn't, it will move on to Plan C, where it will either follow through or do nothing.
 
 ## AutoSelect4237
 
