@@ -2,14 +2,6 @@ package org.usfirst.frc.team4237.robot.components;
 
 import java.util.HashMap;
 
-import edu.wpi.first.wpilibj.AnalogPotentiometer;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.Servo;
-import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.Timer;
-
-import org.usfirst.frc.team4237.robot.components.Gripper.Constants;
 import org.usfirst.frc.team4237.robot.control.DriverXbox;
 import org.usfirst.frc.team4237.robot.control.OperatorXbox;
 import org.usfirst.frc.team4237.robot.control.Xbox;
@@ -97,10 +89,6 @@ public class Elevator implements Component
 
 		talonSRXHashMap.put(Constants.MASTER_MOTOR_PORT, masterTalonSRX);
 		talonSRXHashMap.put(Constants.SLAVE_MOTOR_PORT, slaveTalonSRX);
-
-//		climberDeployTimer.stop();
-//		climberDeployTimer.reset();
-//		climberDeployTimer.start();
 	}
 
 	/**
@@ -130,53 +118,16 @@ public class Elevator implements Component
 	}
 
 
-	//	public void run()
-	//	{
-	//		updateCurrentRange();
-	//		if (DriverStation.getInstance().isOperatorControl() && DriverStation.getInstance().isEnabled())
-	//		{
-	//			teleop();
-	//		}
-	//		else if (DriverStation.getInstance().isAutonomous() && DriverStation.getInstance().isEnabled())
-	//		{
-	//			autonomous();
-	//		}
-	//		else if (DriverStation.getInstance().isTest() && DriverStation.getInstance().isEnabled())
-	//		{
-	//			test();
-	//		}
-	//	}
-
 	public void teleop()
 	{
-		//		rightBumper = xbox.getRawButton(Xbox.Constants.RIGHT_BUMPER);
-		//		leftBumper = xbox.getRawButton(Xbox.Constants.LEFT_BUMPER);
 		leftStickButton = operatorXbox.getRawButton(Xbox.Constants.LEFT_STICK_BUTTON);
 
 		aButton = operatorXbox.getRawButton(Xbox.Constants.A_BUTTON);
 
 		leftYAxis = operatorXbox.getRawAxis(Xbox.Constants.LEFT_STICK_Y_AXIS);
 
-//		startButton = driverXbox.getRawButton(Xbox.Constants.START_BUTTON);
-//		startButtonJustPressed = driverXbox.getRawButtonPressed(Xbox.Constants.START_BUTTON);
-
 		updateCurrentRange();
 
-		//		if (!isMoving())
-		//		{
-		//			if (rightBumper)
-		//			{
-		//				targetRange = currentRange.higherNeighbor().range();
-		//				isMoving = true;
-		//				currentDirection = Constants.Direction.Up;
-		//			}
-		//			else if (leftBumper)
-		//			{
-		//				targetRange = currentRange.lowerNeighbor().range();
-		//				isMoving = true;
-		//				currentDirection = Constants.Direction.Down;
-		//			}
-		//			else 
 		if(Math.abs(leftYAxis) > 0.2)	
 		{
 			if (leftStickButton) //If left stick button is pressed
@@ -221,93 +172,12 @@ public class Elevator implements Component
 			stopMoving();
 			//xbox.setRumble(GenericHID.RumbleType.kLeftRumble, 0);
 		}
-		
-//		if (startButton && !startButtonJustPressed)
-//		{
-//			System.out.println("Holding start button for climber");
-//			
-//			if (climberDeployTimer.get() > 1.0)
-//			{
-//				System.out.println("Deploying climber");
-//				deployClimber();
-//			}
-//		}
-//		else
-//		{
-//			retractClimber();
-//			climberDeployTimer.reset();
-//		}
-
-		
-		//		}
-		//
-		//		else if(isMoving())
-		//		{
-		//			System.out.println("Is Moving");
-		//			if (currentDirection == Constants.Direction.Up)
-		//			{
-		//				if (rightBumper)
-		//				{
-		//					targetRange = currentRange.higherNeighbor.range();
-		//				}
-		//				else if (leftBumper)
-		//				{
-		//					currentDirection = Constants.Direction.None;
-		//					stopMoving();
-		//				}
-		//			}
-		//			else if (currentDirection == Constants.Direction.Down) 
-		//			{
-		//				if (leftBumper)
-		//				{
-		//					targetRange = currentRange.lowerNeighbor.range();
-		//				}
-		//				else if (rightBumper)
-		//				{
-		//					currentDirection = Constants.Direction.None;
-		//					stopMoving();
-		//				}
-		//			}
-		//
-		//			if  ( (currentValue >= targetRange[0] && currentDirection == Constants.Direction.Up) || 
-		//					(currentValue < targetRange[1] && currentDirection == Constants.Direction.Down))
-		//			{
-		//				//System.out.println("Elevator in target range");
-		//				isMoving = false;
-		//				currentDirection = Constants.Direction.None;
-		//				stopMoving();
-		//			}
-		//			else if (currentDirection == Constants.Direction.Up)
-		//			{
-		//				//System.out.println("Elevator raising");
-		//				raise();
-		//			}
-		//			else if (currentDirection == Constants.Direction.Down)
-		//			{
-		//				lower();
-		//				//System.out.println("Elevator lowering");
-		//			}
-		//		}
 	}
 
 	public void autonomous()
 	{
 		updateCurrentRange();
-		//		if (currentValue < targetRange[0] && currentDirection == Constants.Direction.Up)
-		//		{
-		//			//System.out.println("Elevator raising");
-		//			raise();
-		//		}
-		//		else if (currentValue > targetRange[1] && currentDirection == Constants.Direction.Down)
-		//		{
-		//			lower();
-		//			//System.out.println("Elevator lowering");
-		//		}
-		//		else
-		//		{
-		//			currentDirection = Constants.Direction.None;
-		//			stopMoving();
-		//		}
+
 	}
 
 	public void test()
@@ -348,13 +218,13 @@ public class Elevator implements Component
 		}
 		printTestInfo();
 	}
-	/**
-	 * Test Code
-	 */
 
+	/**
+	 * Updates the current position of the elevator.
+	 */
 	public void updateCurrentRange()
 	{
-		currentValue = getStringPot();
+		currentValue = getPosition();
 		//System.out.println("Elevator pot: " + currentValue);
 		if (currentValue <= Constants.Range.floorRange.topValue())
 		{
@@ -394,11 +264,18 @@ public class Elevator implements Component
 
 	}
 
+	/**
+	 * Gets the current range of the elevator.
+	 * @return The current range of the elevator.
+	 */
 	public Constants.Range getCurrentRange()
 	{
 		return currentRange;
 	}
 
+	/**
+	 * Stop the elevator.
+	 */
 	public void stopMoving()
 	{
 		currentDirection = Constants.Direction.None;
@@ -406,11 +283,19 @@ public class Elevator implements Component
 		setMoving(false);
 	}
 
-	public double getStringPot()
+	/**
+	 * Gets the potentiometer value of the elevator.
+	 * @return The potentiometer value of the elevator.
+	 */
+	public double getPosition()
 	{
 		return masterTalonSRX.getSelectedSensorPosition(0);
 	}
 
+	/**
+	 * Checks if elevator is moving or not.
+	 * @return If elevator is moving.
+	 */
 	public boolean isMoving()
 	{
 		return isMoving;
@@ -446,9 +331,8 @@ public class Elevator implements Component
 
 	public void printTestInfo()
 	{
-		//System.out.printf("ID: %2d Potentiometer Position: %.2f", talonSRXHashMap.keySet().toArray()[currentTestKeyPosition], getStringPot());
-		System.out.println("[Elevator] String-potentiometer position: " + getStringPot());
-
+		//System.out.printf("ID: %2d Potentiometer Position: %.2f", talonSRXHashMap.keySet().toArray()[currentTestKeyPosition], getPosition());
+		System.out.println("[Elevator] String-potentiometer position: " + getPosition());
 	}
 
 	public boolean autoFloor()
@@ -514,16 +398,6 @@ public class Elevator implements Component
 		return inScaleRange;
 	}
 
-//	public void deployClimber()
-//	{
-//		climberDeploySolenoid.set(true);
-//	}
-//
-//	public void retractClimber()
-//	{
-//		climberDeploySolenoid.set(false);
-//	}
-
 	public static class Constants
 	{		
 		private enum InitRange
@@ -547,9 +421,7 @@ public class Elevator implements Component
 			topScaleRange(Constants.TOP_SCALE - Constants.THRESHOLD, Constants.TOP_SCALE),
 			none(-1, -1),
 			error(-1, -1);
-
-
-
+			
 			private final double[] range;
 
 			InitRange(double bottomValue, double topValue)

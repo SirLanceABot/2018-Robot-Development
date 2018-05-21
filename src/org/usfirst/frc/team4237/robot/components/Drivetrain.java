@@ -17,6 +17,11 @@ import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.PWM.PeriodMultiplier;
 import edu.wpi.first.wpilibj.drive.MecanumDrive;
 
+/**
+ * This class represents the robot's drivetrain.
+ * It contains all the code for properly controlling
+ * and measuring the movements of the robot.
+ */
 public class Drivetrain extends MecanumDrive implements Component
 {
 	private DriverXbox xbox = DriverXbox.getInstance();
@@ -34,8 +39,6 @@ public class Drivetrain extends MecanumDrive implements Component
 	private double leftXAxis = 0.0;
 	private double leftYAxis = 0.0;
 
-	private double servoPosition = 0.5;
-
 	private static WPI_TalonSRX frontLeftMasterMotor = new WPI_TalonSRX(Constants.FRONT_LEFT_MASTER_MOTOR_PORT);
 	private static WPI_TalonSRX frontLeftFollowerMotor = new WPI_TalonSRX(Constants.FRONT_LEFT_FOLLOWER_MOTOR_PORT);
 
@@ -49,38 +52,42 @@ public class Drivetrain extends MecanumDrive implements Component
 	private static WPI_TalonSRX rearRightFollowerMotor = new WPI_TalonSRX(Constants.REAR_RIGHT_FOLLOWER_MOTOR_PORT);
 
 	private static Servo servo = new Servo(Constants.SERVO_PORT);
+	private double servoPosition = 0.5;
 
-
-	private Encoder enc = new Encoder(0, 1, false, EncodingType.k4X);
+	private Encoder dropDownEncoder = new Encoder(0, 1, false, EncodingType.k4X);
 	private AHRS navX = new AHRS(I2C.Port.kMXP);
 
 	private Timer startUpTimer = new Timer();
 	private Timer t = new Timer();
 	private Timer timer = new Timer();
-	private boolean restartSpinTimer = true;
-	private boolean resetTimer = true;
+
+	private boolean doRestartSpinTimer = true;
+	private boolean doResetTimer = true;
 	private boolean isTimerDone = false;
 
-	//color sensor stuff
+	//Color sensor
 	private AMSColorSensor colorSensor = new AMSColorSensor(AMSColorSensor.Constants.PORT, AMSColorSensor.Constants.ADDRESS);
 	private Colors crgb = new Colors();
 	private Colors crgbPrevious = new Colors();
 	private Colors crgbUpperThreshold = new Colors();
 	private Colors crgbLowerThreshold = new Colors();
-	private int UpperThresholdFactor;
-	private int LowerThresholdFactor;
+	private int upperThresholdFactor;
+	private int lowerThresholdFactor;
 
 	private static Drivetrain instance = new Drivetrain();
 
 	/**
-	 * Returns the instance of Drivetrain
-	 * @return
+	 * Returns the singleton instance of Drivetrain.
+	 * @return The singleton instance of Drivetrain.
 	 */
 	public static Drivetrain getInstance()
 	{
 		return instance;
 	}
 
+    /**
+     * Prints the current of all drivetrain Talon SRXs.
+     */
 	public void debugPrintCurrent()
 	{
 		System.out.println("Talon 0: " + rearRightMasterMotor.getOutputCurrent());
@@ -94,7 +101,9 @@ public class Drivetrain extends MecanumDrive implements Component
 		System.out.println("Talon 15: " + frontRightMasterMotor.getOutputCurrent() + "\n\n");
 	}
 
-
+    /**
+     * Private constructor for Drivetrain.
+     */
 	private Drivetrain()
 	{
 		super(frontLeftMasterMotor, rearLeftMasterMotor, frontRightMasterMotor, rearRightMasterMotor);
@@ -103,11 +112,13 @@ public class Drivetrain extends MecanumDrive implements Component
 		startUpTimer.stop();
 		startUpTimer.reset();
 
+		//Set follower talons to their respective masters
 		frontLeftFollowerMotor.follow(frontLeftMasterMotor);
 		frontRightFollowerMotor.follow(frontRightMasterMotor);
 		rearLeftFollowerMotor.follow(rearLeftMasterMotor);
 		rearRightFollowerMotor.follow(rearRightMasterMotor);
 
+		//Set current limits for each talon
 		frontLeftMasterMotor.configContinuousCurrentLimit(Constants.DRIVE_40_AMP_LIMIT, 10);
 		frontLeftMasterMotor.configPeakCurrentLimit(Constants.DRIVE_40_AMP_TRIGGER, Constants.DRIVE_40_AMP_TIME);
 		frontLeftMasterMotor.configOpenloopRamp(Constants.DRIVE_RAMP_TIME, Constants.DRIVE_RAMP_RATE_TIMEOUT);
@@ -115,7 +126,6 @@ public class Drivetrain extends MecanumDrive implements Component
 		frontLeftFollowerMotor.configContinuousCurrentLimit(Constants.DRIVE_40_AMP_LIMIT, 10);
 		frontLeftFollowerMotor.configPeakCurrentLimit(Constants.DRIVE_40_AMP_TRIGGER, Constants.DRIVE_40_AMP_TIME);
 		frontLeftFollowerMotor.configOpenloopRamp(Constants.DRIVE_RAMP_TIME, Constants.DRIVE_RAMP_RATE_TIMEOUT);
-
 
 		rearLeftMasterMotor.configContinuousCurrentLimit(Constants.DRIVE_40_AMP_LIMIT, 10);
 		rearLeftMasterMotor.configPeakCurrentLimit(Constants.DRIVE_40_AMP_TRIGGER, Constants.DRIVE_40_AMP_TIME);
@@ -125,7 +135,6 @@ public class Drivetrain extends MecanumDrive implements Component
 		rearLeftFollowerMotor.configPeakCurrentLimit(Constants.DRIVE_40_AMP_TRIGGER, Constants.DRIVE_40_AMP_TIME);
 		rearLeftFollowerMotor.configOpenloopRamp(Constants.DRIVE_RAMP_TIME, Constants.DRIVE_RAMP_RATE_TIMEOUT);
 
-
 		frontRightMasterMotor.configContinuousCurrentLimit(Constants.DRIVE_40_AMP_LIMIT, 10);
 		frontRightMasterMotor.configPeakCurrentLimit(Constants.DRIVE_40_AMP_TRIGGER, Constants.DRIVE_40_AMP_TIME);
 		frontRightMasterMotor.configOpenloopRamp(Constants.DRIVE_RAMP_TIME, Constants.DRIVE_RAMP_RATE_TIMEOUT);
@@ -133,7 +142,6 @@ public class Drivetrain extends MecanumDrive implements Component
 		frontRightFollowerMotor.configContinuousCurrentLimit(Constants.DRIVE_40_AMP_LIMIT, 10);
 		frontRightFollowerMotor.configPeakCurrentLimit(Constants.DRIVE_40_AMP_TRIGGER, Constants.DRIVE_40_AMP_TIME);
 		frontRightFollowerMotor.configOpenloopRamp(Constants.DRIVE_RAMP_TIME, Constants.DRIVE_RAMP_RATE_TIMEOUT);
-
 
 		rearRightMasterMotor.configContinuousCurrentLimit(Constants.DRIVE_40_AMP_LIMIT, 10);
 		rearRightMasterMotor.configPeakCurrentLimit(Constants.DRIVE_40_AMP_TRIGGER, Constants.DRIVE_40_AMP_TIME);
@@ -143,6 +151,7 @@ public class Drivetrain extends MecanumDrive implements Component
 		rearRightFollowerMotor.configPeakCurrentLimit(Constants.DRIVE_40_AMP_TRIGGER, Constants.DRIVE_40_AMP_TIME);
 		rearRightFollowerMotor.configOpenloopRamp(Constants.DRIVE_RAMP_TIME, Constants.DRIVE_RAMP_RATE_TIMEOUT);
 
+		//Enable encoder for front right master talon
 		frontRightMasterMotor.configSelectedFeedbackSensor(com.ctre.phoenix.motorcontrol.FeedbackDevice.QuadEncoder, 0, 0);
 		frontRightMasterMotor.setSensorPhase(true);
 
@@ -154,19 +163,27 @@ public class Drivetrain extends MecanumDrive implements Component
 		this.calibrateColorSensor();
 	}
 
-	public double getEncInches()
+    /**
+     * Gets the distance the robot has driven converted to inches.
+     * @return Distance traveled.
+     */
+	public double getEncoderDistance()
 	{
 		return frontRightMasterMotor.getSelectedSensorPosition(0) / 135.0;
 	}
 
+    /**
+     * Main loop method for teleoperated mode
+     */
 	public void teleop()
 	{
 		try
 		{
-			//System.out.println("Encoder tic: " + frontRightMasterMotor.getSelectedSensorPosition(0) + "  Distance: " + getEncInches());
+			//System.out.println("Encoder tick: " + frontRightMasterMotor.getSelectedSensorPosition(0) + "  Distance: " + getEncoderDistance());
 
 			//System.out.println(DriverStation.getInstance().isOperatorControl() + " " + DriverStation.getInstance().isEnabled());
 
+            //Make sure robot is actually in teleop mode
 			if (DriverStation.getInstance().isOperatorControl() && DriverStation.getInstance().isEnabled())
 			{
 				if (Math.abs(xbox.getRawAxis(1)) > 0.2)
@@ -196,7 +213,6 @@ public class Drivetrain extends MecanumDrive implements Component
 				{
 					this.driveCartesian(leftXAxis, leftYAxis, rightXAxis);
 				}
-
 			}
 			//drivetrain.debugPrintCurrent();
 		}
@@ -207,13 +223,13 @@ public class Drivetrain extends MecanumDrive implements Component
 	}
 
 	/**
-	 * Drive the distance passed into the method
-	 * @return
+	 * Drive the distance passed into the method.
+	 * @return If the robot has completed the drive.
 	 */
 	public boolean driveDistance(int inches, double maxSpeed, int heading, int stoppingDistance)
 	{
 		boolean isDoneDriving = false;
-		double x = Math.abs(getEncInches());
+		double x = Math.abs(getEncoderDistance());
 		double startingSpeed = 0.3;
 		double stoppingSpeed = 0.175;
 		int startingDistance = 12;
@@ -250,15 +266,15 @@ public class Drivetrain extends MecanumDrive implements Component
 	}
 
 	/**
-	 * Strafe perpendicular to robot. 0 degrees is North
-	 * @return
+	 * Strafe perpendicular to robot. 0 degrees is North.
+	 * @return If the robot has completed the strafe.
 	 */
 	public boolean strafeSeconds(double time, double strafeSpeed, double heading)
 	{
 		boolean isTimerDone = false;
 		double rotate = (navX.getYaw() - heading) / 50;
 
-		if(resetTimer)
+		if(doResetTimer)
 		{
 			t.stop();
 			t.reset();
@@ -277,7 +293,7 @@ public class Drivetrain extends MecanumDrive implements Component
 		{
 			driveCartesian(0, 0, 0);
 			isTimerDone = true;
-			resetTimer = true;
+			doResetTimer = true;
 		}
 
 		return isTimerDone;
@@ -285,12 +301,12 @@ public class Drivetrain extends MecanumDrive implements Component
 
 	/**
 	 * Strafe at a specific angle. 0 degrees is North
-	 * @return
+	 * @return If the robot has completed the strafe.
 	 */
 	public boolean strafeDistanceAtAngle(int inches, double angle, double speed, int heading)
 	{
 		boolean isDoneDriving = false;
-		double x = Math.abs(getEncInches());
+		double x = Math.abs(getEncoderDistance());
 		double rotate = (navX.getYaw() - heading) / 50;
 		double strafeSpeed = Math.sin(Math.abs(angle)) * speed;
 		double forwardSpeed = Math.cos(Math.abs(angle)) * speed;
@@ -318,17 +334,24 @@ public class Drivetrain extends MecanumDrive implements Component
 		return isDoneDriving;
 	}
 
+    /**
+     * Drive the robot forward at the specified speed and at the specified heading.
+     * @param speed Speed at which the robot should drive.
+     * @param time The maximum time for which the robot can drive.
+     * @param heading Heading the robot should drive at
+     * @return If the robot has finished the drive.
+     */
 	public boolean driveSeconds(double speed, double time, int heading)
 	{
 		isTimerDone = false;
 		double rotate = (navX.getYaw() - heading) / 50;
 
-		if(resetTimer)
+		if(doResetTimer)
 		{
 			t.stop();
 			t.reset();
 			t.start();
-			resetTimer = false;
+			doResetTimer = false;
 		}
 
 		if(t.get() <= time)
@@ -339,16 +362,23 @@ public class Drivetrain extends MecanumDrive implements Component
 		{
 			driveCartesian(0, 0, 0);
 			isTimerDone = true;
-			resetTimer = true;
+			doResetTimer = true;
 		}
 		return isTimerDone;
 	}
 
+    /**
+     * Method to return whether the robot should abort autonomous.
+     * @return Whether to abort autonomous or not.
+     */
 	public boolean abortAutonomous()
 	{
 		return abortAutonomous;
 	}
-	
+
+    /**
+     * Restart the timer.
+     */
 	public void restartTimer()
 	{
 		timer.stop();
@@ -357,8 +387,8 @@ public class Drivetrain extends MecanumDrive implements Component
 	}
 	
 	/**
-	 * Rotate to the bearing passed into the method. 0 degrees is North
-	 * @return
+	 * Rotate to the bearing passed into the method. 0 degrees is North.
+	 * @return If the robot has finished the drive.
 	 */
 	public boolean spinToBearing(int bearing, double speed)
 	{
@@ -369,10 +399,10 @@ public class Drivetrain extends MecanumDrive implements Component
 		{
 			double heading = navX.getYaw();
 			
-			if(restartSpinTimer)
+			if(doRestartSpinTimer)
 			{
 				restartTimer();
-				restartSpinTimer = false;
+				doRestartSpinTimer = false;
 			}
 			
 			if(timer.get() >= 0.2)
@@ -428,6 +458,13 @@ public class Drivetrain extends MecanumDrive implements Component
 		return isDoneSpinning;
 	}
 
+    /**
+     * Drive at the specified speed and heading until the color sensor detects the specified color.
+     * @param color Color to look for.
+     * @param speed Speed at which to drive.
+     * @param heading Heading at which to drive.
+     * @return If the robot has finished the drive.
+     */
 	public boolean driveToColor(AMSColorSensor.Constants.Color color, double speed, int heading)
 	{
 		boolean isDoneDriving = false;
@@ -464,42 +501,71 @@ public class Drivetrain extends MecanumDrive implements Component
 		return isDoneDriving;
 	}
 
+    /**
+     * Returns the rotation about the Y axis of the NavX gyro.
+     * @return The Y axis rotation of the NavX.
+     */
 	public double getNavXYaw()
 	{
 		return navX.getYaw();
 	}
 
+    /**
+     * Zero the NavX
+     */
 	public void resetNavX()
 	{
 		navX.reset();
 	}
 
+    /**
+     * Reset the drop-down wheel encoder.
+     */
 	public void resetEncoder()
 	{
 		frontRightMasterMotor.setSelectedSensorPosition(0, 0, 0);
 		Timer.delay(0.06);
 	}
 
+    /**
+     * Print the current colors detected by the color sensor.
+     */
 	public void printColors()
 	{
 		System.out.print(colorSensor);
 	}
 
+    /**
+     * Prints the heading of the robot.
+     */
 	public void printHeading()
 	{
 		System.out.print("Heading: " + navX.getYaw());
 	}
 
+    /**
+     * Prints the value of the drop-down wheel encoder.
+     */
 	public void printEncoder()
 	{
-		System.out.println("Encoder: " + enc.getRaw());
+		System.out.println("Encoder: " + dropDownEncoder.getRaw());
 	}
 
+    /**
+     * Gets the value of the drop-down encoder wheel's servo.
+     * @return
+     */
 	public double getServo()
 	{
 		return servo.get();
 	}
 
+    /**
+     * Calibrate the NavX.
+     * The NavX is allowed a maximum of five seconds to calibrate
+     * before an error message displayed and the calibration is
+     * marked as bad.
+     */
 	public void calibrateNavX()
 	{	
 		boolean goodCalibration = true;
@@ -518,6 +584,9 @@ public class Drivetrain extends MecanumDrive implements Component
 		System.out.println("Calibration done... "  + "Did NavX calibrate? " + goodCalibration);
 	}
 
+    /**
+     * Calibrates the color sensor based on the current color of the floor.
+     */
 	public void calibrateColorSensor()
 	{
 
@@ -552,18 +621,18 @@ public class Drivetrain extends MecanumDrive implements Component
 		}
 
 		// gap between upper and lower thresholds to prevent jitter between the two states
-		UpperThresholdFactor = 3; //  must be exceeded to determine tape found
-		LowerThresholdFactor = 2; // must be below to reset tape found
+		upperThresholdFactor = 3; //  must be exceeded to determine tape found
+		lowerThresholdFactor = 2; // must be below to reset tape found
 
-		crgbUpperThreshold.C = crgbUpperThreshold.C*UpperThresholdFactor/numSamples; // compute the average and include the tape threshold factor
-		crgbUpperThreshold.R = crgbUpperThreshold.R*UpperThresholdFactor/numSamples;
-		crgbUpperThreshold.G = crgbUpperThreshold.G*UpperThresholdFactor/numSamples;
-		crgbUpperThreshold.B = crgbUpperThreshold.B*UpperThresholdFactor/numSamples;
+		crgbUpperThreshold.C = crgbUpperThreshold.C* upperThresholdFactor /numSamples; // compute the average and include the tape threshold factor
+		crgbUpperThreshold.R = crgbUpperThreshold.R* upperThresholdFactor /numSamples;
+		crgbUpperThreshold.G = crgbUpperThreshold.G* upperThresholdFactor /numSamples;
+		crgbUpperThreshold.B = crgbUpperThreshold.B* upperThresholdFactor /numSamples;
 
-		crgbLowerThreshold.C = crgbLowerThreshold.C*LowerThresholdFactor/numSamples; // compute the average and include the tape threshold factor
-		crgbLowerThreshold.R = crgbLowerThreshold.R*LowerThresholdFactor/numSamples;
-		crgbLowerThreshold.G = crgbLowerThreshold.G*LowerThresholdFactor/numSamples;
-		crgbLowerThreshold.B = crgbLowerThreshold.B*LowerThresholdFactor/numSamples;
+		crgbLowerThreshold.C = crgbLowerThreshold.C* lowerThresholdFactor /numSamples; // compute the average and include the tape threshold factor
+		crgbLowerThreshold.R = crgbLowerThreshold.R* lowerThresholdFactor /numSamples;
+		crgbLowerThreshold.G = crgbLowerThreshold.G* lowerThresholdFactor /numSamples;
+		crgbLowerThreshold.B = crgbLowerThreshold.B* lowerThresholdFactor /numSamples;
 
 		crgbUpperThreshold.C = 3000;
 		crgbUpperThreshold.R = 1000;
@@ -579,19 +648,28 @@ public class Drivetrain extends MecanumDrive implements Component
 		//System.out.println("crgbUpperThreshold " + crgbUpperThreshold + "; crgbLowerThreshold " + crgbLowerThreshold);
 	}
 
-
+    /**
+     * Raises the drop-down encoder wheel.
+     */
 	public void omniWheelUp()
 	{
 		servoPosition = 0.5 + (1.0 / 8.5) * 0.5;
 		servo.set(servoPosition);
 	}
 
+    /**
+     * Lowers the drop-down encoder wheel.
+     */
 	public void omniWheelDown()
 	{
 		servoPosition = 0.5;
 		servo.set(servoPosition);
 	}
 
+    /**
+     * Rotates the servo clockwise.
+     * @param angle The angle to add to the current position of the servo.
+     */
 	public void rotateServoClockwise(int angle)
 	{
 		double rotation = (double)angle / 360.0;
@@ -599,6 +677,10 @@ public class Drivetrain extends MecanumDrive implements Component
 		servo.set(servoPosition);
 	}
 
+    /**
+     * Rotates the servo counterclockwise.
+     * @param angle The angle to add to the current position of the servo.
+     */
 	public void rotateServoCounterClockwise(int angle)
 	{
 		double rotation = (double)angle / 360.0;
@@ -609,13 +691,12 @@ public class Drivetrain extends MecanumDrive implements Component
 	@Override
 	public void printTestInfo()
 	{
-		System.out.println("[Drivetrain] Encoder position: " + getEncInches() + " NavX: " + navX.getYaw() + " colors: " + colorSensor.toString());
+		System.out.println("[Drivetrain] Encoder position: " + getEncoderDistance() + " NavX: " + navX.getYaw() + " colors: " + colorSensor.toString());
 	}
 
 	/**
-	 * Class for constant variables related to the drivetrain
-	 * @author Mark
-	 *
+	 * Class for constant variables related to Drivetrain.
+	 * @author Mark Washington
 	 */
 	public static class Constants
 	{
@@ -641,7 +722,7 @@ public class Drivetrain extends MecanumDrive implements Component
 
 		public static final int DRIVE_RAMP_RATE_TIMEOUT = 10; //ms
 
-		public static final double DRIVE_RAMP_TIME = 0.25;	//FIXME: normally 0.5
+		public static final double DRIVE_RAMP_TIME = 0.25;
 
 		public static final int SERVO_PORT = 0;
 	}
