@@ -2,11 +2,15 @@ package org.usfirst.frc.team4237.robot.components;
 
 import edu.wpi.first.wpilibj.DigitalOutput;
 
+/**
+ * Class to represent a Light Ring on the robot.
+ * Used for illuminating either the floor or a vision target.
+ */
 public class LightRing extends DigitalOutput
 {
 	/**
-	 * Light ring class constructor
-	 * @param port Port the light ring is plugged into
+	 * Constructor for the LightRing class
+	 * @param port The port in which the light ring is connected.
 	 */
 	public LightRing(int port)
 	{

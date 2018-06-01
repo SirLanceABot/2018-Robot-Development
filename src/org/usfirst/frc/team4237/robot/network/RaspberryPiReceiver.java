@@ -36,7 +36,7 @@ public class RaspberryPiReceiver extends Thread
 		}
 	}
 	/**
-	 * Returns instance of RaspberryPiReceiver
+	 * Returns singleton instance of RaspberryPiReceiver
 	 * @return Instance of RaspberryPiReceiver
 	 */
 	public static RaspberryPiReceiver getInstance()
@@ -79,8 +79,8 @@ public class RaspberryPiReceiver extends Thread
 	}
 
 	/**
-	 * Gets the most current data received by the pi
-	 * @return
+	 * Gets the most current data received by the Raspberry Pi.
+	 * @return Data from Raspberry Pi.
 	 */
 	public synchronized String getRawData()
 	{
@@ -95,7 +95,6 @@ public class RaspberryPiReceiver extends Thread
 	/**
 	 * Constants class for constants related to RaspberryPiReceiver
 	 * @author Mark
-	 *
 	 */
 	public static class Constants
 	{

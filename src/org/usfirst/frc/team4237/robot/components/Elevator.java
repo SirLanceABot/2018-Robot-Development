@@ -13,7 +13,8 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 /**
- * Class to control the robot's elevator component
+ * This class represents the robot's elevator component.
+ * It contains all the methods needed to accurately control and position the elevator.
  * @author Ben Puzycki, Darryl Wong, Mark Washington
  *
  */
@@ -24,9 +25,6 @@ public class Elevator implements Component
 	
 	private WPI_TalonSRX masterTalonSRX = new WPI_TalonSRX(Constants.MASTER_MOTOR_PORT); 
 	private WPI_TalonSRX slaveTalonSRX = new WPI_TalonSRX(Constants.SLAVE_MOTOR_PORT);
-
-//	private Solenoid climberDeploySolenoid = new Solenoid(Constants.CLIMBER_DEPLOY_SOLENOID_PORT);
-//	private Timer climberDeployTimer = new Timer();
 
 	private HashMap<Integer, WPI_TalonSRX> talonSRXHashMap = new HashMap<Integer, WPI_TalonSRX>();
 
@@ -50,24 +48,23 @@ public class Elevator implements Component
 	private boolean leftStickButton;
 	private boolean aButton;
 
-//	private boolean startButton;
-//	private boolean startButtonJustPressed;
-
 	private boolean isFloorTarget = false;
 
 	private double leftYAxis;
 
 	private static Elevator instance = new Elevator();
 
+    /**
+     * Method to return the singleton instance of the elevator class.
+     * @return Instance of Elevator.
+     */
 	public static Elevator getInstance()
 	{
 		return instance;
 	}
 
 	/**
-	 * Constructor for Elevator, called only
-	 * once by getInstance(). It initializes
-	 * the keys and values in levelTicks and
+	 * Constructor for Elevator, called only once by getInstance(). It initializes the keys and values in levelTicks and
 	 * tickLevels.
 	 */
 	private Elevator()
@@ -92,7 +89,7 @@ public class Elevator implements Component
 	}
 
 	/**
-	 * Raise the elevator
+	 * Method to raise the elevator.
 	 */
 	public void raise()
 	{
@@ -100,7 +97,7 @@ public class Elevator implements Component
 	}
 
 	/**
-	 * Lower the elevator
+	 * Method to lower the elevator.
 	 */
 	public void lower()
 	{
@@ -117,7 +114,10 @@ public class Elevator implements Component
 		masterTalonSRX.set(-0.5);
 	}
 
-
+	/**
+	 * Main loop method for teleoperated mode.
+     * Handles input from the Operator's Xbox controller to control the movement of the elevator.
+	 */
 	public void teleop()
 	{
 		leftStickButton = operatorXbox.getRawButton(Xbox.Constants.LEFT_STICK_BUTTON);
@@ -174,10 +174,13 @@ public class Elevator implements Component
 		}
 	}
 
+    /**
+     * Main loop method for autonomous mode.
+	 * Does not directly control the elevator. It updates the current position of the elevator.
+     */
 	public void autonomous()
 	{
 		updateCurrentRange();
-
 	}
 
 	public void test()
@@ -220,7 +223,7 @@ public class Elevator implements Component
 	}
 
 	/**
-	 * Updates the current position of the elevator.
+	 * Method to update the current position of the elevator.
 	 */
 	public void updateCurrentRange()
 	{
@@ -274,7 +277,7 @@ public class Elevator implements Component
 	}
 
 	/**
-	 * Stop the elevator.
+	 * Method to stop the elevator.
 	 */
 	public void stopMoving()
 	{
@@ -301,40 +304,64 @@ public class Elevator implements Component
 		return isMoving;
 	}
 
+	/**
+	 * Method to set whether elevator is moving or not.
+	 * @param isMoving Whether the elevator is moving or not.
+	 */
 	public void setMoving(boolean isMoving)
 	{
 		this.isMoving = isMoving;
 	}
 
+	/**
+	 * Method to check if elevator is in the set target range.
+	 * @return If elevator is in current range.
+	 */
 	public boolean inTargetRange()
 	{
 		return  (currentValue >= targetRange[0]) && (currentValue <= targetRange[1]);
 	}
 
+	/**
+	 * Set the target range of the elevator to the scale position. For use in autonomous.
+	 */
 	public void autoSetScaleTargetRange()
 	{
 		currentDirection = Constants.Direction.Up;
 		targetRange = Constants.Range.topScaleRange.range();
 	}
 
+	/**
+	 * Sets the target range of the elevator to the switch position. For use in autonomous.
+	 */
 	public void autoSetSwitchTargetRange()
 	{
 		targetRange = Constants.Range.exchangeAndSwitchAndPortalRange.range;
 		currentDirection = Constants.Direction.Up;
 	}
 
+	/**
+	 * Sets the target range of the elevator to the floor position. For use in autonomous.
+	 */
 	public void autoSetFloorTargetRange()
 	{
 		currentDirection = Constants.Direction.Up;
 		targetRange = Constants.Range.floorRange.range;
 	}
 
+	/**
+	 * Prints important data about the operation of the elevator.
+	 */
 	public void printTestInfo()
 	{
 		//System.out.printf("ID: %2d Potentiometer Position: %.2f", talonSRXHashMap.keySet().toArray()[currentTestKeyPosition], getPosition());
 		System.out.println("[Elevator] String-potentiometer position: " + getPosition());
 	}
 
+	/**
+	 * Automatically move the elevator to the floor position.
+	 * @return Whether the elevator is in the floor position or not.
+	 */
 	public boolean autoFloor()
 	{
 		boolean inFloorRange = false;
@@ -356,6 +383,10 @@ public class Elevator implements Component
 		return inFloorRange;
 	}
 
+	/**
+	 * Automatically move the elevator to the switch position.
+	 * @return Whether the elevator is in the switch position or not.
+	 */
 	public boolean autoSwitch()
 	{
 		boolean inSwitchRange = false;
@@ -377,6 +408,10 @@ public class Elevator implements Component
 		return inSwitchRange;
 	}
 
+	/**
+	 * Automatically move the elevator to the high scale position.
+	 * @return Whether the elevator is in the high scale position or not.
+	 */
 	public boolean autoTopScale()
 	{
 		boolean inScaleRange = false;
@@ -398,6 +433,9 @@ public class Elevator implements Component
 		return inScaleRange;
 	}
 
+    /**
+     * Class to store constant variables used by the Elevator class.
+     */
 	public static class Constants
 	{		
 		private enum InitRange
@@ -421,7 +459,7 @@ public class Elevator implements Component
 			topScaleRange(Constants.TOP_SCALE - Constants.THRESHOLD, Constants.TOP_SCALE),
 			none(-1, -1),
 			error(-1, -1);
-			
+
 			private final double[] range;
 
 			InitRange(double bottomValue, double topValue)

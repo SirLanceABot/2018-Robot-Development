@@ -6,17 +6,14 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 import java.util.HashMap;
 
-import org.usfirst.frc.team4237.robot.components.Elevator.Constants;
 import org.usfirst.frc.team4237.robot.control.OperatorXbox;
 import org.usfirst.frc.team4237.robot.control.Xbox;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Timer;
 
 /**
- * Gripper class
- * @author Julien Thrum, Erin Lafrenz, Ben Puzycki, Darryl Wong, and Mark Washington
+ * Class to control the intake and grip mechanism on the robot's elevator.
+ * @author Julien Thrum, Ben Puzycki, Darryl Wong, Mark Washington
  */
 public class Gripper implements Component
 {
@@ -67,6 +64,9 @@ public class Gripper implements Component
 		return instance;
 	}
 
+	/**
+	 * Constructor for the Gripper class.
+	 */
 	private Gripper()
 	{
 		//Left & right intake talon settings
@@ -100,27 +100,13 @@ public class Gripper implements Component
 		talonSRXHashMap.put(Constants.LEFT_INTAKE_MOTOR_PORT, leftIntakeTalon);
 		talonSRXHashMap.put(Constants.RIGHT_INTAKE_MOTOR_PORT, rightIntakeTalon);
 		talonSRXHashMap.put(Constants.PIVOTER_MOTOR_PORT, pivotTalon);
-
-		//PID settings
-		//		leftIntakeTalon.selectProfileSlot(Constants.PID_SLOT_ID, 0);
-		//		leftIntakeTalon.config_kP(Constants.PID_SLOT_ID, 2.2, 1);
-		//		leftIntakeTalon.config_kI(Constants.PID_SLOT_ID, 0.01, 1);
-		//		leftIntakeTalon.config_kD(Constants.PID_SLOT_ID, 0.0001, 1);
-		//		leftIntakeTalon.config_kF(Constants.PID_SLOT_ID, 4.3, 1);
-		//
-		//		rightIntakeTalon.selectProfileSlot(Constants.PID_SLOT_ID, 0);
-		//		rightIntakeTalon.config_kP(Constants.PID_SLOT_ID, 2.2, 1);
-		//		rightIntakeTalon.config_kI(Constants.PID_SLOT_ID, 0.01, 1);
-		//		rightIntakeTalon.config_kD(Constants.PID_SLOT_ID, 0.0001, 1);
-		//		rightIntakeTalon.config_kF(Constants.PID_SLOT_ID, 4.3, 1);
 	}
 
 
 	/**
-	 * Intake function for autonomous
-	 * @return State of intake, whether it's done or not
+	 * Intake function for autonomous.
+	 * @return State of intake, whether it's done or not.
 	 */
-
 	public boolean autoIntake()
 	{
 		if(!isAutoIntaking())
@@ -148,8 +134,8 @@ public class Gripper implements Component
 
 
 	/** 
-	 * Eject function for autonomous
-	 * @return State of eject, whether it's done or not
+	 * Eject function for autonomous.
+	 * @return State of eject, whether it's done or not.
 	 */
 	public boolean autoEject()
 	{
@@ -168,6 +154,10 @@ public class Gripper implements Component
 		return done;
 	}
 
+	/**
+	 * Method for gently dropping a cube in autonomous.
+	 * @return State of drop, whether it's done or not.
+	 */
 	public boolean autoDrop()
 	{
 		boolean done = false;
@@ -187,7 +177,7 @@ public class Gripper implements Component
 
 
 	/**
-	 * Turn off intake
+	 * Method to shut off the intake motors.
 	 */
 	public void intakeOff()
 	{
@@ -203,7 +193,7 @@ public class Gripper implements Component
 	}
 
 	/**
-	 * Intake with different speed, to rotate cube automatically for autonomous
+	 * Intake with different speed in order to rotate the power cube for a better grip.
 	 */
 	public void intakeDifferentSpeed()
 	{
@@ -213,36 +203,26 @@ public class Gripper implements Component
 	
 	
 	/**
-	 * Intake for use during tele-op
+	 * Intake method for teleoperated mode.
 	 */
 	public void intake()
 	{
-		//TODO: Make velocity-based control work
-		//leftIntakeTalon.set(ControlMode.Velocity, -0.5);
-		//rightIntakeTalon.set(ControlMode.Velocity, -0.5);
-
-		//		leftIntakeTalon.set(ControlMode.PercentOutput, -0.5);
-		//		rightIntakeTalon.set(ControlMode.PercentOutput, -0.5);
-
 		leftIntakeTalon.set(-0.50);
 		rightIntakeTalon.set(-0.50);
-
 	}
 
 	/**
-	 * Eject for use during tele-op
+	 * Method to shoot cube for use in teleoperated mode.
 	 */
 	public void ejectShoot()
 	{
-		//leftIntakeTalon.set(ControlMode.Velocity, 500);
-		//rightIntakeTalon.set(ControlMode.Velocity, 500);
-
-		//		leftIntakeTalon.set(ControlMode.PercentOutput, 0.5);
-		//		rightIntakeTalon.set(ControlMode.PercentOutput, 0.5);
 		leftIntakeTalon.set(1);
 		rightIntakeTalon.set(1);
 	}
 
+	/**
+	 * Method to gently drop cube for use in teleoperated mode.
+	 */
 	public void ejectDrop()
 	{
 		leftIntakeTalon.set(0.25);
@@ -250,7 +230,7 @@ public class Gripper implements Component
 	}
 
 	/**
-	 * Spins cube clockwise into left arm
+	 * Method to spin cube clockwise into left arm.
 	 */
 	public void intakeRotateCubeLeft()
 	{
@@ -259,7 +239,7 @@ public class Gripper implements Component
 	}
 
 	/**
-	 * Spins cube counterclockwise into right arm
+	 * Method to spin cube counterclockwise into right arm.
 	 */
 	public void intakeRotateCubeRight()
 	{
@@ -268,8 +248,8 @@ public class Gripper implements Component
 	}
 
 	/**
-	 * Move pivot arm at selected speed
-	 * @param value Value from joystick
+	 * Method to move pivot arm at a specified speed.
+	 * @param value Speed at which to move the arm.
 	 */
 	public void pivot(double value)
 	{
@@ -278,7 +258,7 @@ public class Gripper implements Component
 	}
 
 	/**
-	 * Raise pivoter
+	 * Method to angle the pivoter up.
 	 */
 	public void raise()
 	{	
@@ -286,7 +266,7 @@ public class Gripper implements Component
 	}
 
 	/**
-	 * Lower pivoter
+	 * Method to angle the pivoter down.
 	 */
 	public void lower()
 	{
@@ -294,7 +274,7 @@ public class Gripper implements Component
 	}
 
 	/**
-	 * Stop pivoting
+	 * Method to stop the pivoter.
 	 */
 	public void pivotOff()
 	{
@@ -303,86 +283,80 @@ public class Gripper implements Component
 		pivotTalon.set(0.0);
 	}
 
+	/**
+	 * Method to pulsate the intake motors.
+	 * Can be used to ensure the power cube is securely held in the robot.
+	 */
 	public void pulsateIntake()
 	{
 		leftIntakeTalon.set(-0.3);
 		rightIntakeTalon.set(-0.3);
 	}
 
+	/**
+	 * Method to get the tick value of the left intake motor's encoder.
+	 * @return The encoder's value.
+	 */
 	public int getLeftIntakeEncoder()
 	{
 		return leftIntakeTalon.getSelectedSensorPosition(0);
 	}
 
+	/*
+     * Method to get the tick value of the right intake motor's encoder.
+	 * @return The encoder's value.
+	 */
 	public int getRightIntakeEncoder()
 	{
 		return rightIntakeTalon.getSelectedSensorPosition(0);
 	}
 
+	/**
+	 * Method to set the upper and lower bounds for the arm in autonomous mode.
+	 */
 	public void setAutoLimits()
 	{
 		pivotTalon.configForwardSoftLimitThreshold(Constants.RAISED, 0);
 	}
 
+	/**
+	 * Method to set the upper and lower bounds for the arm in teleoperated mode.
+	 */
 	public void setTeleopLimits()
 	{
 		pivotTalon.configForwardSoftLimitThreshold(Constants.TELEOP_MAX, 0);
 	}
 
-	//	public void run()
-	//	{
-	//
-	//		updateCurrentRange();
-	//
-	//		if (DriverStation.getInstance().isOperatorControl() && DriverStation.getInstance().isEnabled())
-	//		{
-	//			System.out.println();
-	//			teleop();
-	//		}
-	//		else if (DriverStation.getInstance().isAutonomous() && DriverStation.getInstance().isEnabled())
-	//		{
-	//			autonomous();
-	//		}
-	//		else if (DriverStation.getInstance().isTest() && DriverStation.getInstance().isEnabled())
-	//		{
-	//			test();
-	//		}
-	//	}
-
+	/**
+	 * Main loop method for teleoperated mode.
+	 * Handles input from the Operator's Xbox controller to control the movement of the gripper and pivoting arm.
+	 */
 	public void teleop()
 	{
-		//Pivot
-		boolean aButton = xbox.getRawButton(Xbox.Constants.A_BUTTON);		//Pivot down one level
-		boolean bButton = xbox.getRawButton(Xbox.Constants.B_BUTTON);		//Spin Cube right
-		boolean yButton = xbox.getRawButton(Xbox.Constants.Y_BUTTON);		//Pivot up one level
-		boolean xButton = xbox.getRawButton(Xbox.Constants.X_BUTTON);		//Spin Cube left
-//		boolean startButton = xbox.getRawButton(Xbox.Constants.START_BUTTON);
-//		boolean backButton = xbox.getRawButton(Xbox.Constants.BACK_BUTTON);
 
-		double rightYAxis = xbox.getRawAxis(Xbox.Constants.RIGHT_STICK_Y_AXIS);					//Free moving pivot
+		//Pivot down one level
+		boolean aButton = xbox.getRawButton(Xbox.Constants.A_BUTTON);
 
+		//Spin Cube right
+		boolean bButton = xbox.getRawButton(Xbox.Constants.B_BUTTON);
+
+		//Pivot up one level
+		boolean yButton = xbox.getRawButton(Xbox.Constants.Y_BUTTON);
+
+		//Spin Cube left
+		boolean xButton = xbox.getRawButton(Xbox.Constants.X_BUTTON);
+
+		//Free move for pivoter
+		double rightYAxis = xbox.getRawAxis(Xbox.Constants.RIGHT_STICK_Y_AXIS);
+
+		//Eject
+		double rightTrigger = xbox.getRawAxis(Xbox.Constants.RIGHT_TRIGGER_AXIS);
 
 		//Intake
-		double rightTrigger = xbox.getRawAxis(Xbox.Constants.RIGHT_TRIGGER_AXIS);		//Eject
-		double leftTrigger = xbox.getRawAxis(Xbox.Constants.LEFT_TRIGGER_AXIS);			//Intake
-
+		double leftTrigger = xbox.getRawAxis(Xbox.Constants.LEFT_TRIGGER_AXIS);
 
 		updateCurrentRange();
 
-		//Move pivot arm
-		//		if (!isPivoting())
-		//		{
-		
-		//Some alternative code to make it work like the elevator
-
-		/*
-			if (yButton)
-			{
-				targetRange = currentRange.higherNeighbor().range();
-				setPivoting(true);
-				currentDirection = Constants.Direction.Up;
-			}
-		 */
 		if (Math.abs(rightYAxis) > 0.2)
 		{
 			pivot(-rightYAxis);
@@ -405,61 +379,6 @@ public class Gripper implements Component
 		{
 			pivotOff();
 		}
-
-
-
-		//		}
-		//		else if(isPivoting())
-		//		{
-		//
-		//			System.out.println("Is Pivoting");
-		//			if (currentDirection == Constants.Direction.Up)
-		//			{
-		//				if (yButton)
-		//				{
-		//					targetRange = currentRange.higherNeighbor.range();
-		//					
-		//					
-		//				}
-		//				else if (aButton)
-		//				{
-		//					currentDirection = Constants.Direction.None;
-		//					pivotOff();
-		//				}
-		//			}
-		//			else if (currentDirection == Constants.Direction.Down) 
-		//			{
-		//				if (aButton)
-		//				{
-		//					targetRange = currentRange.lowerNeighbor.range();
-		//				}
-		//				else if (yButton)
-		//				{
-		//					currentDirection = Constants.Direction.None;
-		//					pivotOff();
-		//				}
-		//			}
-		//
-		//
-		//			if ( (currentValue >= targetRange[0] && currentDirection == Constants.Direction.Up) || 
-		//					(currentValue < targetRange[1] && currentDirection == Constants.Direction.Down))
-		//			{
-		//				System.out.println("In target range");
-		//				setPivoting(false);
-		//				currentDirection = Constants.Direction.None;
-		//				pivotOff();
-		//			}
-		//			else if (currentDirection == Constants.Direction.Up)
-		//			{
-		//				System.out.println("Raising");
-		//				raise();
-		//			}
-		//			else if (currentDirection == Constants.Direction.Down)
-		//			{
-		//				lower();
-		//				System.out.println("Lowering");
-		//			}
-		//		}
 
 		//Intake
 		if (Math.abs(rightTrigger) > 0.3)
@@ -512,38 +431,6 @@ public class Gripper implements Component
 		}
 	}
 
-	/**
-	 * Test Code
-	 */
-	public void autonomous()
-	{
-		//		if ( (currentValue >= targetRange[0] && currentDirection == Constants.Direction.Up) || 
-		//				(currentValue < targetRange[1] && currentDirection == Constants.Direction.Down))
-		//		{
-		//			//System.out.println("Pivot Arm in target range");
-		//			pivotOff();	
-		//		}
-		//		else if (currentValue < targetRange[0] && currentDirection == Constants.Direction.Up)
-		//		{
-		//			//System.out.println("Pivot Arm Raising");
-		//			raise();				
-		//		}
-		//		else if (currentValue > targetRange[1] && currentDirection == Constants.Direction.Down)
-		//		{
-		//			lower();
-		//			//System.out.println("Pivot Arm Lowering");
-		//		}
-		//
-		//		if(isAutoEjecting())
-		//		{
-		//			autoDrop();
-		//		}
-		//		else
-		//		{
-		//			intakeOff();
-		//		}
-	}
-
 	public void test()
 	{
 		leftBumper = xbox.getRawButtonPressed(Xbox.Constants.LEFT_BUMPER);
@@ -583,11 +470,13 @@ public class Gripper implements Component
 		printTestInfo();
 	}
 
-	//Updates the current range depending on the encoder value
+	/**
+	 * Updates the current positional range of the pivoting arm.
+	 */
 	public void updateCurrentRange()
 	{
-		currentValue = getPivotPot();
-		//System.out.println("Pivot pot: " + getPivotPot());
+		currentValue = getPivotPotentiometer();
+		//System.out.println("Pivot pot: " + getPivotPotentiometer());
 		if (currentValue <= Constants.Range.floorRange.topValue())
 		{
 			currentRange = Constants.Range.floorRange;
@@ -626,31 +515,55 @@ public class Gripper implements Component
 		}
 	}
 
+    /**
+     * Method to check if autonomous pivot to middle is finished.
+     * @return State of pivot, if it's finished or not.
+     */
 	public boolean isAutoMiddlePivotDone()
 	{
 		return isAutoPivotMiddleDone;
 	}
 
+    /**
+     * Method to check if autonomous pivot to floor is finished.
+     * @return State of pivot, if it's finished or not.
+     */
 	public boolean isAutoFloorPivotDone()
 	{
 		return isAutoPivotFloorDone;
 	}
 
+    /**
+     * Method to check if autonomous pivot to raised position is finished.
+     * @return State of pivot, if it's finished or not.
+     */
 	public boolean isAutoRaisedPivotDone()
 	{
 		return isAutoPivotRaisedDone;
 	}
 
+    /**
+     * Method to get the velocities of the intake motors.
+     * @return An array containing the velocities of the two intake motors.
+     */
 	public int[] getVelocityArray()
 	{
 		return new int[] {leftIntakeTalon.getSelectedSensorVelocity(0), rightIntakeTalon.getSelectedSensorVelocity(0)};
 	}
 
-	public int getPivotPot()
+    /**
+     * Method to get the value of the pivoting arm's potentiometer.
+     * @return The value of the pivoting arm's potentiometer.
+     */
+	public int getPivotPotentiometer()
 	{
 		return pivotTalon.getSelectedSensorPosition(0);
 	}
 
+    /**
+     * Method to check whether or not the intake is autonomously ejecting a power cube.
+     * @return State of ejection, whether is ejecting or not.
+     */
 	public boolean isAutoEjecting()
 	{
 		return isAutoEjecting;
@@ -718,8 +631,8 @@ public class Gripper implements Component
 
 	public void printTestInfo()
 	{
-		System.out.printf("Pivot = %5d		Left Intake = %5d		Right Intake = %5d", getPivotPot(), getLeftIntakeEncoder(), getRightIntakeEncoder());
-		System.out.println("[Gripper] Pivot arm potentiometer position: " + getPivotPot());
+		System.out.printf("Pivot = %5d		Left Intake = %5d		Right Intake = %5d", getPivotPotentiometer(), getLeftIntakeEncoder(), getRightIntakeEncoder());
+		System.out.println("[Gripper] Pivot arm potentiometer position: " + getPivotPotentiometer());
 	}
 
 	public void resetIntakeEncoder()

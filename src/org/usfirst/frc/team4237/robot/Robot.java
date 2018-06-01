@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.IterativeRobot;
 
 /**
  * Main robot class
- * Controls main loops for autonomous and teleop mode
+ * Controls main loops for autonomous and teleoperated mode.
  */
 public class Robot extends IterativeRobot
 {
@@ -125,7 +125,7 @@ public class Robot extends IterativeRobot
 				"\tNavX: " + Drivetrain.getInstance().getNavXYaw() + 
 				"\tColors: "); Drivetrain.getInstance().printColors();
 				System.out.print("\tElevator pot: " + Elevator.getInstance().getPosition() +
-						"\tPivot pot: " + Gripper.getInstance().getPivotPot() + 
+						"\tPivot pot: " + Gripper.getInstance().getPivotPotentiometer() +
 						"\tIntake encoder left: " + Gripper.getInstance().getLeftIntakeEncoder() + 
 						"\tIntake encoder right: " + Gripper.getInstance().getRightIntakeEncoder() + '\n');
 	}

@@ -56,8 +56,8 @@ public class Autonomous
 	private static Autonomous instance = new Autonomous();
 
 	/**
-	 * Method to get instance of autonomous code
-	 * @return
+	 * Method to get singleton instance of the Autonomous class.
+	 * @return Instance of Autonomous.
 	 */
 	public static Autonomous getInstance()
 	{
@@ -126,7 +126,8 @@ public class Autonomous
 	/**
 	 * Method to select which autonomous sequence to run
 	 * The sequence to run is decided based on a three plan system.
-	 * Plan A is the primary sequence to run. If it cannot be run, then it moves on to Plan B, and then as a last resort, Plan C.
+	 * Plan A is the primary sequence to run. If it cannot be run,
+	 * then it moves on to Plan B, and then as a last resort, Plan C.
 	 */
 	public void setAutoMode()
 	{
@@ -266,7 +267,7 @@ public class Autonomous
 	}
 
 	/**
-	 * Autonomous periodic method
+	 * Main autonomous loop method.
 	 */
 	public void periodic()
 	{
@@ -362,6 +363,9 @@ public class Autonomous
 		}
 	}
 
+	/**
+	 * Method to turn on the robot's light rings.
+	 */
 	public void turnLightRingsOn()
 	{
 		//whiteCameraLight.set(true);
@@ -369,6 +373,9 @@ public class Autonomous
 		whiteFloorLight.set(true);
 	}
 
+	/**
+	 * Method to turn off the robot's light rings.
+	 */
 	public void turnLightRingsOff()
 	{
 		whiteCameraLight.set(false);
@@ -376,6 +383,9 @@ public class Autonomous
 		whiteFloorLight.set(false);
 	}
 
+	/**
+	 * Autonomous method for crossing the auto-line.
+	 */
 	public void autoLine()
 	{
 		if(autoStage == Constants.AutoStage.kDrive1)
@@ -393,42 +403,49 @@ public class Autonomous
 			}
 		}
 	}
+
+	/**
+	 * Method for autonomously placing a power cube in the switch from the center starting position.
+	 */
 	public void switchFromMiddle()
 	{
-		//		if(autonStage == Constants.AutonStage.kDrive1)
-		//		{
-		//			if(!doneDriving || !doneMovingGripper || !doneMovingElevator)
-		//			{
-		//				if(!doneMovingGripper)
-		//				{
-		//					doneMovingGripper = gripper.autoHorizontal();
-		//				}
-		//
-		//				if(!doneDriving)
-		//				{
-		//					doneDriving = drivetrain.strafeDistanceAtAngle(95, 21 * switchAngleSign, 1, 0);
-		//				}
-		//
-		//				if(!doneMovingElevator)
-		//				{
-		//					doneMovingElevator = elevator.autoSwitch();
-		//				}
-		//				
-		//				if(timer.get() >= 3.5)
-		//				{
-		//					drivetrain.driveCartesian(0, 0, 0);
-		//					gripper.pivotOff();
-		//					autonStage = Constants.AutonStage.kDone;
-		//				}
-		//			}
-		//			else
-		//			{
-		//				autonStage = Constants.AutonStage.kShoot1;
-		//				System.out.println("Entering: " + autonStage);
-		//				doneMovingGripper = false;
-		//				doneDriving = false;
-		//			}
-		//		}
+		/*
+		if(autonStage == Constants.AutonStage.kDrive1)
+		{
+			if(!doneDriving || !doneMovingGripper || !doneMovingElevator)
+			{
+				if(!doneMovingGripper)
+				{
+					doneMovingGripper = gripper.autoHorizontal();
+				}
+
+				if(!doneDriving)
+				{
+					doneDriving = drivetrain.strafeDistanceAtAngle(95, 21 * switchAngleSign, 1, 0);
+				}
+
+				if(!doneMovingElevator)
+				{
+					doneMovingElevator = elevator.autoSwitch();
+				}
+
+				if(timer.get() >= 3.5)
+				{
+					drivetrain.driveCartesian(0, 0, 0);
+					gripper.pivotOff();
+					autonStage = Constants.AutonStage.kDone;
+				}
+			}
+			else
+			{
+				autonStage = Constants.AutonStage.kShoot1;
+				System.out.println("Entering: " + autonStage);
+				doneMovingGripper = false;
+				doneDriving = false;
+			}
+		}
+		*/
+
 		if(autonStage == Constants.AutonStage.kDrive1)
 		{
 			if(!doneDriving)
@@ -840,6 +857,9 @@ public class Autonomous
 		}
 	}
 
+	/**
+	 * Method for placing a power cube in the left side of the switch starting from the center.
+	 */
 	public void switchLeftFromMiddle()
 	{
 		if(autoStage == Constants.AutoStage.kDrive1)
@@ -1143,6 +1163,9 @@ public class Autonomous
 		}
 	}
 
+	/**
+	 * Method for placing a power cube in the right side of the switch starting from the center.
+	 */
 	public void switchRightFromMiddle()
 	{
 		if(autoStage == Constants.AutoStage.kDrive1)
@@ -1455,6 +1478,9 @@ public class Autonomous
 		}
 	}
 
+	/**
+	 * Method for placing a power cube in the switch on the same side of the field as the robot, from the end of the switch.
+	 */
 	public void switchOnSameSideOnEnd()
 	{
 		if(autoStage == Constants.AutoStage.kDrive1)
