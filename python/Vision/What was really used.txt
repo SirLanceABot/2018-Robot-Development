@@ -1,0 +1,5 @@
+2018 used the Raspberry Pi for a camera server only since vision wasn't needed for the Autonomous and the camera server on the roboRIO failed and wasn't fixed and NI didn't get it fixed in the time allowed.
+
+Used GitHub repository jacksonliam/mjpg-streamer
+
+The simple_mjpeg_streamer_http_server.py is included as an example what might be useful in the future.  It had nothing to do with the 2018 season.
