@@ -2,4 +2,4 @@
 
 Used GitHub repository jacksonliam/mjpg-streamer
 
-The simple_mjpeg_streamer_http_server.py is included as an example what might be useful in the future.  It had nothing to do with the 2018 season.
+The simple_mjpeg_streamer_http_server.py and are included as an example what might be useful in the future.  They had nothing to do with the 2018 season.
