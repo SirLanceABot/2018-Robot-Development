@@ -1,0 +1,13 @@
+TARGETS = dhcpcd busybox-syslogd killprocs motd livestream.sh dbus busybox-klogd single ntp rsync ssh cron bluetooth avahi-daemon plymouth rmnologin rc.local
+INTERACTIVE =
+dbus: busybox-syslogd
+single: killprocs motd
+ntp: busybox-syslogd
+rsync: busybox-syslogd
+ssh: busybox-syslogd
+cron: busybox-syslogd
+bluetooth: busybox-syslogd dbus
+avahi-daemon: dbus busybox-syslogd
+plymouth: dhcpcd bluetooth busybox-syslogd dbus busybox-klogd avahi-daemon motd ntp rsync ssh cron livestream.sh
+rmnologin: dhcpcd bluetooth busybox-syslogd dbus busybox-klogd avahi-daemon motd ntp rsync ssh cron livestream.sh
+rc.local: dhcpcd bluetooth busybox-syslogd dbus busybox-klogd avahi-daemon motd ntp rsync ssh cron livestream.sh

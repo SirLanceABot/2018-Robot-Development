@@ -1,0 +1,9 @@
+TARGETS = dhcpcd fake-hwclock livestream.sh busybox-klogd bluetooth avahi-daemon plymouth urandom alsa-utils busybox-syslogd sendsigs umountnfs.sh rpcbind nfs-common hwclock.sh networking umountfs umountroot halt reboot
+busybox-syslogd: bluetooth avahi-daemon
+sendsigs: bluetooth busybox-klogd alsa-utils avahi-daemon busybox-syslogd plymouth
+umountnfs.sh: bluetooth busybox-klogd alsa-utils avahi-daemon busybox-syslogd sendsigs plymouth
+networking: umountnfs.sh rpcbind livestream.sh
+umountfs: dhcpcd bluetooth urandom hwclock.sh umountnfs.sh busybox-klogd alsa-utils networking avahi-daemon busybox-syslogd plymouth rpcbind
+umountroot: fake-hwclock umountfs
+halt: umountroot
+reboot: umountroot
